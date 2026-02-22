@@ -7,6 +7,7 @@ import { t } from "@/data/translations";
 
 import Navbar from "@/components/Navbar";
 import HeroCanvas from "@/components/HeroCanvas";
+import RecentUpdates from "@/components/RecentUpdates";
 import YouTubeBanner from "@/components/YouTubeBanner";
 import OnlineTools from "@/components/OnlineTools";
 import TechNews from "@/components/TechNews";
@@ -112,6 +113,10 @@ export default function Home() {
                         </motion.div>
                     </motion.div>
                 </section>
+
+                {/* ─── Recent Updates ─── */}
+                <RecentUpdates />
+                <div className="section-divider mx-4" />
 
                 {/* ─── YouTube Banner ─── */}
                 <YouTubeBanner />
