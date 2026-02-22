@@ -250,6 +250,8 @@ export const courses = [
         lessons: 24,
         level: "Intermediate",
         image: "🎓",
+        videoId: "su_GXRGReTA",
+        downloadUrl: "https://drive.google.com/drive/folders/1exPIXbqxy9LCcCf6QWCzF73xENg2O6hG",
     },
     {
         title: "Full-Stack App Development",
@@ -260,6 +262,8 @@ export const courses = [
         lessons: 48,
         level: "Advanced",
         image: "💻",
+        videoId: "_BwZvuJiCuc",
+        downloadUrl: "https://drive.google.com/drive/folders/1exPIXbqxy9LCcCf6QWCzF73xENg2O6hG",
     },
     {
         title: "Tech Content Creation",
@@ -270,6 +274,8 @@ export const courses = [
         lessons: 12,
         level: "Beginner",
         image: "🎬",
+        videoId: "MM1k4h4yl6U",
+        downloadUrl: null,
     },
 ];
 
