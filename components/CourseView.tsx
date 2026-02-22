@@ -14,10 +14,10 @@ function StepIndicator({ current, steps }: { current: number; steps: string[] })
           <div className="flex flex-col items-center gap-1">
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500 ${i < current
-                  ? "bg-green-500 text-white"
-                  : i === current
-                    ? "bg-tecsubCyan text-tecsubNavy"
-                    : "border border-white/20 text-white/40"
+                ? "bg-green-500 text-white"
+                : i === current
+                  ? "bg-tecsubCyan text-tecsubNavy"
+                  : "border border-white/20 text-white/40"
                 }`}
             >
               {i < current ? "✓" : i + 1}
@@ -236,8 +236,8 @@ export default function CourseView({ id }: { id: string }) {
                 <button
                   onClick={() => setPaymentMethod("card")}
                   className={`p-5 rounded-xl text-left transition-all duration-300 ${paymentMethod === "card"
-                      ? "ring-2 ring-tecsubCyan"
-                      : "hover:border-white/30"
+                    ? "ring-2 ring-tecsubCyan"
+                    : "hover:border-white/30"
                     }`}
                   style={{
                     background: paymentMethod === "card" ? "rgba(0,229,255,0.08)" : "rgba(0,0,0,0.3)",
@@ -269,8 +269,8 @@ export default function CourseView({ id }: { id: string }) {
                 <button
                   onClick={() => setPaymentMethod("crypto")}
                   className={`p-5 rounded-xl text-left transition-all duration-300 ${paymentMethod === "crypto"
-                      ? "ring-2 ring-tecsubCyan"
-                      : "hover:border-white/30"
+                    ? "ring-2 ring-tecsubCyan"
+                    : "hover:border-white/30"
                     }`}
                   style={{
                     background: paymentMethod === "crypto" ? "rgba(0,229,255,0.08)" : "rgba(0,0,0,0.3)",
@@ -297,7 +297,7 @@ export default function CourseView({ id }: { id: string }) {
                 </button>
               </div>
 
-              {/* Card Payment Details */}
+              {/* Card Payment — Redirect Button */}
               <AnimatePresence mode="wait">
                 {paymentMethod === "card" && (
                   <motion.div
@@ -308,16 +308,33 @@ export default function CourseView({ id }: { id: string }) {
                     transition={{ duration: 0.3 }}
                     className="mb-6 overflow-hidden"
                   >
-                    <div className="rounded-xl p-5" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "0.75rem" }}>
-                      <p className="text-sm font-semibold mb-3" style={{ color: "var(--text-primary)" }}>
-                        💳 Card Payment Instructions
+                    <div className="rounded-xl p-6" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "0.75rem" }}>
+                      <p className="text-sm font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
+                        💳 Secure Card Payment
                       </p>
-                      <ol className="text-xs space-y-2 list-decimal list-inside" style={{ color: "var(--text-secondary)" }}>
-                        <li>Make a payment of <strong className="text-tecsubCyan">${course.price} USD</strong> via Visa/MasterCard</li>
-                        <li>Contact us on <a href="https://t.me/Hasanthamedagedra" target="_blank" rel="noopener noreferrer" className="text-tecsubCyan underline">Telegram</a> for card payment link</li>
-                        <li>Take a screenshot of the payment confirmation</li>
-                        <li>Upload the screenshot below</li>
-                      </ol>
+                      <p className="text-xs mb-4" style={{ color: "var(--text-secondary)" }}>
+                        You will be redirected to a secure payment page to complete your purchase of <strong className="text-tecsubCyan">${course.price} USD</strong>.
+                      </p>
+                      <div className="flex items-center gap-4 mb-4">
+                        {["🔒 SSL Encrypted", "🛡️ Secure", "✅ Verified"].map((b) => (
+                          <span key={b} className="text-[9px] font-medium" style={{ color: "var(--text-secondary)" }}>{b}</span>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setStep(0)}
+                          className="px-6 py-3 rounded-full border border-white/15 text-sm font-semibold hover:border-white/30 transition-all"
+                          style={{ color: "var(--text-primary)" }}
+                        >
+                          ← Back
+                        </button>
+                        <button
+                          onClick={() => router.push(`/payment/${id}`)}
+                          className="flex-1 py-3.5 rounded-full bg-tecsubCyan text-tecsubNavy font-bold text-sm hover:shadow-[0_0_35px_rgba(0,229,255,0.5)] transition-all duration-300 uppercase tracking-wide"
+                        >
+                          💳 Pay with Card →
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -339,8 +356,8 @@ export default function CourseView({ id }: { id: string }) {
                           key={w}
                           onClick={() => setSelectedWallet(w)}
                           className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wide transition-all duration-300 ${selectedWallet === w
-                              ? "bg-tecsubCyan text-tecsubNavy"
-                              : "border border-white/15"
+                            ? "bg-tecsubCyan text-tecsubNavy"
+                            : "border border-white/15"
                             }`}
                           style={{ color: selectedWallet === w ? undefined : "var(--text-secondary)" }}
                         >
@@ -380,8 +397,8 @@ export default function CourseView({ id }: { id: string }) {
                 )}
               </AnimatePresence>
 
-              {/* Screenshot Upload */}
-              {paymentMethod && (
+              {/* Screenshot Upload — only for Crypto payment */}
+              {paymentMethod === "crypto" && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -407,7 +424,7 @@ export default function CourseView({ id }: { id: string }) {
                       <div className="flex flex-col items-center gap-3">
                         <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-tecsubCyan/10 transition-colors">
                           <svg className="w-6 h-6 text-tecsubCyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
                         </div>
                         <p className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
@@ -459,8 +476,8 @@ export default function CourseView({ id }: { id: string }) {
                       onClick={handleSubmitPayment}
                       disabled={!screenshot}
                       className={`flex-1 py-3.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all duration-300 ${screenshot
-                          ? "bg-tecsubCyan text-tecsubNavy hover:shadow-[0_0_35px_rgba(0,229,255,0.5)]"
-                          : "bg-white/10 text-white/30 cursor-not-allowed"
+                        ? "bg-tecsubCyan text-tecsubNavy hover:shadow-[0_0_35px_rgba(0,229,255,0.5)]"
+                        : "bg-white/10 text-white/30 cursor-not-allowed"
                         }`}
                     >
                       Submit Payment Proof →
