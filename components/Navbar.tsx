@@ -19,7 +19,7 @@ export default function Navbar() {
         { label: t(language, "nav_courses"), href: "#courses" },
     ];
 
-    const langLabels = { en: "EN", si: "සි", ta: "த" };
+    const langLabels = { en: "EN", si: "සි", ta: "ත" };
 
     return (
         <motion.nav
@@ -29,25 +29,24 @@ export default function Navbar() {
             className="fixed top-0 left-0 right-0 z-50 glass-nav"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
+                <div className="flex items-center justify-between h-20">
                     
-                    {/* ----- වෙනස් කළ ලෝගෝ කොටස (FIXED LOGO SECTION) ----- */}
-                    <a href="/tecsub-solutions/" className="flex items-center gap-3">
-                        {/* ලෝගෝ එක සඳහා වෙනමම කොටුවක් */}
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/10 bg-white/5 p-1.5">
+                    {/* ----- ලෝගෝ එක සහ නම පේන කොටස (FIXED) ----- */}
+                    <a href="/tecsub-solutions/" className="flex items-center gap-4 group">
+                        {/* ලෝගෝ කොටුව - flex-shrink-0 මගින් මෙය කුඩා වීම වළක්වයි */}
+                        <div className="w-12 h-12 flex-shrink-0 rounded-xl flex items-center justify-center border border-white/20 bg-white/10 p-2 transition-all group-hover:border-tecsubCyan/50">
                             <img
                                 src="/tecsub-solutions/logo/tecsub.svg"
-                                alt="TecSub Solutions Logo"
+                                alt="TecSub Logo"
                                 className="w-full h-full object-contain"
                             />
                         </div>
-                        {/* නම සඳහා වෙනමම ස්ටයිල් එකක් */}
-                        <span className="font-bebas text-xl sm:text-2xl tracking-wider gradient-text">
+                        {/* නම - පැහැදිලිව පේන්න වෙනම span එකක් */}
+                        <span className="font-bebas text-2xl sm:text-3xl tracking-wider gradient-text leading-none">
                             TECSUB SOLUTIONS
                         </span>
                     </a>
-                    {/* -------------------------------------------------- */}
-
+                    {/* ------------------------------------------- */}
 
                     {/* Desktop Nav */}
                     <div className="hidden lg:flex items-center gap-1">
@@ -121,63 +120,9 @@ export default function Navbar() {
                         >
                             {t(language, "get_solutions")}
                         </a>
-
-                        {/* Mobile Hamburger */}
-                        <button
-                            onClick={() => setIsOpen(!isOpen)}
-                            className="lg:hidden flex flex-col gap-1.5 p-2"
-                            aria-label="Toggle menu"
-                        >
-                            <motion.span
-                                animate={isOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-                                className="w-5 h-0.5 bg-tecsubCyan block"
-                            />
-                            <motion.span
-                                animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
-                                className="w-5 h-0.5 bg-tecsubCyan block"
-                            />
-                            <motion.span
-                                animate={isOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-                                className="w-5 h-0.5 bg-tecsubCyan block"
-                            />
-                        </button>
                     </div>
                 </div>
             </div>
-
-            {/* Mobile Menu */}
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="lg:hidden glass-nav overflow-hidden border-t border-white/[0.06]"
-                    >
-                        <div className="px-4 py-4 space-y-1">
-                            {navLinks.map((link) => (
-                                <a
-                                    key={link.href}
-                                    href={link.href}
-                                    onClick={() => setIsOpen(false)}
-                                    className="block px-4 py-3 rounded-xl text-sm font-medium uppercase tracking-wider hover:bg-white/5 hover:text-tecsubCyan transition-all duration-300"
-                                    style={{ color: "var(--text-secondary)" }}
-                                >
-                                    {link.label}
-                                </a>
-                            ))}
-                            <a
-                                href="#contact"
-                                onClick={() => setIsOpen(false)}
-                                className="block px-4 py-3 text-center rounded-full bg-gradient-to-r from-tecsubCyan to-tecsubBlue text-tecsubNavy font-semibold text-sm tracking-wider uppercase mt-4"
-                            >
-                                {t(language, "get_solutions")}
-                            </a>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </motion.nav>
     );
 }
