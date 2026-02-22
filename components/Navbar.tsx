@@ -20,6 +20,7 @@ export default function Navbar() {
         { label: t(language, "nav_videos"), href: "#videos" },
         { label: t(language, "nav_prompts"), href: "#prompts" },
         { label: t(language, "nav_courses"), href: "#courses" },
+        { label: "Apps", href: "/apps" },
     ];
 
     const langLabels: Record<string, string> = { en: "EN", si: "සි", ta: "ත" };
@@ -47,6 +48,13 @@ export default function Navbar() {
     const handleNavClick = (href: string) => {
         setIsOpen(false);
         setLangOpen(false);
+
+        // Page links (e.g., /apps) — navigate directly
+        if (href.startsWith("/")) {
+            router.push(href);
+            return;
+        }
+
         const sectionId = href.replace("#", "");
 
         if (pathname === "/" || pathname === "/tecsub-solutions/" || pathname === "/tecsub-solutions") {

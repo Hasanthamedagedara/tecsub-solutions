@@ -55,27 +55,46 @@ export default function Footer() {
                 </motion.div>
             </div>
 
-            {/* Social strip */}
+            {/* Contact & Social strip */}
             <div className="border-t border-white/[0.06] py-8 px-4">
-                <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-                    <div className="flex items-center gap-4 flex-wrap justify-center">
-                        {socialLinks.slice(0, 8).map((link) => (
-                            <a
-                                key={link.name}
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="social-icon-glow hover:text-tecsubCyan transition-colors duration-300"
-                                title={link.name}
-                                style={{ color: "var(--text-secondary)" }}
-                            >
-                                <SocialIcon name={link.name} className="w-5 h-5" />
-                            </a>
-                        ))}
+                <div className="max-w-7xl mx-auto flex flex-col items-center gap-6">
+                    {/* Contact Number */}
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.15)" }}>
+                            <svg className="w-4 h-4 text-tecsubCyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                        </div>
+                        <a
+                            href="tel:+94726128749"
+                            className="text-sm sm:text-base font-semibold hover:text-tecsubCyan transition-colors duration-300 tracking-wide"
+                            style={{ color: "var(--text-primary)" }}
+                        >
+                            +94-726128749
+                        </a>
                     </div>
-                    <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                        © {new Date().getFullYear()} {t(language, "footer_copy")}
-                    </p>
+
+                    {/* Social Icons */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 w-full">
+                        <div className="flex items-center gap-4 flex-wrap justify-center">
+                            {socialLinks.slice(0, 8).map((link) => (
+                                <a
+                                    key={link.name}
+                                    href={link.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="social-icon-glow hover:text-tecsubCyan transition-colors duration-300"
+                                    title={link.name}
+                                    style={{ color: "var(--text-secondary)" }}
+                                >
+                                    <SocialIcon name={link.name} className="w-5 h-5" />
+                                </a>
+                            ))}
+                        </div>
+                        <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                            © {new Date().getFullYear()} {t(language, "footer_copy")}
+                        </p>
+                    </div>
                 </div>
             </div>
         </footer>

@@ -33,8 +33,17 @@ export default function Home() {
             <div className="relative" style={{ zIndex: 10 }}>
                 <Navbar />
 
+                {/* ─── Ad: Top Banner 1 ─── */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24">
+                    <AdPlacement format="banner" />
+                </div>
+                {/* ─── Ad: Top Banner 2 ─── */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                    <AdPlacement format="banner" />
+                </div>
+
                 {/* ─── Hero Section ─── */}
-                <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-16">
+                <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-8">
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -137,10 +146,29 @@ export default function Home() {
 
                 {/* ─── Tech News ─── */}
                 <TechNews />
-                <div className="section-divider mx-4" />
+
+                {/* ─── Ad: Banner after Tech News 1 ─── */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+                    <AdPlacement format="banner" />
+                </div>
+                {/* ─── Ad: Banner after Tech News 2 ─── */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                    <AdPlacement format="banner" />
+                </div>
+                <div className="section-divider mx-4 mt-8" />
+
+                {/* ─── Ad: Banner before AI Lab 1 ─── */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+                    <AdPlacement format="in-content" />
+                </div>
 
                 {/* ─── AI Lab, App Forge, Software, Videos, Social ─── */}
                 <ContentSections />
+
+                {/* ─── Ad: Banner after AI Lab 2 ─── */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-4">
+                    <AdPlacement format="in-content" />
+                </div>
 
                 {/* ─── Ad: Native between major sections ─── */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
