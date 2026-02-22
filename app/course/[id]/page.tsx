@@ -319,3 +319,6 @@ export default function PaymentPage({ params }: { params: { id: string } }) {
         </div>
     );
 }
+export async function generateStaticParams() {
+  return [{ id: '1' }];
+}
