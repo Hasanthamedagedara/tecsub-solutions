@@ -31,7 +31,12 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
-                    <a href="#" className="font-bebas text-xl sm:text-2xl tracking-wider gradient-text">
+                    <a href="#" className="flex items-center gap-2.5 font-bebas text-xl sm:text-2xl tracking-wider gradient-text">
+                        <img
+                            src="/logo.jpeg"
+                            alt="TecSub Solutions Logo"
+                            className="w-9 h-9 rounded-xl object-cover border border-white/10"
+                        />
                         TECSUB SOLUTIONS
                     </a>
 
