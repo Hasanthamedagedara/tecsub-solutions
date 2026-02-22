@@ -399,7 +399,7 @@ export const wallets = {
 export const youtubeChannels = [
     {
         name: "Hasantha Medagedara",
-        url: "https://www.youtube.com/@tecsub.0",
+        url: "https://www.youtube.com/@Hasanthamedagedara",
         description: "Tech reviews, tutorials, and deep dives",
     },
     {
