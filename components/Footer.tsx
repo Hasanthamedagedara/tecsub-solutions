@@ -43,7 +43,7 @@ export default function Footer() {
                             {t(language, "contact_us")}
                         </a>
                         <a
-                            href="https://youtube.com/@hasanthamedagedara"
+                            href="https://www.youtube.com/@tecsub.0"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="px-10 py-4 border-2 border-white/20 font-semibold rounded-full hover:border-tecsubCyan hover:text-tecsubCyan transition-all duration-300 tracking-wide uppercase text-sm sm:text-base"

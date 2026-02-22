@@ -307,7 +307,7 @@ export const videos = [
 export const socialLinks = [
     { name: "Telegram", url: "https://t.me/Hasanthamedagedra" },
     { name: "Facebook", url: "https://www.facebook.com/Hasanthamedagedara" },
-    { name: "YouTube", url: "https://youtube.com/@hasanthamedagedara" },
+    { name: "YouTube", url: "https://www.youtube.com/@tecsub.0" },
     { name: "TikTok", url: "http://tiktok.com/@Hasanthamedagedara" },
     { name: "WhatsApp", url: "https://whatsapp.com/channel/0029Vb6cPkODuMRkMeIaT31F" },
     { name: "Telegram Channel", url: "https://t.me/tecsub0" },
@@ -399,12 +399,12 @@ export const wallets = {
 export const youtubeChannels = [
     {
         name: "Hasantha Medagedara",
-        url: "https://youtube.com/@hasanthamedagedara",
+        url: "https://www.youtube.com/@tecsub.0",
         description: "Tech reviews, tutorials, and deep dives",
     },
     {
         name: "Tecsub Solutions",
-        url: "https://youtube.com/@tecsub0",
+        url: "https://www.youtube.com/@tecsub.0",
         description: "Software demos and product updates",
     },
 ];
