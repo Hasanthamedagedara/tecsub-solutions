@@ -81,7 +81,10 @@ export default function HeroCanvas() {
         for (let i = 1; i <= FRAME_COUNT; i++) {
             const img = new Image();
             const num = String(i).padStart(3, "0");
-            img.src = `${SEQUENCE_PATH}${num}.jpg`;
+            
+            // මෙන්න මෙතන මම Repository එකේ නම එකතු කළා
+            img.src = `/tecsub-solutions${SEQUENCE_PATH}${num}.jpg`;
+            
             img.onload = () => {
                 loadedCount++;
                 if (loadedCount === 1) drawFrame(0);
