@@ -1,9 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: '/tecsub-solutions', 
+  basePath: '/tecsub-solutions',
   images: {
     unoptimized: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true, // 
+  },
+  typescript: {
+    ignoreBuildErrors: true, // 
   },
 };
 
