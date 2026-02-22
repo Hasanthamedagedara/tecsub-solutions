@@ -30,15 +30,24 @@ export default function Navbar() {
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
-                    {/* Logo Section with tecsub.svg */}
-                    <a href="/tecsub-solutions/" className="flex items-center gap-2.5 font-bebas text-xl sm:text-2xl tracking-wider gradient-text">
-                        <img
-                            src="/tecsub-solutions/logo/tecsub.svg" 
-                            alt="TecSub Solutions Logo"
-                            className="w-9 h-9 object-contain"
-                        />
-                        TECSUB SOLUTIONS
+                    
+                    {/* ----- වෙනස් කළ ලෝගෝ කොටස (FIXED LOGO SECTION) ----- */}
+                    <a href="/tecsub-solutions/" className="flex items-center gap-3">
+                        {/* ලෝගෝ එක සඳහා වෙනමම කොටුවක් */}
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/10 bg-white/5 p-1.5">
+                            <img
+                                src="/tecsub-solutions/logo/tecsub.svg"
+                                alt="TecSub Solutions Logo"
+                                className="w-full h-full object-contain"
+                            />
+                        </div>
+                        {/* නම සඳහා වෙනමම ස්ටයිල් එකක් */}
+                        <span className="font-bebas text-xl sm:text-2xl tracking-wider gradient-text">
+                            TECSUB SOLUTIONS
+                        </span>
                     </a>
+                    {/* -------------------------------------------------- */}
+
 
                     {/* Desktop Nav */}
                     <div className="hidden lg:flex items-center gap-1">
