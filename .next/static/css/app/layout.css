@@ -732,6 +732,9 @@ video {
 .mt-auto{
   margin-top: auto;
 }
+.mt-5{
+  margin-top: 1.25rem;
+}
 .line-clamp-1{
   overflow: hidden;
   display: -webkit-box;
@@ -1229,6 +1232,9 @@ video {
 .rounded-xl{
   border-radius: 0.75rem;
 }
+.rounded-\[1\.75rem\]{
+  border-radius: 1.75rem;
+}
 .rounded-b-xl{
   border-bottom-right-radius: 0.75rem;
   border-bottom-left-radius: 0.75rem;
@@ -1692,6 +1698,9 @@ video {
 .pt-8{
   padding-top: 2rem;
 }
+.pt-6{
+  padding-top: 1.5rem;
+}
 .text-left{
   text-align: left;
 }
@@ -1830,6 +1839,9 @@ video {
 .tracking-widest{
   letter-spacing: 0.1em;
 }
+.tracking-\[0\.2em\]{
+  letter-spacing: 0.2em;
+}
 .text-\[\#0f0f0f\]{
   --tw-text-opacity: 1;
   color: rgb(15 15 15 / var(--tw-text-opacity, 1));
@@ -1932,6 +1944,9 @@ video {
 }
 .opacity-80{
   opacity: 0.8;
+}
+.opacity-30{
+  opacity: 0.3;
 }
 .shadow-2xl{
   --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
@@ -2569,6 +2584,10 @@ body {
     height: 2.25rem;
   }
 
+  .sm\:h-28{
+    height: 7rem;
+  }
+
   .sm\:w-12{
     width: 3rem;
   }
@@ -2595,6 +2614,10 @@ body {
 
   .sm\:w-auto{
     width: auto;
+  }
+
+  .sm\:w-28{
+    width: 7rem;
   }
 
   .sm\:flex-1{
@@ -2625,6 +2648,10 @@ body {
     align-items: flex-end;
   }
 
+  .sm\:justify-start{
+    justify-content: flex-start;
+  }
+
   .sm\:gap-2{
     gap: 0.5rem;
   }
@@ -2639,6 +2666,10 @@ body {
 
   .sm\:gap-6{
     gap: 1.5rem;
+  }
+
+  .sm\:gap-8{
+    gap: 2rem;
   }
 
   .sm\:p-10{
@@ -2687,6 +2718,10 @@ body {
 
   .sm\:pt-28{
     padding-top: 7rem;
+  }
+
+  .sm\:text-left{
+    text-align: left;
   }
 
   .sm\:text-2xl{
@@ -2743,6 +2778,10 @@ body {
     font-size: 0.75rem;
     line-height: 1rem;
   }
+
+  .sm\:text-\[11px\]{
+    font-size: 11px;
+  }
 }
 @media (min-width: 768px){
 
@@ -2774,6 +2813,10 @@ body {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  .md\:p-10{
+    padding: 2.5rem;
+  }
+
   .md\:text-3xl{
     font-size: 1.875rem;
     line-height: 2.25rem;
@@ -2791,6 +2834,11 @@ body {
 
   .md\:text-8xl{
     font-size: 6rem;
+    line-height: 1;
+  }
+
+  .md\:text-5xl{
+    font-size: 3rem;
     line-height: 1;
   }
 }
