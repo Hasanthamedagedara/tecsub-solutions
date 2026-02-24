@@ -2,9 +2,8 @@
 
 /* ─── Ad Placement Component ─── 
    Integrates real Adsterra ad codes.
-   - "banner": 728×90 on desktop, 320×50 on mobile
-   - "native": Native ads script
-   - "in-content": Native ads (same as native, placed between content)
+   - "banner": 728×90 on desktop (≥768px), 320×50 on mobile (<768px)
+   - "native" / "in-content": Native ads script
    - "smart-link": Hidden, no visual container
 */
 
@@ -17,33 +16,43 @@ interface AdPlacementProps {
     className?: string;
 }
 
-export default function AdPlacement({ format, className = "" }: AdPlacementProps) {
-    const adRef = useRef<HTMLDivElement>(null);
-    const [isMobile, setIsMobile] = useState(false);
-    const loaded = useRef(false);
+// Counter to generate unique IDs for each native ad instance
+let nativeAdCounter = 0;
 
-    // Detect screen size
+export default function AdPlacement({ format, className = "" }: AdPlacementProps) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isMobile, setIsMobile] = useState(false);
+    const [ready, setReady] = useState(false);
+    const instanceId = useRef<number>(0);
+
+    // Assign unique ID on mount
+    useEffect(() => {
+        if (format === "native" || format === "in-content") {
+            instanceId.current = ++nativeAdCounter;
+        }
+    }, [format]);
+
+    // Detect screen size on client
     useEffect(() => {
         const check = () => setIsMobile(window.innerWidth < 768);
         check();
+        setReady(true);
         window.addEventListener("resize", check);
         return () => window.removeEventListener("resize", check);
     }, []);
 
-    // Inject ad scripts
+    // Inject ad scripts once ready
     useEffect(() => {
-        if (!adRef.current || loaded.current) return;
-        loaded.current = true;
+        if (!ready || !containerRef.current) return;
 
-        const container = adRef.current;
+        const container = containerRef.current;
+        // Clear previous ad content
+        container.innerHTML = "";
 
         if (format === "banner") {
-            // Banner ads: 728×90 for desktop, 320×50 for mobile
-            const atScript = document.createElement("script");
-            const invokeScript = document.createElement("script");
-
             if (!isMobile) {
-                // Desktop: 728×90
+                // ── Desktop: 728×90 banner ──
+                const atScript = document.createElement("script");
                 atScript.text = `
                     atOptions = {
                         'key' : 'fab4548b5efa7488bcf199573cb1b9d3',
@@ -53,9 +62,14 @@ export default function AdPlacement({ format, className = "" }: AdPlacementProps
                         'params' : {}
                     };
                 `;
+                const invokeScript = document.createElement("script");
                 invokeScript.src = "https://www.highperformanceformat.com/fab4548b5efa7488bcf199573cb1b9d3/invoke.js";
+
+                container.appendChild(atScript);
+                container.appendChild(invokeScript);
             } else {
-                // Mobile: 320×50
+                // ── Mobile: 320×50 banner ──
+                const atScript = document.createElement("script");
                 atScript.text = `
                     atOptions = {
                         'key' : '17d6c09433ad372ba0f0e5dc446424f6',
@@ -65,58 +79,49 @@ export default function AdPlacement({ format, className = "" }: AdPlacementProps
                         'params' : {}
                     };
                 `;
+                const invokeScript = document.createElement("script");
                 invokeScript.src = "https://www.highperformanceformat.com/17d6c09433ad372ba0f0e5dc446424f6/invoke.js";
-            }
 
-            container.appendChild(atScript);
-            container.appendChild(invokeScript);
+                container.appendChild(atScript);
+                container.appendChild(invokeScript);
+            }
         } else if (format === "native" || format === "in-content") {
-            // Native ads
+            // ── Native ads ──
+            const uniqueContainerId = `container-5f7fc104d149ac94bf41e2d48a59715c-${instanceId.current}`;
+
+            const nativeDiv = document.createElement("div");
+            nativeDiv.id = uniqueContainerId;
+            container.appendChild(nativeDiv);
+
             const script = document.createElement("script");
             script.async = true;
             script.setAttribute("data-cfasync", "false");
             script.src = "https://pl28783703.effectivegatecpm.com/5f7fc104d149ac94bf41e2d48a59715c/invoke.js";
-
-            const nativeDiv = document.createElement("div");
-            nativeDiv.id = "container-5f7fc104d149ac94bf41e2d48a59715c";
-
             container.appendChild(script);
-            container.appendChild(nativeDiv);
         }
-
-        return () => {
-            // Cleanup on unmount
-            if (container) {
-                container.innerHTML = "";
-            }
-        };
-    }, [format, isMobile]);
+    }, [format, isMobile, ready]);
 
     // SmartLink ads are invisible
     if (format === "smart-link") {
-        return (
-            <div
-                ref={adRef}
-                data-ad-format="smart-link"
-                className="hidden"
-            />
-        );
+        return <div ref={containerRef} className="hidden" />;
     }
 
-    // Height config
-    const heightClass =
+    // Determine container sizing
+    const sizeStyles: React.CSSProperties =
         format === "banner"
             ? isMobile
-                ? "min-h-[50px]"
-                : "min-h-[90px]"
-            : "min-h-[250px]";
+                ? { minHeight: "50px", maxWidth: "320px" }
+                : { minHeight: "90px", maxWidth: "728px" }
+            : { minHeight: "250px" };
 
     return (
         <div
-            ref={adRef}
+            ref={containerRef}
             data-ad-format={format}
-            className={`relative ${heightClass} flex items-center justify-center overflow-hidden ${className}`}
+            className={`relative flex items-center justify-center overflow-hidden mx-auto ${className}`}
             style={{
+                ...sizeStyles,
+                width: "100%",
                 borderRadius: "0.75rem",
             }}
         />
