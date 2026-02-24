@@ -25,12 +25,12 @@ export default function Navbar() {
     const navLinks: NavItem[] = [
         {
             label: t(language, "nav_tools"),
-            href: "#tools",
+            href: "/tools",
             subs: [
                 { label: "🤖 AI Tools", href: "#ai-lab" },
-                { label: "🎬 YT Tools", href: "#videos" },
-                { label: "📊 Data Extract Tools", href: "#tools" },
-                { label: "📱 Mobile Tools", href: "#tools" },
+                { label: "🎬 YT Tools", href: "/tools/yt-data-grab" },
+                { label: "📊 Data Extract Tools", href: "/tools/yt-data-grab" },
+                { label: "📱 Mobile Tools", href: "/tools" },
             ],
         },
         { label: t(language, "nav_software"), href: "#software" },
