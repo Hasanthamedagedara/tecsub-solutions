@@ -32,7 +32,6 @@ export default function HeroCanvas() {
 
         ctx.clearRect(0, 0, displayWidth, displayHeight);
 
-        // Object-fit: cover — fill the entire viewport
         const imgRatio = img.naturalWidth / img.naturalHeight;
         const canvasRatio = displayWidth / displayHeight;
 
@@ -82,8 +81,8 @@ export default function HeroCanvas() {
             const img = new Image();
             const num = String(i).padStart(3, "0");
             
-            // මෙන්න මෙතන මම Repository එකේ නම එකතු කළා
-            img.src = `/tecsub-solutions${SEQUENCE_PATH}${num}.jpg`;
+            // මම මෙතනින් /tecsub-solutions කියන කෑල්ල අයින් කළා
+            img.src = `${SEQUENCE_PATH}${num}.jpg`;
             
             img.onload = () => {
                 loadedCount++;
@@ -107,13 +106,11 @@ export default function HeroCanvas() {
 
     return (
         <>
-            {/* Fixed background canvas */}
             <canvas
                 ref={canvasRef}
                 className="fixed inset-0 w-screen h-screen"
                 style={{ zIndex: 0 }}
             />
-            {/* Dark overlay for content readability */}
             <div
                 className="fixed inset-0 pointer-events-none"
                 style={{
