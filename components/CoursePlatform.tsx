@@ -21,7 +21,14 @@ export default function CoursePlatform() {
     const allCourses = [...courses, ...adminCoursesMapped];
 
     const handleEnroll = (index: number) => {
-        router.push(`/course/${index}`);
+        const course = allCourses[index];
+        if (course && course.price > 0) {
+            // Paid course → go to payment page first
+            router.push(`/payment/${index}`);
+        } else {
+            // Free course → direct access
+            router.push(`/course/${index}`);
+        }
     };
 
     return (
