@@ -11,6 +11,7 @@ import {
 import SocialIcon from "@/components/SocialIcon";
 import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
+import { useAdminContent, adminToVideos, adminToDownloads } from "@/hooks/useAdminContent";
 
 /* ─── Section Wrapper ─── */
 function Section({
@@ -136,7 +137,11 @@ function VideoCard({ videoId, title, index }: { videoId: string; title: string; 
 export default function ContentSections() {
     const { language } = useAppContext();
     const [showAllVideos, setShowAllVideos] = useState(false);
-    const displayedVideos = showAllVideos ? videos : videos.slice(0, 8);
+    const adminVideos = useAdminContent("videos");
+    const adminSoftware = useAdminContent("software");
+    const allVideos = [...videos, ...adminToVideos(adminVideos)];
+    const allDownloads = [...downloads, ...adminToDownloads(adminSoftware)];
+    const displayedVideos = showAllVideos ? allVideos : allVideos.slice(0, 8);
 
     return (
         <div className="relative z-10">
@@ -177,7 +182,7 @@ export default function ContentSections() {
                     subtitle={t(language, "section_software_sub")}
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {downloads.map((sw, i) => (
+                    {allDownloads.map((sw, i) => (
                         <motion.div
                             key={sw.name}
                             initial={{ opacity: 0, y: 30 }}
@@ -242,14 +247,14 @@ export default function ContentSections() {
                         <VideoCard key={video.id} videoId={video.id} title={video.title} index={i} />
                     ))}
                 </div>
-                {videos.length > 8 && (
+                {allVideos.length > 8 && (
                     <div className="mt-10 text-center">
                         <button
                             onClick={() => setShowAllVideos(!showAllVideos)}
                             className="px-8 py-3 rounded-full border-2 border-tecsubCyan/30 font-semibold hover:bg-tecsubCyan hover:text-tecsubNavy transition-all duration-300 tracking-wide uppercase text-sm"
                             style={{ color: "var(--text-primary)" }}
                         >
-                            {showAllVideos ? t(language, "show_less") : `${t(language, "show_all")} ${videos.length} Videos`}
+                            {showAllVideos ? t(language, "show_less") : `${t(language, "show_all")} ${allVideos.length} Videos`}
                         </button>
                     </div>
                 )}

@@ -6,12 +6,19 @@ import { motion, useInView } from "framer-motion";
 import { courses, wallets } from "@/data/product";
 import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
+import { useAdminContent } from "@/hooks/useAdminContent";
 
 export default function CoursePlatform() {
     const { language } = useAppContext();
     const router = useRouter();
     const ref = useRef<HTMLDivElement>(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const adminCourses = useAdminContent("courses");
+    const adminCoursesMapped = adminCourses.map(item => ({
+        title: item.title, description: item.description || "Course from admin",
+        price: 0, duration: "—", level: "All Levels" as const, lessons: 0, image: "📚", modules: [],
+    }));
+    const allCourses = [...courses, ...adminCoursesMapped];
 
     const handleEnroll = (index: number) => {
         router.push(`/course/${index}`);
@@ -37,7 +44,7 @@ export default function CoursePlatform() {
 
             {/* Course Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-                {courses.map((course, i) => (
+                {allCourses.map((course, i) => (
                     <motion.div
                         key={course.title}
                         initial={{ opacity: 0, y: 30 }}

@@ -5,6 +5,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { aiPrompts } from "@/data/product";
 import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
+import { useAdminContent, adminToPrompts } from "@/hooks/useAdminContent";
 
 function PromptModal({
     prompt,
@@ -119,6 +120,8 @@ export default function AIPromptHub() {
     const ref = useRef<HTMLDivElement>(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
     const [selectedPrompt, setSelectedPrompt] = useState<(typeof aiPrompts)[number] | null>(null);
+    const adminPrompts = useAdminContent("prompts");
+    const allPrompts = [...aiPrompts, ...adminToPrompts(adminPrompts)];
 
     const categoryColors: Record<string, string> = {
         Marketing: "#FF6B6B",
@@ -146,7 +149,7 @@ export default function AIPromptHub() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {aiPrompts.map((prompt, i) => (
+                    {allPrompts.map((prompt, i) => (
                         <motion.div
                             key={prompt.title}
                             initial={{ opacity: 0, y: 30 }}

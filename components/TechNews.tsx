@@ -5,6 +5,8 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { techNews } from "@/data/product";
 import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
+import { useAdminContent, adminToNews } from "@/hooks/useAdminContent";
+
 
 /* ─── News Article Modal ─── */
 function NewsModal({
@@ -95,6 +97,8 @@ export default function TechNews() {
     const ref = useRef<HTMLDivElement>(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
     const [selectedArticle, setSelectedArticle] = useState<(typeof techNews)[number] | null>(null);
+    const adminNews = useAdminContent("news");
+    const allNews = [...techNews, ...adminToNews(adminNews)];
 
     return (
         <>
@@ -116,7 +120,7 @@ export default function TechNews() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {techNews.map((news, i) => (
+                    {allNews.map((news, i) => (
                         <motion.article
                             key={news.title}
                             initial={{ opacity: 0, y: 30 }}

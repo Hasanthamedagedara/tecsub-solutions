@@ -54,6 +54,8 @@ export default function Navbar() {
         },
         { label: "Online Assets", href: "/assets" },
         { label: "Shop", href: "/shop" },
+        { label: t(language, "nav_videos") || "Videos", href: "#videos" },
+        { label: "Studio", href: "/admin" },
         { label: "About", href: "/about" },
     ];
 
