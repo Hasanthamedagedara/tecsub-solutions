@@ -25,7 +25,6 @@ export default function Navbar() {
 
     const langLabels: Record<string, string> = { en: "EN", si: "සි", ta: "ත" };
 
-    // Close mobile menu on resize
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth >= 1024) setIsOpen(false);
@@ -34,7 +33,6 @@ export default function Navbar() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    // Prevent body scroll when menu is open
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = "hidden";
@@ -44,12 +42,10 @@ export default function Navbar() {
         return () => { document.body.style.overflow = ""; };
     }, [isOpen]);
 
-    // Handle nav link click — works from any page
     const handleNavClick = (href: string) => {
         setIsOpen(false);
         setLangOpen(false);
 
-        // Page links (e.g., /apps) — navigate directly
         if (href.startsWith("/")) {
             router.push(href);
             return;
@@ -57,14 +53,12 @@ export default function Navbar() {
 
         const sectionId = href.replace("#", "");
 
-        if (pathname === "/" || pathname === "/tecsub-solutions/" || pathname === "/tecsub-solutions") {
-            // On home page — scroll to section
+        if (pathname === "/") {
             const el = document.getElementById(sectionId);
             if (el) {
                 el.scrollIntoView({ behavior: "smooth" });
             }
         } else {
-            // On subpage — navigate home first, then scroll
             router.push(`/#${sectionId}`);
         }
     };
@@ -80,11 +74,11 @@ export default function Navbar() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16 sm:h-20">
 
-                        {/* Logo */}
+                        {/* Logo - Updated Path for Custom Domain */}
                         <a href="/" className="flex items-center gap-2 sm:gap-4 group flex-shrink-0">
                             <div className="w-9 h-9 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl flex items-center justify-center border border-white/20 bg-white/10 p-1.5 sm:p-2 transition-all group-hover:border-tecsubCyan/50">
                                 <img
-                                    src="/tecsub-solutions/logo/tecsub.svg"
+                                    src="/logo/tecsub.svg"
                                     alt="TecSub Logo"
                                     className="w-full h-full object-contain"
                                 />
@@ -110,7 +104,6 @@ export default function Navbar() {
 
                         {/* Right Controls */}
                         <div className="flex items-center gap-1.5 sm:gap-2">
-                            {/* Language Switcher */}
                             <div className="relative">
                                 <button
                                     onClick={() => { setLangOpen(!langOpen); setIsOpen(false); }}
@@ -142,7 +135,6 @@ export default function Navbar() {
                                 </AnimatePresence>
                             </div>
 
-                            {/* Dark Mode Toggle */}
                             <button
                                 onClick={toggleTheme}
                                 className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center border border-white/10 hover:border-tecsubCyan/30 transition-colors"
@@ -159,7 +151,6 @@ export default function Navbar() {
                                 )}
                             </button>
 
-                            {/* CTA Button — desktop only */}
                             <a
                                 href="#contact"
                                 className="hidden md:inline-flex px-4 py-2 text-[10px] sm:text-xs font-semibold tracking-wider uppercase rounded-full bg-gradient-to-r from-tecsubCyan to-tecsubBlue text-tecsubNavy hover:shadow-[0_0_30px_rgba(0,229,255,0.4)] transition-all duration-300"
@@ -167,7 +158,6 @@ export default function Navbar() {
                                 {t(language, "get_solutions")}
                             </a>
 
-                            {/* Hamburger Button — mobile/tablet */}
                             <button
                                 onClick={() => { setIsOpen(!isOpen); setLangOpen(false); }}
                                 className="lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center border border-white/10 hover:border-tecsubCyan/30 transition-colors ml-1"
@@ -196,11 +186,9 @@ export default function Navbar() {
                 </div>
             </motion.nav>
 
-            {/* ═══════════ Mobile Menu Overlay ═══════════ */}
             <AnimatePresence>
                 {isOpen && (
                     <>
-                        {/* Backdrop */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -210,7 +198,6 @@ export default function Navbar() {
                             onClick={() => setIsOpen(false)}
                         />
 
-                        {/* Slide-down Menu */}
                         <motion.div
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -227,7 +214,6 @@ export default function Navbar() {
                                     border: "1px solid rgba(0, 229, 255, 0.1)",
                                 }}
                             >
-                                {/* Nav Links */}
                                 <div className="space-y-1 mb-4">
                                     {navLinks.map((link, i) => (
                                         <motion.button
@@ -245,10 +231,8 @@ export default function Navbar() {
                                     ))}
                                 </div>
 
-                                {/* Divider */}
                                 <div className="h-px my-3" style={{ background: "linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent)" }} />
 
-                                {/* Mobile CTA */}
                                 <motion.button
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
