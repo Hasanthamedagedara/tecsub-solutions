@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -24,7 +24,7 @@ interface Course {
 }
 
 /* ─── Course Data ─── */
-const COURSES: Course[] = [
+const DEFAULT_COURSES: Course[] = [
     {
         id: "c-fb",
         title: "Facebook Marketing Masterclass",
@@ -156,6 +156,68 @@ const COURSES: Course[] = [
 export default function CoursesPage() {
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
     const [currency, setCurrency] = useState<"usd" | "lkr" | "usdt">("usd");
+    const [courses, setCourses] = useState<Course[]>(DEFAULT_COURSES);
+
+    /* ─── Sync with admin localStorage ─── */
+    useEffect(() => {
+        const loadFromStorage = () => {
+            const stored = localStorage.getItem("tecsub-admin-courses");
+            if (stored) {
+                try {
+                    const adminItems = JSON.parse(stored);
+                    if (adminItems.length > 0) {
+                        // Map admin ContentItem format to Course format
+                        const mapped: Course[] = adminItems.map((item: { id: string; title: string; category: string; author: string; status: string }, idx: number) => {
+                            // Try to find matching default course
+                            const def = DEFAULT_COURSES.find(c => c.title === item.title);
+                            if (def) return { ...def, id: item.id };
+                            // New admin-added course
+                            const colors = ["#1877F2", "#FF0000", "#00F2EA", "#E1306C", "#4ADE80", "#38BDF8", "#C084FC", "#F97316"];
+                            return {
+                                id: item.id,
+                                title: item.title,
+                                instructor: item.author || "Hasantha Medagedara",
+                                priceUSD: 15 + Math.floor(Math.random() * 11),
+                                priceLKR: 4500 + Math.floor(Math.random() * 3000),
+                                priceUSDT: 15 + Math.floor(Math.random() * 11),
+                                duration: "6 hours",
+                                lessons: 30 + Math.floor(Math.random() * 30),
+                                level: "All Levels",
+                                description: `Premium course on ${item.title}. Category: ${item.category}.`,
+                                topics: [item.category, "Getting Started", "Advanced Techniques", "Monetization"],
+                                icon: "📚",
+                                color: colors[idx % colors.length],
+                            };
+                        }).filter((item: { id: string; title: string; category: string; author: string; status: string }) => {
+                            const adminItem = adminItems.find((a: { id: string; status: string }) => a.id === item.id);
+                            return !adminItem || adminItem.status !== "archived";
+                        });
+                        setCourses(mapped);
+                        return;
+                    }
+                } catch { /* ignore parse errors */ }
+            }
+            // Seed localStorage with defaults on first load
+            const seed = DEFAULT_COURSES.map((c, i) => ({
+                id: c.id,
+                title: c.title,
+                type: "courses",
+                status: "published" as const,
+                category: "Education",
+                author: c.instructor,
+                createdAt: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            }));
+            localStorage.setItem("tecsub-admin-courses", JSON.stringify(seed));
+            setCourses(DEFAULT_COURSES);
+        };
+
+        loadFromStorage();
+        // Listen for storage changes (cross-tab real-time sync)
+        window.addEventListener("storage", loadFromStorage);
+        // Also poll for same-tab changes (admin panel is same origin)
+        const interval = setInterval(loadFromStorage, 2000);
+        return () => { window.removeEventListener("storage", loadFromStorage); clearInterval(interval); };
+    }, []);
 
     const getPrice = (course: Course) => {
         switch (currency) {
@@ -212,7 +274,7 @@ export default function CoursesPage() {
 
                     {/* Course Grid */}
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        {COURSES.map((course, i) => (
+                        {courses.map((course, i) => (
                             <motion.div
                                 key={course.id}
                                 initial={{ opacity: 0, y: 20 }}

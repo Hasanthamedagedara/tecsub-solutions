@@ -32,13 +32,44 @@ export default function NewReleasesPage() {
     const [releases, setReleases] = useState<AppRelease[]>([]);
 
     useEffect(() => {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            try { setReleases(JSON.parse(stored)); } catch { setReleases(DEFAULT_RELEASES); localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_RELEASES)); }
-        } else {
+        const loadFromStorage = () => {
+            const adminStored = localStorage.getItem("tecsub-admin-new_releases");
+            if (adminStored) {
+                try {
+                    const adminItems = JSON.parse(adminStored);
+                    if (adminItems.length > 0) {
+                        const mapped: AppRelease[] = adminItems.map((item: { id: string; title: string; category: string; status: string }, idx: number) => {
+                            const def = DEFAULT_RELEASES.find(r => r.name === item.title);
+                            if (def) return { ...def, id: item.id };
+                            const colors = ["#00E5FF", "#4ADE80", "#C084FC", "#38BDF8", "#F97316", "#EF4444"];
+                            return {
+                                id: item.id, name: item.title, version: "v1.0",
+                                category: item.category || "Software",
+                                releaseDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+                                description: `${item.title} — New release managed by admin.`,
+                                icon: "\ud83d\udce6", color: colors[idx % colors.length], isNew: true,
+                            };
+                        }).filter((item: { id: string }) => {
+                            const adminItem = adminItems.find((a: { id: string; status: string }) => a.id === item.id);
+                            return !adminItem || adminItem.status !== "archived";
+                        });
+                        setReleases(mapped);
+                        return;
+                    }
+                } catch { /* ignore */ }
+            }
+            const seed = DEFAULT_RELEASES.map(r => ({
+                id: r.id, title: r.name, type: "new_releases", status: "published" as const,
+                category: r.category, author: "Admin",
+                createdAt: r.releaseDate,
+            }));
+            localStorage.setItem("tecsub-admin-new_releases", JSON.stringify(seed));
             setReleases(DEFAULT_RELEASES);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_RELEASES));
-        }
+        };
+        loadFromStorage();
+        window.addEventListener("storage", loadFromStorage);
+        const interval = setInterval(loadFromStorage, 2000);
+        return () => { window.removeEventListener("storage", loadFromStorage); clearInterval(interval); };
     }, []);
 
     return (

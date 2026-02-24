@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -20,7 +20,7 @@ interface AIAsset {
 }
 
 /* ─── Data ─── */
-const ASSETS: AIAsset[] = [
+const DEFAULT_ASSETS: AIAsset[] = [
     {
         id: "a-suno",
         name: "Suno AI Premium",
@@ -122,6 +122,49 @@ const ASSETS: AIAsset[] = [
 export default function OnlineAssetsPage() {
     const [selectedAsset, setSelectedAsset] = useState<AIAsset | null>(null);
     const [currency, setCurrency] = useState<"usd" | "lkr">("usd");
+    const [assets, setAssets] = useState<AIAsset[]>(DEFAULT_ASSETS);
+
+    /* ─── Sync with admin localStorage ─── */
+    useEffect(() => {
+        const loadFromStorage = () => {
+            const stored = localStorage.getItem("tecsub-admin-online_assets");
+            if (stored) {
+                try {
+                    const adminItems = JSON.parse(stored);
+                    if (adminItems.length > 0) {
+                        const mapped: AIAsset[] = adminItems.map((item: { id: string; title: string; category: string; author: string; status: string }, idx: number) => {
+                            const def = DEFAULT_ASSETS.find(a => a.name === item.title);
+                            if (def) return { ...def, id: item.id };
+                            const colors = ["#FF6B6B", "#4285F4", "#1DA1F2", "#FF0000", "#1DB954", "#10A37F", "#C084FC", "#7B2FF7"];
+                            return {
+                                id: item.id, name: item.title, category: item.category || "AI Tool",
+                                priceUSD: 10, priceLKR: 3000,
+                                description: `Premium ${item.title} subscription managed by admin.`,
+                                features: ["Full Access", "Priority Support", "Monthly Updates"],
+                                icon: "💡", color: colors[idx % colors.length], period: "Monthly",
+                            };
+                        }).filter((item: { id: string }) => {
+                            const adminItem = adminItems.find((a: { id: string; status: string }) => a.id === item.id);
+                            return !adminItem || adminItem.status !== "archived";
+                        });
+                        setAssets(mapped);
+                        return;
+                    }
+                } catch { /* ignore */ }
+            }
+            const seed = DEFAULT_ASSETS.map(a => ({
+                id: a.id, title: a.name, type: "online_assets", status: "published" as const,
+                category: a.category, author: "Admin",
+                createdAt: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            }));
+            localStorage.setItem("tecsub-admin-online_assets", JSON.stringify(seed));
+            setAssets(DEFAULT_ASSETS);
+        };
+        loadFromStorage();
+        window.addEventListener("storage", loadFromStorage);
+        const interval = setInterval(loadFromStorage, 2000);
+        return () => { window.removeEventListener("storage", loadFromStorage); clearInterval(interval); };
+    }, []);
 
     const getPrice = (asset: AIAsset) => {
         return currency === "lkr" ? `Rs. ${asset.priceLKR.toLocaleString()}` : `$${asset.priceUSD}`;
@@ -163,7 +206,7 @@ export default function OnlineAssetsPage() {
 
                     {/* Assets Grid */}
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        {ASSETS.map((asset, i) => (
+                        {assets.map((asset, i) => (
                             <motion.div
                                 key={asset.id}
                                 initial={{ opacity: 0, y: 20 }}

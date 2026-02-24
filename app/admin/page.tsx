@@ -26,9 +26,11 @@ const TABS: Tab[] = [
     { id: "videos", label: "Video Library", icon: "video_library" },
     { id: "prompts", label: "AI Prompts", icon: "smart_toy" },
     { id: "software", label: "Software Files", icon: "folder_open" },
-    { id: "courses", label: "Course Modules", icon: "school" },
+    { id: "courses", label: "Courses", icon: "school" },
     { id: "mod_apps", label: "Mod Apps", icon: "sports_esports" },
     { id: "new_releases", label: "New Releases", icon: "new_releases" },
+    { id: "online_assets", label: "Online Assets", icon: "cloud" },
+    { id: "shop", label: "Shop Products", icon: "storefront" },
 ];
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
@@ -482,7 +484,7 @@ export default function AdminPage() {
                                                                     <div className="flex items-center gap-3">
                                                                         <div className="w-10 h-10 rounded-lg bg-admin-bg-lighter border border-admin-border flex items-center justify-center shrink-0">
                                                                             <span className="material-symbols-outlined text-admin-text-secondary text-lg">
-                                                                                {activeTab === "videos" ? "play_circle" : activeTab === "prompts" ? "smart_toy" : activeTab === "software" ? "folder_zip" : activeTab === "courses" ? "school" : activeTab === "mod_apps" ? "sports_esports" : activeTab === "new_releases" ? "new_releases" : "article"}
+                                                                                {activeTab === "videos" ? "play_circle" : activeTab === "prompts" ? "smart_toy" : activeTab === "software" ? "folder_zip" : activeTab === "courses" ? "school" : activeTab === "mod_apps" ? "sports_esports" : activeTab === "new_releases" ? "new_releases" : activeTab === "online_assets" ? "cloud" : activeTab === "shop" ? "storefront" : "article"}
                                                                             </span>
                                                                         </div>
                                                                         <div>

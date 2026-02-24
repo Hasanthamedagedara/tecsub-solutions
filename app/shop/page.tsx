@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -23,7 +23,7 @@ interface Product {
 }
 
 /* ─── Demo Products ─── */
-const PRODUCTS: Product[] = [
+const DEFAULT_PRODUCTS: Product[] = [
     {
         id: "p-001", name: "Tecsub Recorder Pro License", category: "Software", price: 29, originalPrice: 49, rating: 4.9, reviews: 234,
         description: "Lifetime license for Tecsub Recorder with all pro features, smart zoom, floating toolbar, and unlimited recording.",
@@ -105,8 +105,54 @@ export default function ShopPage() {
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
     const [sortBy, setSortBy] = useState<"popular" | "price-low" | "price-high">("popular");
+    const [products, setProducts] = useState<Product[]>(DEFAULT_PRODUCTS);
 
-    const filtered = PRODUCTS
+    /* ─── Sync with admin localStorage ─── */
+    useEffect(() => {
+        const loadFromStorage = () => {
+            const stored = localStorage.getItem("tecsub-admin-shop");
+            if (stored) {
+                try {
+                    const adminItems = JSON.parse(stored);
+                    if (adminItems.length > 0) {
+                        const mapped: Product[] = adminItems.map((item: { id: string; title: string; category: string; author: string; status: string }, idx: number) => {
+                            const def = DEFAULT_PRODUCTS.find(p => p.name === item.title);
+                            if (def) return { ...def, id: item.id };
+                            const colors = ["#00E5FF", "#C084FC", "#E1306C", "#4ADE80", "#38BDF8", "#FF0000", "#F97316", "#A78BFA"];
+                            return {
+                                id: item.id, name: item.title, category: item.category || "Software",
+                                price: 10 + Math.floor(Math.random() * 25),
+                                originalPrice: 30 + Math.floor(Math.random() * 40),
+                                rating: 4.5 + Math.random() * 0.4,
+                                reviews: 50 + Math.floor(Math.random() * 200),
+                                description: `${item.title} — Premium digital product.`,
+                                features: ["Full Access", "Lifetime Updates", "Support"],
+                                icon: "📦", color: colors[idx % colors.length], inStock: true,
+                            };
+                        }).filter((item: { id: string }) => {
+                            const adminItem = adminItems.find((a: { id: string; status: string }) => a.id === item.id);
+                            return !adminItem || adminItem.status !== "archived";
+                        });
+                        setProducts(mapped);
+                        return;
+                    }
+                } catch { /* ignore */ }
+            }
+            const seed = DEFAULT_PRODUCTS.map(p => ({
+                id: p.id, title: p.name, type: "shop", status: "published" as const,
+                category: p.category, author: "Admin",
+                createdAt: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            }));
+            localStorage.setItem("tecsub-admin-shop", JSON.stringify(seed));
+            setProducts(DEFAULT_PRODUCTS);
+        };
+        loadFromStorage();
+        window.addEventListener("storage", loadFromStorage);
+        const interval = setInterval(loadFromStorage, 2000);
+        return () => { window.removeEventListener("storage", loadFromStorage); clearInterval(interval); };
+    }, []);
+
+    const filtered = products
         .filter((p) => {
             const matchCat = selectedCategory === "All" || p.category === selectedCategory;
             const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.description.toLowerCase().includes(searchQuery.toLowerCase());

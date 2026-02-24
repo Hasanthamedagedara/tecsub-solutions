@@ -191,18 +191,46 @@ export default function ModAppsPage() {
     const [selectedApp, setSelectedApp] = useState<ModApp | null>(null);
 
     useEffect(() => {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            try {
-                setApps(JSON.parse(stored));
-            } catch {
-                setApps(DEFAULT_MOD_APPS);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_MOD_APPS));
+        const loadFromStorage = () => {
+            // Check admin key first (priority)
+            const adminStored = localStorage.getItem("tecsub-admin-mod_apps");
+            if (adminStored) {
+                try {
+                    const adminItems = JSON.parse(adminStored);
+                    if (adminItems.length > 0) {
+                        const mapped: ModApp[] = adminItems.map((item: { id: string; title: string; category: string; status: string }, idx: number) => {
+                            const def = DEFAULT_MOD_APPS.find(a => a.name === item.title);
+                            if (def) return { ...def, id: item.id };
+                            const colors = ["#1DB954", "#FF0000", "#E1306C", "#25D366", "#E50914", "#62B246", "#7B2FF7", "#0088FF"];
+                            return {
+                                id: item.id, name: item.title, version: "v1.0",
+                                category: item.category || "Utility", size: "50 MB", rating: 4.5,
+                                downloads: "1K+", description: `${item.title} mod app managed by admin.`,
+                                features: ["Full Access", "No Ads", "Premium Unlocked"],
+                                icon: "\ud83d\udce6", color: colors[idx % colors.length],
+                            };
+                        }).filter((item: { id: string }) => {
+                            const adminItem = adminItems.find((a: { id: string; status: string }) => a.id === item.id);
+                            return !adminItem || adminItem.status !== "archived";
+                        });
+                        setApps(mapped);
+                        return;
+                    }
+                } catch { /* ignore */ }
             }
-        } else {
+            // Seed admin key with defaults
+            const seed = DEFAULT_MOD_APPS.map(a => ({
+                id: a.id, title: a.name, type: "mod_apps", status: "published" as const,
+                category: a.category, author: "Admin",
+                createdAt: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            }));
+            localStorage.setItem("tecsub-admin-mod_apps", JSON.stringify(seed));
             setApps(DEFAULT_MOD_APPS);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_MOD_APPS));
-        }
+        };
+        loadFromStorage();
+        window.addEventListener("storage", loadFromStorage);
+        const interval = setInterval(loadFromStorage, 2000);
+        return () => { window.removeEventListener("storage", loadFromStorage); clearInterval(interval); };
     }, []);
 
     const filteredApps = apps.filter((app) => {
