@@ -36,9 +36,7 @@ export default function Navbar() {
         { label: t(language, "nav_software"), href: "#software" },
         { label: t(language, "nav_news"), href: "#news" },
         { label: "AI Tool", href: "#ai-lab" },
-        { label: t(language, "nav_videos"), href: "#videos" },
-        { label: t(language, "nav_prompts"), href: "#prompts" },
-        { label: t(language, "nav_courses"), href: "#courses" },
+        { label: t(language, "nav_courses"), href: "/courses" },
         {
             label: "Apps",
             href: "/apps",
@@ -47,6 +45,8 @@ export default function Navbar() {
                 { label: "🆕 New Releases", href: "/apps/new-releases" },
             ],
         },
+        { label: "Online Assets", href: "/assets" },
+        { label: "Shop", href: "/shop" },
         { label: "About", href: "/about" },
     ];
 

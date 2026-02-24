@@ -107,11 +107,16 @@ const features: Feature[] = [
     {
         label: "🎓 Courses",
         color: "#EF4444",
-        href: "#courses",
+        href: "/courses",
         subs: [
-            { label: "AI Website Review Masterclass", href: "#courses" },
-            { label: "Full-Stack App Development", href: "#courses" },
-            { label: "Tech Content Creation", href: "#courses" },
+            { label: "📘 Facebook Marketing", href: "/courses" },
+            { label: "▶️ YouTube Growth", href: "/courses" },
+            { label: "🎵 TikTok Viral", href: "/courses" },
+            { label: "📸 Instagram Mastery", href: "/courses" },
+            { label: "💰 Adsterra Monetization", href: "/courses" },
+            { label: "🌐 Website Development", href: "/courses" },
+            { label: "🤖 AI & Prompt Engineering", href: "/courses" },
+            { label: "🎬 Viral AI Video", href: "/courses" },
         ],
     },
     {
@@ -127,6 +132,29 @@ const features: Feature[] = [
             { label: "🎮 Mod Apps", href: "/apps/mod" },
             { label: "🆕 New Releases", href: "/apps/new-releases" },
             { label: "📦 All Downloads", href: "/apps" },
+        ],
+    },
+    {
+        label: "🛒 Online Assets",
+        color: "#10A37F",
+        href: "/assets",
+        subs: [
+            { label: "🎶 Suno AI", href: "/assets" },
+            { label: "💎 Gemini", href: "/assets" },
+            { label: "🧠 Grok", href: "/assets" },
+            { label: "▶️ YouTube Premium", href: "/assets" },
+            { label: "🎵 Spotify Premium", href: "/assets" },
+        ],
+    },
+    {
+        label: "🛍️ Shop",
+        color: "#F59E0B",
+        href: "/shop",
+        subs: [
+            { label: "💻 Software Licenses", href: "/shop" },
+            { label: "🎨 Design Packs", href: "/shop" },
+            { label: "📱 Templates", href: "/shop" },
+            { label: "📚 eBooks", href: "/shop" },
         ],
     },
     {
