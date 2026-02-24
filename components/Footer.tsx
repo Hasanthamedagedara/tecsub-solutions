@@ -117,9 +117,8 @@ export default function Footer() {
                                     href={link.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="social-icon-glow hover:text-tecsubCyan transition-colors duration-300"
+                                    className="social-icon-glow opacity-80 hover:opacity-100 hover:scale-110 transition-all duration-300"
                                     title={link.name}
-                                    style={{ color: "var(--text-secondary)" }}
                                 >
                                     <SocialIcon name={link.name} className="w-5 h-5" />
                                 </a>
