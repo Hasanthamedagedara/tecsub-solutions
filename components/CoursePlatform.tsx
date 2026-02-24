@@ -102,7 +102,7 @@ export default function CoursePlatform() {
                     {t(language, "section_payments")}
                 </h3>
                 <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-                    Visa / MasterCard • USDT TRC20 (Binance & Bybit)
+                    Visa / MasterCard • Google Pay • USDT TRC20 (Binance & Bybit)
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -116,6 +116,19 @@ export default function CoursePlatform() {
                         <div>
                             <p className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>Visa / MasterCard</p>
                             <p className="text-xs" style={{ color: "var(--text-secondary)" }}>Secure card payments</p>
+                        </div>
+                    </div>
+
+                    {/* Google Pay */}
+                    <div className="rounded-xl p-5 flex items-center gap-4" style={{ background: "rgba(0,0,0,0.2)" }}>
+                        <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
+                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                                <path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" fill="#4285F4" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>Google Pay</p>
+                            <p className="text-xs" style={{ color: "var(--text-secondary)" }}>Fast & secure checkout</p>
                         </div>
                     </div>
 

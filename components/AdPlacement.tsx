@@ -1,12 +1,14 @@
 "use client";
 
 /* ─── Ad Placement Component ─── 
-   Non-intrusive ad spaces for Adsterra / Monetag integration.
-   Supports: Banner, Native, In-Content, Sidebar
-   These render placeholder containers where ad scripts inject content.
+   Integrates real Adsterra ad codes.
+   - "banner": 728×90 on desktop, 320×50 on mobile
+   - "native": Native ads script
+   - "in-content": Native ads (same as native, placed between content)
+   - "smart-link": Hidden, no visual container
 */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type AdFormat = "banner" | "native" | "in-content" | "sidebar" | "smart-link";
 
@@ -17,71 +19,106 @@ interface AdPlacementProps {
 
 export default function AdPlacement({ format, className = "" }: AdPlacementProps) {
     const adRef = useRef<HTMLDivElement>(null);
+    const [isMobile, setIsMobile] = useState(false);
+    const loaded = useRef(false);
 
+    // Detect screen size
     useEffect(() => {
-        // In production, Adsterra/Monetag scripts auto-detect these containers
-        // via data attributes and inject ads. No manual script loading needed.
-        // The ad networks' head scripts handle the injection automatically.
+        const check = () => setIsMobile(window.innerWidth < 768);
+        check();
+        window.addEventListener("resize", check);
+        return () => window.removeEventListener("resize", check);
     }, []);
 
-    const formatConfig: Record<AdFormat, { height: string; label: string }> = {
-        "banner": { height: "h-[90px] sm:h-[90px]", label: "728×90 Banner" },
-        "native": { height: "min-h-[250px]", label: "Native Ad" },
-        "in-content": { height: "h-[250px] sm:h-[280px]", label: "In-Content Ad" },
-        "sidebar": { height: "h-[600px]", label: "Sidebar Ad" },
-        "smart-link": { height: "h-0", label: "" },
-    };
+    // Inject ad scripts
+    useEffect(() => {
+        if (!adRef.current || loaded.current) return;
+        loaded.current = true;
 
-    // SmartLink ads are invisible — they work via onclick/direct traffic
+        const container = adRef.current;
+
+        if (format === "banner") {
+            // Banner ads: 728×90 for desktop, 320×50 for mobile
+            const atScript = document.createElement("script");
+            const invokeScript = document.createElement("script");
+
+            if (!isMobile) {
+                // Desktop: 728×90
+                atScript.text = `
+                    atOptions = {
+                        'key' : 'fab4548b5efa7488bcf199573cb1b9d3',
+                        'format' : 'iframe',
+                        'height' : 90,
+                        'width' : 728,
+                        'params' : {}
+                    };
+                `;
+                invokeScript.src = "https://www.highperformanceformat.com/fab4548b5efa7488bcf199573cb1b9d3/invoke.js";
+            } else {
+                // Mobile: 320×50
+                atScript.text = `
+                    atOptions = {
+                        'key' : '17d6c09433ad372ba0f0e5dc446424f6',
+                        'format' : 'iframe',
+                        'height' : 50,
+                        'width' : 320,
+                        'params' : {}
+                    };
+                `;
+                invokeScript.src = "https://www.highperformanceformat.com/17d6c09433ad372ba0f0e5dc446424f6/invoke.js";
+            }
+
+            container.appendChild(atScript);
+            container.appendChild(invokeScript);
+        } else if (format === "native" || format === "in-content") {
+            // Native ads
+            const script = document.createElement("script");
+            script.async = true;
+            script.setAttribute("data-cfasync", "false");
+            script.src = "https://pl28783703.effectivegatecpm.com/5f7fc104d149ac94bf41e2d48a59715c/invoke.js";
+
+            const nativeDiv = document.createElement("div");
+            nativeDiv.id = "container-5f7fc104d149ac94bf41e2d48a59715c";
+
+            container.appendChild(script);
+            container.appendChild(nativeDiv);
+        }
+
+        return () => {
+            // Cleanup on unmount
+            if (container) {
+                container.innerHTML = "";
+            }
+        };
+    }, [format, isMobile]);
+
+    // SmartLink ads are invisible
     if (format === "smart-link") {
         return (
             <div
                 ref={adRef}
                 data-ad-format="smart-link"
-                data-ad-network="adsterra-monetag"
                 className="hidden"
             />
         );
     }
 
-    const config = formatConfig[format];
+    // Height config
+    const heightClass =
+        format === "banner"
+            ? isMobile
+                ? "min-h-[50px]"
+                : "min-h-[90px]"
+            : "min-h-[250px]";
 
     return (
         <div
             ref={adRef}
             data-ad-format={format}
-            data-ad-network="adsterra-monetag"
-            className={`relative ${config.height} rounded-xl overflow-hidden ${className}`}
+            className={`relative ${heightClass} flex items-center justify-center overflow-hidden ${className}`}
             style={{
-                background: "linear-gradient(135deg, rgba(0,229,255,0.02) 0%, rgba(0,114,188,0.02) 100%)",
-                border: "1px dashed rgba(0,229,255,0.08)",
+                borderRadius: "0.75rem",
             }}
-        >
-            {/* Placeholder — replaced by ad network script in production */}
-            <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[10px] uppercase tracking-[0.2em] opacity-20" style={{ color: "var(--text-secondary)" }}>
-                    {config.label}
-                </span>
-            </div>
-        </div>
+        />
     );
 }
-
-/* ─── Popunder / Social Bar / Push Notification Script Container ─── 
-   These ad types are loaded via <script> tags in the <head>.
-   They auto-run and don't need visible containers.
-   
-   In production, add these to app/layout.tsx <head>:
-   
-   <!-- Adsterra Popunder -->
-   <script data-cfasync="false" src="//your-adsterra-popunder-url.js"></script>
-   
-   <!-- Adsterra Social Bar -->  
-   <script data-cfasync="false" src="//your-adsterra-social-bar-url.js"></script>
-   
-   <!-- Monetag MultiTag (auto-optimization) -->
-   <script data-cfasync="false" src="//your-monetag-multitag-url.js"></script>
-   
-   <!-- Push Notification -->
-   <script data-cfasync="false" src="//your-push-notification-url.js"></script>
-*/

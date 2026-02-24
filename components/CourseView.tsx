@@ -49,7 +49,7 @@ export default function CourseView({ id }: { id: string }) {
 
   // Steps: 0=details, 1=payment, 2=pending, 3=content
   const [step, setStep] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState<"card" | "crypto" | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"card" | "crypto" | "gpay" | null>(null);
   const [selectedWallet, setSelectedWallet] = useState<"binance" | "bybit">("binance");
   const [screenshot, setScreenshot] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
@@ -231,7 +231,7 @@ export default function CourseView({ id }: { id: string }) {
               </p>
 
               {/* Payment Method Selection */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 {/* Card Option */}
                 <button
                   onClick={() => setPaymentMethod("card")}
@@ -295,6 +295,38 @@ export default function CourseView({ id }: { id: string }) {
                     ))}
                   </div>
                 </button>
+
+                {/* Google Pay Option */}
+                <button
+                  onClick={() => setPaymentMethod("gpay")}
+                  className={`p-5 rounded-xl text-left transition-all duration-300 ${paymentMethod === "gpay"
+                    ? "ring-2 ring-tecsubCyan"
+                    : "hover:border-white/30"
+                    }`}
+                  style={{
+                    background: paymentMethod === "gpay" ? "rgba(0,229,255,0.08)" : "rgba(0,0,0,0.3)",
+                    border: paymentMethod === "gpay" ? "1px solid rgba(0,229,255,0.3)" : "1px solid rgba(255,255,255,0.08)",
+                    borderRadius: "0.75rem",
+                  }}
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center">
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                        <path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" fill="#4285F4" />
+                        <path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574" fill="#34A853" />
+                        <path d="M4.801 14.4a7.47 7.47 0 01-.4-2.4c0-.835.145-1.645.4-2.4" fill="#FBBC05" />
+                        <path d="M12.24 4.426c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-4.69 0-8.75 2.69-10.72 6.6l3.28 2.826c.78-2.34 2.96-4" fill="#EA4335" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>Google Pay</p>
+                      <p className="text-[10px]" style={{ color: "var(--text-secondary)" }}>Fast & Secure Checkout</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-2">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/10 font-bold" style={{ color: "var(--text-secondary)" }}>GPay</span>
+                  </div>
+                </button>
               </div>
 
               {/* Card Payment — Redirect Button */}
@@ -333,6 +365,56 @@ export default function CourseView({ id }: { id: string }) {
                           className="flex-1 py-3.5 rounded-full bg-tecsubCyan text-tecsubNavy font-bold text-sm hover:shadow-[0_0_35px_rgba(0,229,255,0.5)] transition-all duration-300 uppercase tracking-wide"
                         >
                           💳 Pay with Card →
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Google Pay — Redirect Button */}
+                {paymentMethod === "gpay" && (
+                  <motion.div
+                    key="gpay-details"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="mb-6 overflow-hidden"
+                  >
+                    <div className="rounded-xl p-6" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "0.75rem" }}>
+                      <div className="flex items-center gap-3 mb-2">
+                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                          <path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" fill="#4285F4" />
+                        </svg>
+                        <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                          Google Pay Checkout
+                        </p>
+                      </div>
+                      <p className="text-xs mb-4" style={{ color: "var(--text-secondary)" }}>
+                        You will be redirected to complete your purchase of <strong className="text-tecsubCyan">${course.price} USD</strong> via Google Pay.
+                      </p>
+                      <div className="flex items-center gap-4 mb-4">
+                        {["🔒 SSL Encrypted", "🛡️ Secure", "✅ Verified"].map((b) => (
+                          <span key={b} className="text-[9px] font-medium" style={{ color: "var(--text-secondary)" }}>{b}</span>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setStep(0)}
+                          className="px-6 py-3 rounded-full border border-white/15 text-sm font-semibold hover:border-white/30 transition-all"
+                          style={{ color: "var(--text-primary)" }}
+                        >
+                          ← Back
+                        </button>
+                        <button
+                          onClick={() => router.push(`/payment/${id}`)}
+                          className="flex-1 py-3.5 rounded-full font-bold text-sm hover:shadow-[0_0_35px_rgba(66,133,244,0.5)] transition-all duration-300 uppercase tracking-wide flex items-center justify-center gap-2"
+                          style={{ background: "#4285F4", color: "#fff" }}
+                        >
+                          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                            <path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" fill="#fff" />
+                          </svg>
+                          Pay with Google Pay →
                         </button>
                       </div>
                     </div>
@@ -539,7 +621,7 @@ export default function CourseView({ id }: { id: string }) {
                 </div>
                 <div className="flex justify-between text-xs">
                   <span style={{ color: "var(--text-secondary)" }}>Method</span>
-                  <span style={{ color: "var(--text-primary)" }}>{paymentMethod === "card" ? "Card" : "Crypto (USDT)"}</span>
+                  <span style={{ color: "var(--text-primary)" }}>{paymentMethod === "card" ? "Card" : paymentMethod === "gpay" ? "Google Pay" : "Crypto (USDT)"}</span>
                 </div>
               </div>
 
