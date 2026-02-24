@@ -159,6 +159,62 @@ export default function AboutPage() {
                         </div>
                     </motion.section>
 
+                    {/* ═══ Most Hyped Software & Apps ═══ */}
+                    <motion.section {...fadeUp(0.35)} className="mb-16">
+                        <h2 className="font-bebas text-3xl sm:text-4xl tracking-wide text-center mb-3" style={{ color: "var(--text-primary)" }}>
+                            🔥 Most Hyped Software & Apps
+                        </h2>
+                        <p className="text-center text-xs sm:text-sm mb-10 max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>
+                            Our community's favorites — the tools and apps everyone is talking about.
+                        </p>
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            {[
+                                { icon: "🎥", name: "Tecsub Recorder", tag: "Screen Recorder", downloads: "50K+", rating: 4.9, color: "#00E5FF", desc: "Smart zoom, floating toolbar, 4K recording, 9:16 social mode." },
+                                { icon: "📊", name: "Data Grab V5", tag: "Data Extraction", downloads: "32K+", rating: 4.8, color: "#F97316", desc: "AI-powered pattern recognition, batch processing, CSV/JSON export." },
+                                { icon: "🔒", name: "VPN Ultra", tag: "Privacy & Security", downloads: "45K+", rating: 4.7, color: "#C084FC", desc: "100+ servers, WireGuard protocol, zero-log policy, unlimited bandwidth." },
+                                { icon: "🧹", name: "Tecsub Cleaner", tag: "System Utility", downloads: "28K+", rating: 4.6, color: "#4ADE80", desc: "Junk cleaner, RAM optimizer, startup manager, disk analyzer." },
+                                { icon: "💻", name: "Code Studio", tag: "IDE", downloads: "22K+", rating: 4.8, color: "#38BDF8", desc: "AI autocomplete, multi-language, integrated terminal, Git support." },
+                                { icon: "🎮", name: "Mod Apps Hub", tag: "Modified Apps", downloads: "120K+", rating: 4.9, color: "#FF0000", desc: "Premium apps unlocked — Spotify, YouTube, Instagram, WhatsApp & more." },
+                                { icon: "🖼️", name: "Batch Image Resizer", tag: "Media Tool", downloads: "18K+", rating: 4.5, color: "#FFD93D", desc: "Drag-and-drop batch processing, smart crop, format conversion." },
+                                { icon: "☁️", name: "Tecsub Backup", tag: "Cloud Storage", downloads: "15K+", rating: 4.6, color: "#34D399", desc: "Encrypted cloud backup, auto-sync, versioning, cross-device access." },
+                            ].map((app) => (
+                                <div
+                                    key={app.name}
+                                    className="rounded-2xl p-4 transition-all duration-300 hover:scale-[1.03] group"
+                                    style={{
+                                        background: "rgba(0,0,0,0.3)",
+                                        border: "1px solid rgba(255,255,255,0.06)",
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        (e.currentTarget as HTMLElement).style.borderColor = `${app.color}30`;
+                                        (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 30px ${app.color}10`;
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)";
+                                        (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                                    }}
+                                >
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ background: `${app.color}15` }}>
+                                            {app.icon}
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-xs" style={{ color: "var(--text-primary)" }}>{app.name}</h4>
+                                            <p className="text-[10px]" style={{ color: app.color }}>{app.tag}</p>
+                                        </div>
+                                    </div>
+                                    <p className="text-[11px] mb-3 leading-relaxed line-clamp-2" style={{ color: "var(--text-secondary)" }}>
+                                        {app.desc}
+                                    </p>
+                                    <div className="flex items-center justify-between text-[10px]" style={{ color: "var(--text-secondary)" }}>
+                                        <span>⭐ {app.rating}</span>
+                                        <span>📥 {app.downloads}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.section>
+
                     {/* ═══ Footer Credit ═══ */}
                     <motion.div
                         {...fadeUp(0.4)}
