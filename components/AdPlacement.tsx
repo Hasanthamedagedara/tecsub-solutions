@@ -1,38 +1,113 @@
 "use client";
 
-/* ─── Ad Placement Component ─── 
-   Integrates real Adsterra ad codes.
-   - "banner": 728×90 on desktop (≥768px), 320×50 on mobile (<768px)
-   - "native" / "in-content": Native ads script
-   - "smart-link": Hidden, no visual container
+/* ─── Adsterra Ad Placement Component ───
+   Supports all Adsterra ad formats with responsive sizing.
+   
+   Formats:
+   - "banner"      → 728×90 (desktop) / 320×50 (mobile)
+   - "banner-md"   → 468×60 (medium banner)
+   - "rectangle"   → 300×250 (in-content rectangle)
+   - "sidebar"     → 160×600 (tall skyscraper)
+   - "sidebar-short" → 160×300 (short sidebar)
+   - "native"      → Native ads 3:1
+   - "in-content"  → Native ads (alias, placed between content)
 */
 
 import { useEffect, useRef, useState } from "react";
 
-type AdFormat = "banner" | "native" | "in-content" | "sidebar" | "smart-link";
+type AdFormat =
+    | "banner"        // 728×90 desktop / 320×50 mobile
+    | "banner-md"     // 468×60
+    | "rectangle"     // 300×250
+    | "sidebar"       // 160×600
+    | "sidebar-short" // 160×300
+    | "native"        // native ads
+    | "in-content";   // native ads (alias)
 
 interface AdPlacementProps {
     format: AdFormat;
     className?: string;
 }
 
-// Counter to generate unique IDs for each native ad instance
-let nativeAdCounter = 0;
+// Ad script configs
+const AD_CONFIGS = {
+    "728x90": {
+        key: "fab4548b5efa7488bcf199573cb1b9d3",
+        width: 728,
+        height: 90,
+    },
+    "320x50": {
+        key: "17d6c09433ad372ba0f0e5dc446424f6",
+        width: 320,
+        height: 50,
+    },
+    "468x60": {
+        key: "d313f4b4ab4a261aaa073a211f1ba03b",
+        width: 468,
+        height: 60,
+    },
+    "300x250": {
+        key: "8d784274202ca73423a441cf4d6efadf",
+        width: 300,
+        height: 250,
+    },
+    "160x600": {
+        key: "698894df0c3830dd82a1a58e0c876d4b",
+        width: 160,
+        height: 600,
+    },
+    "160x300": {
+        key: "79e0924f819401dd05b1d3fad84e8937",
+        width: 160,
+        height: 300,
+    },
+} as const;
+
+const NATIVE_SCRIPT_URL = "https://pl28783703.effectivegatecpm.com/5f7fc104d149ac94bf41e2d48a59715c/invoke.js";
+const NATIVE_CONTAINER_ID = "container-5f7fc104d149ac94bf41e2d48a59715c";
+
+let instanceCounter = 0;
+
+function injectBannerAd(
+    container: HTMLElement,
+    config: { key: string; width: number; height: number }
+) {
+    const optionsScript = document.createElement("script");
+    optionsScript.text = `
+        atOptions = {
+            'key' : '${config.key}',
+            'format' : 'iframe',
+            'height' : ${config.height},
+            'width' : ${config.width},
+            'params' : {}
+        };
+    `;
+    const invokeScript = document.createElement("script");
+    invokeScript.src = `https://www.highperformanceformat.com/${config.key}/invoke.js`;
+
+    container.appendChild(optionsScript);
+    container.appendChild(invokeScript);
+}
+
+function injectNativeAd(container: HTMLElement, uniqueId: number) {
+    const nativeDiv = document.createElement("div");
+    nativeDiv.id = `${NATIVE_CONTAINER_ID}-${uniqueId}`;
+    container.appendChild(nativeDiv);
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.setAttribute("data-cfasync", "false");
+    script.src = NATIVE_SCRIPT_URL;
+    container.appendChild(script);
+}
 
 export default function AdPlacement({ format, className = "" }: AdPlacementProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isMobile, setIsMobile] = useState(false);
     const [ready, setReady] = useState(false);
-    const instanceId = useRef<number>(0);
+    const uniqueId = useRef(++instanceCounter);
 
-    // Assign unique ID on mount
-    useEffect(() => {
-        if (format === "native" || format === "in-content") {
-            instanceId.current = ++nativeAdCounter;
-        }
-    }, [format]);
-
-    // Detect screen size on client
+    // Detect screen size
     useEffect(() => {
         const check = () => setIsMobile(window.innerWidth < 768);
         check();
@@ -41,89 +116,71 @@ export default function AdPlacement({ format, className = "" }: AdPlacementProps
         return () => window.removeEventListener("resize", check);
     }, []);
 
-    // Inject ad scripts once ready
+    // Inject scripts
     useEffect(() => {
         if (!ready || !containerRef.current) return;
 
         const container = containerRef.current;
-        // Clear previous ad content
         container.innerHTML = "";
 
-        if (format === "banner") {
-            if (!isMobile) {
-                // ── Desktop: 728×90 banner ──
-                const atScript = document.createElement("script");
-                atScript.text = `
-                    atOptions = {
-                        'key' : 'fab4548b5efa7488bcf199573cb1b9d3',
-                        'format' : 'iframe',
-                        'height' : 90,
-                        'width' : 728,
-                        'params' : {}
-                    };
-                `;
-                const invokeScript = document.createElement("script");
-                invokeScript.src = "https://www.highperformanceformat.com/fab4548b5efa7488bcf199573cb1b9d3/invoke.js";
-
-                container.appendChild(atScript);
-                container.appendChild(invokeScript);
-            } else {
-                // ── Mobile: 320×50 banner ──
-                const atScript = document.createElement("script");
-                atScript.text = `
-                    atOptions = {
-                        'key' : '17d6c09433ad372ba0f0e5dc446424f6',
-                        'format' : 'iframe',
-                        'height' : 50,
-                        'width' : 320,
-                        'params' : {}
-                    };
-                `;
-                const invokeScript = document.createElement("script");
-                invokeScript.src = "https://www.highperformanceformat.com/17d6c09433ad372ba0f0e5dc446424f6/invoke.js";
-
-                container.appendChild(atScript);
-                container.appendChild(invokeScript);
-            }
-        } else if (format === "native" || format === "in-content") {
-            // ── Native ads ──
-            const uniqueContainerId = `container-5f7fc104d149ac94bf41e2d48a59715c-${instanceId.current}`;
-
-            const nativeDiv = document.createElement("div");
-            nativeDiv.id = uniqueContainerId;
-            container.appendChild(nativeDiv);
-
-            const script = document.createElement("script");
-            script.async = true;
-            script.setAttribute("data-cfasync", "false");
-            script.src = "https://pl28783703.effectivegatecpm.com/5f7fc104d149ac94bf41e2d48a59715c/invoke.js";
-            container.appendChild(script);
+        switch (format) {
+            case "banner":
+                injectBannerAd(container, isMobile ? AD_CONFIGS["320x50"] : AD_CONFIGS["728x90"]);
+                break;
+            case "banner-md":
+                injectBannerAd(container, isMobile ? AD_CONFIGS["320x50"] : AD_CONFIGS["468x60"]);
+                break;
+            case "rectangle":
+                injectBannerAd(container, AD_CONFIGS["300x250"]);
+                break;
+            case "sidebar":
+                injectBannerAd(container, AD_CONFIGS["160x600"]);
+                break;
+            case "sidebar-short":
+                injectBannerAd(container, AD_CONFIGS["160x300"]);
+                break;
+            case "native":
+            case "in-content":
+                injectNativeAd(container, uniqueId.current);
+                break;
         }
     }, [format, isMobile, ready]);
 
-    // SmartLink ads are invisible
-    if (format === "smart-link") {
-        return <div ref={containerRef} className="hidden" />;
-    }
-
     // Determine container sizing
-    const sizeStyles: React.CSSProperties =
-        format === "banner"
-            ? isMobile
+    let sizeStyles: React.CSSProperties = {};
+
+    switch (format) {
+        case "banner":
+            sizeStyles = isMobile
                 ? { minHeight: "50px", maxWidth: "320px" }
-                : { minHeight: "90px", maxWidth: "728px" }
-            : { minHeight: "250px" };
+                : { minHeight: "90px", maxWidth: "728px" };
+            break;
+        case "banner-md":
+            sizeStyles = isMobile
+                ? { minHeight: "50px", maxWidth: "320px" }
+                : { minHeight: "60px", maxWidth: "468px" };
+            break;
+        case "rectangle":
+            sizeStyles = { minHeight: "250px", maxWidth: "300px" };
+            break;
+        case "sidebar":
+            sizeStyles = { minHeight: "600px", maxWidth: "160px" };
+            break;
+        case "sidebar-short":
+            sizeStyles = { minHeight: "300px", maxWidth: "160px" };
+            break;
+        case "native":
+        case "in-content":
+            sizeStyles = { minHeight: "250px" };
+            break;
+    }
 
     return (
         <div
             ref={containerRef}
             data-ad-format={format}
             className={`relative flex items-center justify-center overflow-hidden mx-auto ${className}`}
-            style={{
-                ...sizeStyles,
-                width: "100%",
-                borderRadius: "0.75rem",
-            }}
+            style={{ ...sizeStyles, width: "100%", borderRadius: "0.75rem" }}
         />
     );
 }

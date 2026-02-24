@@ -23,22 +23,15 @@ export default function Home() {
 
     return (
         <>
-            {/* Fixed Background — Canvas animation (z-index: 0-1) */}
+            {/* Fixed Background — Canvas animation */}
             <HeroCanvas />
 
-            {/* Invisible ad scripts (Popunder, Push, SmartLink — head-injected) */}
-            <AdPlacement format="smart-link" />
-
-            {/* Foreground — All interactive content (z-index: 10+) */}
+            {/* Foreground — All interactive content */}
             <div className="relative" style={{ zIndex: 10 }}>
                 <Navbar />
 
-                {/* ─── Ad: Top Banner 1 ─── */}
+                {/* ─── Ad: Top Banner (728×90 / 320×50) ─── */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24">
-                    <AdPlacement format="banner" />
-                </div>
-                {/* ─── Ad: Top Banner 2 ─── */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
                     <AdPlacement format="banner" />
                 </div>
 
@@ -130,7 +123,7 @@ export default function Home() {
                 {/* ─── YouTube Banner ─── */}
                 <YouTubeBanner />
 
-                {/* ─── Ad: Banner after hero ─── */}
+                {/* ─── Ad: Banner after hero (728×90 / 320×50) ─── */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
                     <AdPlacement format="banner" />
                 </div>
@@ -138,26 +131,23 @@ export default function Home() {
                 {/* ─── Online Tools ─── */}
                 <OnlineTools />
 
-                {/* ─── Ad: In-Content between sections ─── */}
+                {/* ─── Ad: Native between Online Tools & Tech News ─── */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <AdPlacement format="in-content" />
+                    <AdPlacement format="native" />
                 </div>
                 <div className="section-divider mx-4" />
 
                 {/* ─── Tech News ─── */}
                 <TechNews />
 
-                {/* ─── Ad: Banner after Tech News 1 ─── */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-                    <AdPlacement format="banner" />
-                </div>
-                {/* ─── Ad: Banner after Tech News 2 ─── */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                    <AdPlacement format="banner" />
+                {/* ─── Ad: Medium Banner + Rectangle after Tech News ─── */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex flex-col sm:flex-row items-center justify-center gap-6">
+                    <AdPlacement format="banner-md" />
+                    <AdPlacement format="rectangle" className="hidden sm:flex" />
                 </div>
                 <div className="section-divider mx-4 mt-8" />
 
-                {/* ─── Ad: Banner before AI Lab 1 ─── */}
+                {/* ─── Ad: Native before AI Lab ─── */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
                     <AdPlacement format="in-content" />
                 </div>
@@ -165,23 +155,36 @@ export default function Home() {
                 {/* ─── AI Lab, App Forge, Software, Videos, Social ─── */}
                 <ContentSections />
 
-                {/* ─── Ad: Banner after AI Lab 2 ─── */}
+                {/* ─── Ad: Content with sidebars after Content Sections ─── */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-4">
-                    <AdPlacement format="in-content" />
-                </div>
-
-                {/* ─── Ad: Native between major sections ─── */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-                    <AdPlacement format="native" />
+                    <div className="flex justify-center gap-6">
+                        {/* Left Sidebar ad — desktop only */}
+                        <div className="hidden lg:block flex-shrink-0">
+                            <AdPlacement format="sidebar-short" />
+                        </div>
+                        {/* Center Native ad */}
+                        <div className="flex-1 max-w-2xl">
+                            <AdPlacement format="native" />
+                        </div>
+                        {/* Right Sidebar ad — desktop only */}
+                        <div className="hidden lg:block flex-shrink-0">
+                            <AdPlacement format="sidebar-short" />
+                        </div>
+                    </div>
                 </div>
                 <div className="section-divider mx-4" />
 
                 {/* ─── AI Prompts ─── */}
                 <AIPromptHub />
 
-                {/* ─── Ad: Banner before courses ─── */}
+                {/* ─── Ad: Banner before courses (468×60 / 320×50) ─── */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <AdPlacement format="banner" />
+                    <AdPlacement format="banner-md" />
+                </div>
+
+                {/* ─── Ad: Rectangle ad (300×250) ─── */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                    <AdPlacement format="rectangle" />
                 </div>
                 <div className="section-divider mx-4" />
 
@@ -192,7 +195,10 @@ export default function Home() {
                 {/* ─── Beta Community ─── */}
                 <BetaCommunity />
 
-                {/* ─── Ad: Banner before footer ─── */}
+                {/* ─── Ad: Full banner + native before footer ─── */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
+                    <AdPlacement format="banner" />
+                </div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
                     <AdPlacement format="in-content" />
                 </div>
