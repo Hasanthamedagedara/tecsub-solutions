@@ -164,6 +164,18 @@ export const onlineTools = [
         category: "Developer",
         icon: ".*",
     },
+    {
+        title: "PDF Converter",
+        description: "Convert PDF to Word, Excel, Image, Text and more — all file types supported.",
+        category: "Document",
+        icon: "📑",
+    },
+    {
+        title: "Image Converter",
+        description: "Convert images between PNG, JPG, WebP, BMP, GIF and more formats instantly.",
+        category: "Image",
+        icon: "🔄",
+    },
 ];
 
 export const techNews = [

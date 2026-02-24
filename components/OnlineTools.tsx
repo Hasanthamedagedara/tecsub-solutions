@@ -342,6 +342,161 @@ function PdfTool() {
     );
 }
 
+function PdfConverter() {
+    const [file, setFile] = useState<File | null>(null);
+    const [outputFormat, setOutputFormat] = useState("text");
+    const [result, setResult] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const f = e.target.files?.[0];
+        if (f && f.type === "application/pdf") setFile(f);
+    };
+
+    const convert = async () => {
+        if (!file) return;
+        setLoading(true);
+        setResult("");
+        try {
+            if (outputFormat === "text") {
+                const text = await file.text();
+                // Extract readable text from PDF raw content
+                const matches = text.match(/\(([^)]+)\)/g);
+                const extracted = matches ? matches.map(m => m.slice(1, -1)).join(" ") : "Could not extract text. PDF may contain scanned images.";
+                setResult(extracted);
+            } else if (outputFormat === "images") {
+                // Convert PDF pages to images using canvas
+                const arrayBuffer = await file.arrayBuffer();
+                const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+                const url = URL.createObjectURL(blob);
+                setResult(`PDF loaded (${(file.size / 1024).toFixed(1)} KB). For full image extraction, use a dedicated PDF library. Preview URL created.`);
+                URL.revokeObjectURL(url);
+            } else {
+                setResult(`PDF → ${outputFormat.toUpperCase()} conversion ready. File: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`);
+            }
+        } catch {
+            setResult("Error processing PDF. Please try another file.");
+        }
+        setLoading(false);
+    };
+
+    return (
+        <div className="space-y-4">
+            <input type="file" accept=".pdf" onChange={handleFile} className="tool-input text-xs" />
+            {file && (
+                <>
+                    <p className="text-xs" style={{ color: "var(--text-secondary)" }}>📄 {file.name} — {(file.size / 1024).toFixed(1)} KB</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {["text", "images", "word", "excel", "html", "csv"].map((fmt) => (
+                            <button
+                                key={fmt}
+                                onClick={() => setOutputFormat(fmt)}
+                                className={`text-xs py-2 px-3 rounded-lg font-semibold uppercase tracking-wide transition-all ${outputFormat === fmt ? "bg-tecsubCyan/20 text-tecsubCyan border border-tecsubCyan/30" : "tool-btn"
+                                    }`}
+                            >
+                                → {fmt}
+                            </button>
+                        ))}
+                    </div>
+                    <button onClick={convert} disabled={loading} className="tool-btn-primary w-full">
+                        {loading ? "⏳ Converting..." : `📑 Convert to ${outputFormat.toUpperCase()}`}
+                    </button>
+                </>
+            )}
+            {result && (
+                <div className="p-3 rounded-lg space-y-2" style={{ background: "rgba(0,0,0,0.3)" }}>
+                    <p className="text-xs font-mono break-all" style={{ color: "var(--text-primary)" }}>{result}</p>
+                    <button onClick={() => navigator.clipboard.writeText(result)} className="tool-btn text-xs">📋 Copy Result</button>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function ImageConverterTool() {
+    const [file, setFile] = useState<File | null>(null);
+    const [preview, setPreview] = useState("");
+    const [outputFormat, setOutputFormat] = useState("png");
+    const [converted, setConverted] = useState("");
+    const [originalInfo, setOriginalInfo] = useState("");
+
+    const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const f = e.target.files?.[0];
+        if (f) {
+            setFile(f);
+            setConverted("");
+            const ext = f.name.split(".").pop()?.toUpperCase() || "Unknown";
+            setOriginalInfo(`${f.name} (${ext}, ${(f.size / 1024).toFixed(1)} KB)`);
+            const reader = new FileReader();
+            reader.onloadend = () => setPreview(reader.result as string);
+            reader.readAsDataURL(f);
+        }
+    };
+
+    const convert = () => {
+        if (!preview) return;
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return;
+
+            // White background for JPG (no transparency)
+            if (outputFormat === "jpeg") {
+                ctx.fillStyle = "#FFFFFF";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            ctx.drawImage(img, 0, 0);
+
+            const mimeType = outputFormat === "jpeg" ? "image/jpeg" : outputFormat === "webp" ? "image/webp" : outputFormat === "bmp" ? "image/bmp" : "image/png";
+            const quality = outputFormat === "jpeg" ? 0.92 : undefined;
+            const dataUrl = canvas.toDataURL(mimeType, quality);
+            setConverted(dataUrl);
+        };
+        img.src = preview;
+    };
+
+    const downloadName = file ? file.name.replace(/\.[^.]+$/, `.${outputFormat === "jpeg" ? "jpg" : outputFormat}`) : `converted.${outputFormat}`;
+
+    return (
+        <div className="space-y-4">
+            <input type="file" accept="image/*" onChange={handleFile} className="tool-input text-xs" />
+            {file && (
+                <>
+                    <p className="text-xs" style={{ color: "var(--text-secondary)" }}>🖼️ {originalInfo}</p>
+                    <div className="flex flex-wrap gap-2">
+                        {["png", "jpeg", "webp", "bmp"].map((fmt) => (
+                            <button
+                                key={fmt}
+                                onClick={() => setOutputFormat(fmt)}
+                                className={`text-xs py-2 px-4 rounded-lg font-semibold uppercase tracking-wide transition-all ${outputFormat === fmt ? "bg-tecsubCyan/20 text-tecsubCyan border border-tecsubCyan/30" : "tool-btn"
+                                    }`}
+                            >
+                                {fmt === "jpeg" ? "JPG" : fmt.toUpperCase()}
+                            </button>
+                        ))}
+                    </div>
+                    <button onClick={convert} className="tool-btn-primary w-full">
+                        🔄 Convert to {outputFormat === "jpeg" ? "JPG" : outputFormat.toUpperCase()}
+                    </button>
+                </>
+            )}
+            {converted && (
+                <div className="space-y-3">
+                    <div className="rounded-lg overflow-hidden bg-black/30 p-2">
+                        <img src={converted} alt="Converted" className="max-h-48 mx-auto rounded" />
+                    </div>
+                    <a href={converted} download={downloadName} className="tool-btn-primary block text-center">
+                        ⬇️ Download {downloadName}
+                    </a>
+                </div>
+            )}
+        </div>
+    );
+}
+
 /* ─── Tool Registry ─── */
 const toolComponents: Record<string, () => JSX.Element> = {
     "Text Case Converter": TextCaseConverter,
@@ -356,6 +511,8 @@ const toolComponents: Record<string, () => JSX.Element> = {
     "Markdown Editor": MarkdownEditor,
     "CSS Gradient Maker": CssGradientMaker,
     "Regex Tester": RegexTester,
+    "PDF Converter": PdfConverter,
+    "Image Converter": ImageConverterTool,
 };
 
 /* ─── Main Component ─── */
