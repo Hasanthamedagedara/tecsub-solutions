@@ -6,22 +6,47 @@ import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
 import { useRouter, usePathname } from "next/navigation";
 
+/* ─── Nav item type with optional sub-dropdown ─── */
+interface NavItem {
+    label: string;
+    href: string;
+    subs?: { label: string; href: string }[];
+}
+
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [langOpen, setLangOpen] = useState(false);
+    const [hoverDropdown, setHoverDropdown] = useState<string | null>(null);
+    const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
     const { theme, toggleTheme, language, setLanguage } = useAppContext();
     const router = useRouter();
     const pathname = usePathname();
 
-    const navLinks = [
-        { label: t(language, "nav_tools"), href: "#tools" },
+    const navLinks: NavItem[] = [
+        {
+            label: t(language, "nav_tools"),
+            href: "#tools",
+            subs: [
+                { label: "🤖 AI Tools", href: "#ai-lab" },
+                { label: "🎬 YT Tools", href: "#videos" },
+                { label: "📊 Data Extract Tools", href: "#tools" },
+                { label: "📱 Mobile Tools", href: "#tools" },
+            ],
+        },
         { label: t(language, "nav_software"), href: "#software" },
         { label: t(language, "nav_news"), href: "#news" },
         { label: "AI Tool", href: "#ai-lab" },
         { label: t(language, "nav_videos"), href: "#videos" },
         { label: t(language, "nav_prompts"), href: "#prompts" },
         { label: t(language, "nav_courses"), href: "#courses" },
-        { label: "Apps", href: "/apps" },
+        {
+            label: "Apps",
+            href: "/apps",
+            subs: [
+                { label: "🎮 Mod Apps", href: "/apps/mod" },
+                { label: "🆕 New Releases", href: "/apps/new-releases" },
+            ],
+        },
         { label: "About", href: "/about" },
     ];
 
@@ -47,6 +72,8 @@ export default function Navbar() {
     const handleNavClick = (href: string) => {
         setIsOpen(false);
         setLangOpen(false);
+        setHoverDropdown(null);
+        setMobileExpanded(null);
 
         if (href.startsWith("/")) {
             router.push(href);
@@ -76,7 +103,7 @@ export default function Navbar() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16 sm:h-20">
 
-                        {/* Logo - Updated Path for Custom Domain */}
+                        {/* Logo */}
                         <a href="/" className="flex items-center gap-2 sm:gap-4 group flex-shrink-0">
                             <div className="w-9 h-9 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl flex items-center justify-center border border-white/20 bg-white/10 p-1.5 sm:p-2 transition-all group-hover:border-tecsubCyan/50">
                                 <img
@@ -91,16 +118,58 @@ export default function Navbar() {
                         </a>
 
                         {/* Desktop Nav */}
-                        <div className="hidden lg:flex items-center gap-1">
+                        <div className="hidden lg:flex items-center gap-0.5">
                             {navLinks.map((link) => (
-                                <button
-                                    key={link.href}
-                                    onClick={() => handleNavClick(link.href)}
-                                    className="px-3 py-2 text-xs font-medium uppercase tracking-wider hover:text-tecsubCyan transition-colors duration-300"
-                                    style={{ color: "var(--text-secondary)" }}
+                                <div
+                                    key={link.label}
+                                    className="relative"
+                                    onMouseEnter={() => link.subs && setHoverDropdown(link.label)}
+                                    onMouseLeave={() => setHoverDropdown(null)}
                                 >
-                                    {link.label}
-                                </button>
+                                    <button
+                                        onClick={() => handleNavClick(link.href)}
+                                        className="px-2.5 py-2 text-[11px] font-medium uppercase tracking-wider hover:text-tecsubCyan transition-colors duration-300 flex items-center gap-1"
+                                        style={{ color: "var(--text-secondary)" }}
+                                    >
+                                        {link.label}
+                                        {link.subs && (
+                                            <svg className="w-3 h-3 opacity-50" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                            </svg>
+                                        )}
+                                    </button>
+
+                                    {/* Desktop Dropdown */}
+                                    <AnimatePresence>
+                                        {link.subs && hoverDropdown === link.label && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: -6 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -6 }}
+                                                transition={{ duration: 0.2 }}
+                                                className="absolute top-full left-0 mt-1 min-w-[200px] py-2 z-[60]"
+                                                style={{
+                                                    background: "rgba(10,10,11,0.96)",
+                                                    backdropFilter: "blur(20px)",
+                                                    border: "1px solid rgba(0,229,255,0.1)",
+                                                    borderRadius: "0.75rem",
+                                                    boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
+                                                }}
+                                            >
+                                                {link.subs.map((sub) => (
+                                                    <button
+                                                        key={sub.label}
+                                                        onClick={() => handleNavClick(sub.href)}
+                                                        className="w-full px-4 py-2.5 text-left text-[12px] font-medium hover:bg-white/5 hover:text-tecsubCyan transition-all duration-200 flex items-center gap-2"
+                                                        style={{ color: "rgba(255,255,255,0.85)" }}
+                                                    >
+                                                        {sub.label}
+                                                    </button>
+                                                ))}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                             ))}
                         </div>
 
@@ -188,6 +257,7 @@ export default function Navbar() {
                 </div>
             </motion.nav>
 
+            {/* ═══ Mobile Menu ═══ */}
             <AnimatePresence>
                 {isOpen && (
                     <>
@@ -218,18 +288,61 @@ export default function Navbar() {
                             >
                                 <div className="space-y-1 mb-4">
                                     {navLinks.map((link, i) => (
-                                        <motion.button
-                                            key={link.href}
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: i * 0.05, duration: 0.3 }}
-                                            onClick={() => handleNavClick(link.href)}
-                                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium uppercase tracking-wider hover:bg-tecsubCyan/10 hover:text-tecsubCyan transition-all duration-300 text-left"
-                                            style={{ color: "var(--text-primary)" }}
-                                        >
-                                            <span className="w-1.5 h-1.5 rounded-full bg-tecsubCyan/40 flex-shrink-0" />
-                                            {link.label}
-                                        </motion.button>
+                                        <div key={link.label}>
+                                            <motion.button
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: i * 0.04, duration: 0.3 }}
+                                                onClick={() => {
+                                                    if (link.subs) {
+                                                        setMobileExpanded(mobileExpanded === link.label ? null : link.label);
+                                                    } else {
+                                                        handleNavClick(link.href);
+                                                    }
+                                                }}
+                                                className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium uppercase tracking-wider hover:bg-tecsubCyan/10 hover:text-tecsubCyan transition-all duration-300 text-left"
+                                                style={{ color: "var(--text-primary)" }}
+                                            >
+                                                <span className="flex items-center gap-3">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-tecsubCyan/40 flex-shrink-0" />
+                                                    {link.label}
+                                                </span>
+                                                {link.subs && (
+                                                    <motion.span
+                                                        animate={{ rotate: mobileExpanded === link.label ? 180 : 0 }}
+                                                        className="text-xs opacity-50"
+                                                    >
+                                                        ▼
+                                                    </motion.span>
+                                                )}
+                                            </motion.button>
+
+                                            {/* Mobile Sub-dropdown */}
+                                            <AnimatePresence>
+                                                {link.subs && mobileExpanded === link.label && (
+                                                    <motion.div
+                                                        initial={{ height: 0, opacity: 0 }}
+                                                        animate={{ height: "auto", opacity: 1 }}
+                                                        exit={{ height: 0, opacity: 0 }}
+                                                        transition={{ duration: 0.25 }}
+                                                        className="overflow-hidden"
+                                                    >
+                                                        <div className="ml-8 mt-1 mb-2 space-y-0.5 pl-3" style={{ borderLeft: "2px solid rgba(0,229,255,0.2)" }}>
+                                                            {link.subs.map((sub) => (
+                                                                <button
+                                                                    key={sub.label}
+                                                                    onClick={() => handleNavClick(sub.href)}
+                                                                    className="w-full text-left px-3 py-2 rounded-lg text-[13px] hover:bg-white/5 transition-all"
+                                                                    style={{ color: "rgba(255,255,255,0.8)" }}
+                                                                >
+                                                                    {sub.label}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
                                     ))}
                                 </div>
 

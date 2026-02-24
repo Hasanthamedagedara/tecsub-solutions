@@ -27,6 +27,8 @@ const TABS: Tab[] = [
     { id: "prompts", label: "AI Prompts", icon: "smart_toy" },
     { id: "software", label: "Software Files", icon: "folder_open" },
     { id: "courses", label: "Course Modules", icon: "school" },
+    { id: "mod_apps", label: "Mod Apps", icon: "sports_esports" },
+    { id: "new_releases", label: "New Releases", icon: "new_releases" },
 ];
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
@@ -243,8 +245,8 @@ export default function AdminPage() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors w-full text-left ${activeTab === tab.id
-                                    ? "bg-admin-primary/10 text-admin-primary border-l-2 border-admin-primary"
-                                    : "text-admin-text-secondary hover:bg-admin-bg-lighter hover:text-white border-l-2 border-transparent"
+                                ? "bg-admin-primary/10 text-admin-primary border-l-2 border-admin-primary"
+                                : "text-admin-text-secondary hover:bg-admin-bg-lighter hover:text-white border-l-2 border-transparent"
                                 }`}
                         >
                             <span className={`material-symbols-outlined text-[22px] ${activeTab === tab.id ? "" : "group-hover:text-admin-primary"}`}>
@@ -480,7 +482,7 @@ export default function AdminPage() {
                                                                     <div className="flex items-center gap-3">
                                                                         <div className="w-10 h-10 rounded-lg bg-admin-bg-lighter border border-admin-border flex items-center justify-center shrink-0">
                                                                             <span className="material-symbols-outlined text-admin-text-secondary text-lg">
-                                                                                {activeTab === "videos" ? "play_circle" : activeTab === "prompts" ? "smart_toy" : activeTab === "software" ? "folder_zip" : activeTab === "courses" ? "school" : "article"}
+                                                                                {activeTab === "videos" ? "play_circle" : activeTab === "prompts" ? "smart_toy" : activeTab === "software" ? "folder_zip" : activeTab === "courses" ? "school" : activeTab === "mod_apps" ? "sports_esports" : activeTab === "new_releases" ? "new_releases" : "article"}
                                                                             </span>
                                                                         </div>
                                                                         <div>
@@ -545,8 +547,8 @@ export default function AdminPage() {
                                                     key={p}
                                                     onClick={() => setCurrentPage(p)}
                                                     className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${currentPage === p
-                                                            ? "border-admin-primary bg-admin-primary/10 text-admin-primary hover:bg-admin-primary/20"
-                                                            : "border-admin-border text-admin-text-secondary hover:text-white hover:bg-admin-bg-lighter"
+                                                        ? "border-admin-primary bg-admin-primary/10 text-admin-primary hover:bg-admin-primary/20"
+                                                        : "border-admin-border text-admin-text-secondary hover:text-white hover:bg-admin-bg-lighter"
                                                         }`}
                                                 >
                                                     {p}

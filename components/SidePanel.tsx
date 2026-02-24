@@ -123,6 +123,11 @@ const features: Feature[] = [
         label: "📱 Apps",
         color: "#06B6D4",
         href: "/apps",
+        subs: [
+            { label: "🎮 Mod Apps", href: "/apps/mod" },
+            { label: "🆕 New Releases", href: "/apps/new-releases" },
+            { label: "📦 All Downloads", href: "/apps" },
+        ],
     },
     {
         label: "ℹ️ About",

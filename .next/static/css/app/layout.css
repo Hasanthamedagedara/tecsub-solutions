@@ -623,6 +623,9 @@ video {
 .top-\[50\%\]{
   top: 50%;
 }
+.left-4{
+  left: 1rem;
+}
 .z-10{
   z-index: 10;
 }
@@ -646,6 +649,9 @@ video {
 }
 .z-\[56\]{
   z-index: 56;
+}
+.z-\[70\]{
+  z-index: 70;
 }
 .mx-2{
   margin-left: 0.5rem;
@@ -747,6 +753,9 @@ video {
 }
 .mb-10{
   margin-bottom: 2.5rem;
+}
+.ml-8{
+  margin-left: 2rem;
 }
 .line-clamp-2{
   overflow: hidden;
@@ -975,6 +984,9 @@ video {
 }
 .min-w-\[300px\]{
   min-width: 300px;
+}
+.min-w-\[200px\]{
+  min-width: 200px;
 }
 .max-w-2xl{
   max-width: 42rem;
@@ -1703,6 +1715,9 @@ video {
 .pl-3{
   padding-left: 0.75rem;
 }
+.pl-12{
+  padding-left: 3rem;
+}
 .text-left{
   text-align: left;
 }
@@ -1974,6 +1989,9 @@ video {
 }
 .opacity-80{
   opacity: 0.8;
+}
+.opacity-50{
+  opacity: 0.5;
 }
 .shadow-2xl{
   --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
@@ -2363,6 +2381,16 @@ body {
   --tw-scale-y: 1.1;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
+.hover\:scale-\[1\.02\]:hover{
+  --tw-scale-x: 1.02;
+  --tw-scale-y: 1.02;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+.hover\:scale-\[1\.01\]:hover{
+  --tw-scale-x: 1.01;
+  --tw-scale-y: 1.01;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
 .hover\:border-admin-primary\/50:hover{
   border-color: rgb(43 75 238 / 0.5);
 }
@@ -2381,6 +2409,9 @@ body {
 }
 .hover\:border-white\/30:hover{
   border-color: rgb(255 255 255 / 0.3);
+}
+.hover\:border-white\/20:hover{
+  border-color: rgb(255 255 255 / 0.2);
 }
 .hover\:bg-admin-bg-lighter:hover{
   --tw-bg-opacity: 1;
@@ -2492,6 +2523,10 @@ body {
 .hover\:shadow-tecsubCyan\/50:hover{
   --tw-shadow-color: rgb(0 229 255 / 0.5);
   --tw-shadow: var(--tw-shadow-colored);
+}
+.hover\:brightness-110:hover{
+  --tw-brightness: brightness(1.1);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 .focus\:border-tecsubCyan:focus{
   --tw-border-opacity: 1;
