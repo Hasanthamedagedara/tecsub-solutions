@@ -1,945 +1,614 @@
 "use client";
-
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 /* ─── Types ─── */
 type ContentItem = {
-    id: string;
-    title: string;
-    type: string;
+    id: string; title: string; type: string;
     status: "published" | "draft" | "archived";
-    category: string;
-    author: string;
-    createdAt: string;
-    description?: string;
+    category: string; author: string; createdAt: string; description?: string;
 };
+type Toast = { id: number; message: string; type: "success" | "error" | "info" };
 
-/* ─── Tab → Public Page URL mapping ─── */
+/* ─── Tab Config ─── */
 const TAB_PAGE_MAP: Record<string, { url: string; label: string }> = {
-    news: { url: "/#news", label: "News Section" },
-    videos: { url: "/#videos", label: "Video Gallery" },
-    prompts: { url: "/prompts", label: "AI Prompts" },
-    software: { url: "/#software", label: "Software Hub" },
-    courses: { url: "/courses", label: "Courses Page" },
-    mod_apps: { url: "/apps/mod", label: "Mod Apps" },
+    news: { url: "/#news", label: "News" }, videos: { url: "/#videos", label: "Videos" },
+    prompts: { url: "/prompts", label: "AI Prompts" }, software: { url: "/#software", label: "Software" },
+    courses: { url: "/courses", label: "Courses" }, mod_apps: { url: "/apps/mod", label: "Mod Apps" },
     new_releases: { url: "/apps/new-releases", label: "New Releases" },
-    online_assets: { url: "/assets", label: "Online Assets" },
-    shop: { url: "/shop", label: "Shop Page" },
+    online_assets: { url: "/assets", label: "Assets" }, shop: { url: "/shop", label: "Shop" },
 };
 
-type Tab = {
-    id: string;
-    label: string;
-    icon: string;
-};
-
-/* ─── Constants ─── */
-const TABS: Tab[] = [
-    { id: "overview", label: "Overview", icon: "grid_view" },
-    { id: "news", label: "News Manager", icon: "article" },
-    { id: "videos", label: "Video Library", icon: "video_library" },
-    { id: "prompts", label: "AI Prompts", icon: "smart_toy" },
-    { id: "software", label: "Software Files", icon: "folder_open" },
-    { id: "courses", label: "Courses", icon: "school" },
-    { id: "mod_apps", label: "Mod Apps", icon: "sports_esports" },
-    { id: "new_releases", label: "New Releases", icon: "new_releases" },
-    { id: "online_assets", label: "Online Assets", icon: "cloud" },
-    { id: "shop", label: "Shop Products", icon: "storefront" },
+type NavItem = { id: string; label: string; icon: string; children?: NavItem[] };
+const NAV_ITEMS: NavItem[] = [
+    { id: "dashboard", label: "Dashboard", icon: "dashboard" },
+    {
+        id: "content", label: "Content", icon: "video_library", children: [
+            { id: "news", label: "News", icon: "article" },
+            { id: "videos", label: "Videos", icon: "play_circle" },
+            { id: "prompts", label: "AI Prompts", icon: "smart_toy" },
+            { id: "software", label: "Software", icon: "folder_open" },
+            { id: "courses", label: "Courses", icon: "school" },
+            { id: "mod_apps", label: "Mod Apps", icon: "sports_esports" },
+            { id: "new_releases", label: "New Releases", icon: "new_releases" },
+            { id: "online_assets", label: "Online Assets", icon: "cloud" },
+            { id: "shop", label: "Shop", icon: "storefront" },
+        ]
+    },
+    { id: "comments", label: "Comments", icon: "chat" },
+    { id: "analytics", label: "Analytics", icon: "analytics" },
+    { id: "settings", label: "Settings", icon: "settings" },
 ];
 
-const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-    "Tech News": { bg: "bg-blue-500/10", text: "text-blue-400", border: "border-blue-500/20" },
-    Hardware: { bg: "bg-purple-500/10", text: "text-purple-400", border: "border-purple-500/20" },
-    Announcements: { bg: "bg-amber-500/10", text: "text-amber-400", border: "border-amber-500/20" },
-    Education: { bg: "bg-emerald-500/10", text: "text-emerald-400", border: "border-emerald-500/20" },
-    Software: { bg: "bg-cyan-500/10", text: "text-cyan-400", border: "border-cyan-500/20" },
-    AI: { bg: "bg-rose-500/10", text: "text-rose-400", border: "border-rose-500/20" },
-    Tutorial: { bg: "bg-teal-500/10", text: "text-teal-400", border: "border-teal-500/20" },
-    Review: { bg: "bg-sky-500/10", text: "text-sky-400", border: "border-sky-500/20" },
-    Default: { bg: "bg-slate-500/10", text: "text-slate-400", border: "border-slate-500/20" },
+const CATEGORIES = ["Tech News", "Hardware", "Announcements", "Education", "Software", "AI", "Tutorial", "Review"];
+const CAT_COLORS: Record<string, string> = {
+    "Tech News": "bg-blue-500", "Hardware": "bg-purple-500", "Announcements": "bg-amber-500",
+    "Education": "bg-emerald-500", "Software": "bg-cyan-500", "AI": "bg-rose-500",
+    "Tutorial": "bg-teal-500", "Review": "bg-sky-500",
 };
-
 const ADMIN_PASSWORD = "tecsub2026";
 
-/* ─── Helper: category badge style ─── */
-function catStyle(cat: string) {
-    return CATEGORY_COLORS[cat] || CATEGORY_COLORS.Default;
-}
-
-/* ─── Component ─── */
 export default function AdminPage() {
-    /* Auth */
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [password, setPassword] = useState("");
-
-    /* Content state */
-    const [activeTab, setActiveTab] = useState("news");
+    const [activeTab, setActiveTab] = useState("dashboard");
     const [items, setItems] = useState<ContentItem[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 6;
-
-    /* Editing / Adding */
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [contentExpanded, setContentExpanded] = useState(true);
+    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+    const [statusFilter, setStatusFilter] = useState<string>("all");
     const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
     const [showAddModal, setShowAddModal] = useState(false);
-    const [previewItem, setPreviewItem] = useState<ContentItem | null>(null);
+    const [detailItem, setDetailItem] = useState<ContentItem | null>(null);
+    const [toasts, setToasts] = useState<Toast[]>([]);
     const [newTitle, setNewTitle] = useState("");
     const [newCategory, setNewCategory] = useState("Tech News");
     const [newAuthor, setNewAuthor] = useState("Admin");
     const [newDescription, setNewDescription] = useState("");
+    const [wizardStep, setWizardStep] = useState(1);
+    const [wizardType, setWizardType] = useState("news");
+    const [activity, setActivity] = useState<{ text: string; time: string }[]>([]);
+    const itemsPerPage = 8;
+    const toastId = useRef(0);
 
-    /* Upload simulation */
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [uploadFile, setUploadFile] = useState<string | null>(null);
-    const uploadTimer = useRef<NodeJS.Timeout | null>(null);
+    const contentTab = ["news", "videos", "prompts", "software", "courses", "mod_apps", "new_releases", "online_assets", "shop"].includes(activeTab) ? activeTab : "news";
 
-    /* ─── Load / Save ─── */
+    const addToast = useCallback((message: string, type: Toast["type"] = "success") => {
+        const id = ++toastId.current;
+        setToasts(t => [...t, { id, message, type }]);
+        setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3500);
+    }, []);
+
+    const addActivity = useCallback((text: string) => {
+        setActivity(a => [{ text, time: new Date().toLocaleTimeString() }, ...a].slice(0, 20));
+    }, []);
+
     useEffect(() => {
-        const stored = localStorage.getItem(`tecsub-admin-${activeTab}`);
-        if (stored) setItems(JSON.parse(stored));
-        else setItems([]);
-        setCurrentPage(1);
-        setSearchQuery("");
+        const tab = ["news", "videos", "prompts", "software", "courses", "mod_apps", "new_releases", "online_assets", "shop"].includes(activeTab) ? activeTab : null;
+        if (tab) {
+            const stored = localStorage.getItem(`tecsub-admin-${tab}`);
+            setItems(stored ? JSON.parse(stored) : []);
+        }
+        setCurrentPage(1); setSearchQuery(""); setStatusFilter("all");
     }, [activeTab]);
 
     const saveItems = (updated: ContentItem[]) => {
         setItems(updated);
-        localStorage.setItem(`tecsub-admin-${activeTab}`, JSON.stringify(updated));
+        localStorage.setItem(`tecsub-admin-${contentTab}`, JSON.stringify(updated));
     };
 
-    /* ─── Auth ─── */
-    const handleLogin = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (password === ADMIN_PASSWORD) setIsLoggedIn(true);
-    };
+    const handleLogin = (e: React.FormEvent) => { e.preventDefault(); if (password === ADMIN_PASSWORD) setIsLoggedIn(true); };
 
-    /* ─── CRUD ─── */
     const addItem = () => {
         if (!newTitle.trim()) return;
         const item: ContentItem = {
-            id: `#${1000 + items.length + 1}`,
-            title: newTitle,
-            type: activeTab,
-            status: "draft",
-            category: newCategory,
-            author: newAuthor,
+            id: `#${1000 + items.length + 1}`, title: newTitle, type: wizardType,
+            status: "draft", category: newCategory, author: newAuthor,
             description: newDescription || undefined,
             createdAt: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
         };
         saveItems([item, ...items]);
-        setNewTitle("");
-        setNewCategory("Tech News");
-        setNewAuthor("Admin");
-        setNewDescription("");
-        setShowAddModal(false);
+        addToast(`"${newTitle}" created as draft`);
+        addActivity(`Created "${newTitle}" in ${wizardType}`);
+        setNewTitle(""); setNewCategory("Tech News"); setNewAuthor("Admin"); setNewDescription("");
+        setShowAddModal(false); setWizardStep(1);
     };
 
-    const deleteItem = (id: string) => saveItems(items.filter((i) => i.id !== id));
+    const deleteItem = (id: string) => {
+        const item = items.find(i => i.id === id);
+        saveItems(items.filter(i => i.id !== id));
+        addToast(`Item deleted`, "info");
+        if (item) addActivity(`Deleted "${item.title}"`);
+        if (detailItem?.id === id) setDetailItem(null);
+    };
 
     const updateItem = (item: ContentItem) => {
-        saveItems(items.map((i) => (i.id === item.id ? item : i)));
-        setEditingItem(null);
+        saveItems(items.map(i => i.id === item.id ? item : i));
+        setEditingItem(null); setDetailItem(item);
+        addToast(`"${item.title}" updated`);
+        addActivity(`Updated "${item.title}"`);
     };
 
     const cycleStatus = (item: ContentItem) => {
         const order: ContentItem["status"][] = ["draft", "published", "archived"];
         const next = order[(order.indexOf(item.status) + 1) % order.length];
-        updateItem({ ...item, status: next });
+        const updated = { ...item, status: next };
+        saveItems(items.map(i => i.id === item.id ? updated : i));
+        addToast(`Status changed to ${next}`);
+        addActivity(`"${item.title}" → ${next}`);
     };
 
-    /* ─── Upload simulation ─── */
-    const simulateUpload = (fileName: string) => {
-        setUploadFile(fileName);
-        setUploadProgress(0);
-        if (uploadTimer.current) clearInterval(uploadTimer.current);
-        uploadTimer.current = setInterval(() => {
-            setUploadProgress((p) => {
-                if (p >= 100) {
-                    if (uploadTimer.current) clearInterval(uploadTimer.current);
-                    return 100;
-                }
-                return p + Math.random() * 15;
-            });
-        }, 300);
-    };
-
-    /* ─── Filtering ─── */
-    const filtered = items.filter(
-        (i) =>
-            i.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            i.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            i.id.includes(searchQuery)
-    );
+    const filtered = items.filter(i => {
+        const matchSearch = i.title.toLowerCase().includes(searchQuery.toLowerCase()) || i.category.toLowerCase().includes(searchQuery.toLowerCase()) || i.id.includes(searchQuery);
+        const matchStatus = statusFilter === "all" || i.status === statusFilter;
+        return matchSearch && matchStatus;
+    });
     const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
     const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-    /* ─── Stats ─── */
     const totalCount = items.length;
-    const publishedCount = items.filter((i) => i.status === "published").length;
-    const draftCount = items.filter((i) => i.status === "draft").length;
+    const publishedCount = items.filter(i => i.status === "published").length;
+    const draftCount = items.filter(i => i.status === "draft").length;
 
-    /* ─── Tab label for breadcrumb ─── */
-    const currentTabLabel = TABS.find((t) => t.id === activeTab)?.label || "Overview";
+    const currentLabel = NAV_ITEMS.flatMap(n => n.children ? [n, ...n.children] : [n]).find(n => n.id === activeTab)?.label || "Dashboard";
 
-    /* ─── Status badge ─── */
-    const statusBadge = (status: ContentItem["status"]) => {
-        if (status === "published")
-            return (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-admin-success/10 text-admin-success border border-admin-success/20">
-                    <span className="w-1.5 h-1.5 rounded-full bg-admin-success animate-pulse" />
-                    Published
-                </span>
-            );
-        if (status === "archived")
-            return (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600/30">
-                    Archived
-                </span>
-            );
-        return (
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-admin-bg-lighter text-admin-text-secondary border border-admin-border">
-                Draft
-            </span>
-        );
+    const statusBadge = (s: ContentItem["status"]) => {
+        const cls = s === "published" ? "bg-admin-success/20 text-green-400" : s === "archived" ? "bg-admin-bg-lighter text-admin-text-secondary" : "bg-yellow-500/20 text-yellow-400";
+        return <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${cls}`}>
+            {s === "published" && <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />}{s.charAt(0).toUpperCase() + s.slice(1)}
+        </span>;
     };
 
-    /* ═══════════════════════ LOGIN SCREEN ═══════════════════════ */
-    if (!isLoggedIn) {
-        return (
-            <div className="min-h-screen bg-admin-bg-dark flex items-center justify-center p-4 font-['Noto_Sans',sans-serif]">
-                <div className="w-full max-w-md bg-admin-bg-card p-8 rounded-2xl border border-admin-border shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-admin-primary to-transparent" />
-                    <div className="text-center mb-8">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-admin-primary to-purple-600 flex items-center justify-center text-white font-bold text-2xl font-space-grotesk shadow-lg shadow-admin-primary/20 mx-auto mb-4">
-                            TS
-                        </div>
-                        <h2 className="text-2xl font-space-grotesk font-bold text-white">Welcome Back</h2>
-                        <p className="text-admin-text-secondary text-sm mt-2">TecSub Secure Admin Portal</p>
-                    </div>
-                    <form onSubmit={handleLogin} className="space-y-4">
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter password"
-                            className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-3 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent placeholder:text-slate-600 text-sm outline-none"
-                        />
-                        <button
-                            type="submit"
-                            className="w-full flex items-center justify-center gap-2 bg-admin-primary hover:bg-admin-primary-hover text-white font-bold py-3 rounded-lg transition-colors shadow-lg shadow-admin-primary/20"
-                        >
-                            <span className="material-symbols-outlined text-xl">login</span>
-                            Sign In
-                        </button>
-                    </form>
-                    <p className="text-center text-xs text-admin-text-secondary mt-6 flex items-center justify-center gap-1">
-                        <span className="material-symbols-outlined text-sm">lock</span>
-                        Secured Admin Portal
-                    </p>
+    /* ═══ LOGIN ═══ */
+    if (!isLoggedIn) return (
+        <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center p-4 font-['Roboto',sans-serif]">
+            <div className="w-full max-w-sm bg-[#272727] p-8 rounded-2xl border border-[#3f3f3f] shadow-2xl">
+                <div className="text-center mb-6">
+                    <div className="w-14 h-14 rounded-full bg-admin-red flex items-center justify-center text-white font-bold text-xl mx-auto mb-3">▶</div>
+                    <h2 className="text-xl font-semibold text-white">TecSub Studio</h2>
+                    <p className="text-[#aaa] text-sm mt-1">Sign in to manage your content</p>
                 </div>
+                <form onSubmit={handleLogin} className="space-y-4">
+                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter password"
+                        className="w-full bg-[#121212] border border-[#3f3f3f] text-white px-4 py-3 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent placeholder:text-[#717171] text-sm outline-none" />
+                    <button type="submit" className="w-full bg-admin-primary hover:bg-admin-primary-hover text-[#0f0f0f] font-semibold py-3 rounded-lg transition-colors text-sm">Sign In</button>
+                </form>
             </div>
-        );
-    }
+        </div>
+    );
 
-    /* ═══════════════════════ DASHBOARD ═══════════════════════ */
+    /* ═══ MAIN LAYOUT ═══ */
+    const isContentTab = ["news", "videos", "prompts", "software", "courses", "mod_apps", "new_releases", "online_assets", "shop"].includes(activeTab);
+
     return (
-        <div className="bg-admin-bg-dark text-admin-text font-['Noto_Sans',sans-serif] antialiased selection:bg-admin-primary selection:text-white h-screen overflow-hidden flex">
-            {/* ─── SIDEBAR ─── */}
-            <aside className="w-64 h-full flex flex-col bg-admin-bg-card border-r border-admin-border shrink-0 overflow-y-auto">
-                {/* Logo */}
-                <div className="p-6 flex items-center gap-3 border-b border-admin-border/50">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-admin-primary to-purple-600 flex items-center justify-center text-white font-bold text-xl font-space-grotesk shadow-lg shadow-admin-primary/20">
-                        TS
-                    </div>
-                    <div>
-                        <h1 className="text-white font-space-grotesk font-bold text-lg leading-tight">TecSub</h1>
-                        <p className="text-admin-text-secondary text-xs">Admin Console</p>
-                    </div>
-                </div>
-
-                {/* Nav */}
-                <nav className="flex-1 px-3 py-6 flex flex-col gap-1">
-                    <p className="px-3 text-xs font-semibold text-admin-text-secondary uppercase tracking-wider mb-2">Main Menu</p>
-                    {TABS.map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors w-full text-left ${activeTab === tab.id
-                                ? "bg-admin-primary/10 text-admin-primary border-l-2 border-admin-primary"
-                                : "text-admin-text-secondary hover:bg-admin-bg-lighter hover:text-white border-l-2 border-transparent"
-                                }`}
-                        >
-                            <span className={`material-symbols-outlined text-[22px] ${activeTab === tab.id ? "" : "group-hover:text-admin-primary"}`}>
-                                {tab.icon}
-                            </span>
-                            <span className="font-medium text-sm">{tab.label}</span>
-                        </button>
-                    ))}
-
-                    <div className="mt-8 mb-2 px-3 border-t border-admin-border/30 pt-6">
-                        <p className="text-xs font-semibold text-admin-text-secondary uppercase tracking-wider mb-2">System</p>
-                    </div>
-                    <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-admin-text-secondary hover:bg-admin-bg-lighter hover:text-white transition-colors w-full text-left border-l-2 border-transparent">
-                        <span className="material-symbols-outlined text-[22px]">settings</span>
-                        <span className="font-medium text-sm">Settings</span>
+        <div className="bg-[#0f0f0f] text-[#f1f1f1] font-['Roboto',sans-serif] antialiased h-screen overflow-hidden flex flex-col">
+            {/* ─── TOP BAR (YouTube Studio style) ─── */}
+            <header className="h-14 bg-[#272727] border-b border-[#3f3f3f] flex items-center justify-between px-4 shrink-0 z-30">
+                <div className="flex items-center gap-3">
+                    <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-[#3f3f3f] rounded-full transition-colors">
+                        <span className="material-symbols-outlined text-[22px] text-[#f1f1f1]">menu</span>
                     </button>
-                    <button
-                        onClick={() => setIsLoggedIn(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-admin-text-secondary hover:bg-admin-bg-lighter hover:text-admin-danger transition-colors w-full text-left border-l-2 border-transparent"
-                    >
-                        <span className="material-symbols-outlined text-[22px]">logout</span>
-                        <span className="font-medium text-sm">Logout</span>
-                    </button>
-                </nav>
-
-                {/* User Profile Footer */}
-                <div className="p-4 border-t border-admin-border bg-admin-bg-lighter/30">
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-admin-primary to-purple-600 flex items-center justify-center text-white text-sm font-bold font-space-grotesk ring-2 ring-admin-primary/30">
-                                HM
-                            </div>
-                            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-admin-success rounded-full ring-2 ring-admin-bg-card" />
-                        </div>
-                        <div className="flex flex-col overflow-hidden">
-                            <span className="text-sm font-semibold text-white truncate font-space-grotesk">Hasantha M.</span>
-                            <span className="text-xs text-admin-text-secondary truncate">Super Admin</span>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-            {/* ─── MAIN CONTENT ─── */}
-            <main className="flex-1 flex flex-col h-full overflow-hidden relative">
-                {/* Header */}
-                <header className="h-16 border-b border-admin-border bg-admin-bg-card/50 backdrop-blur-md flex items-center justify-between px-6 shrink-0 z-10">
-                    <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-space-grotesk font-bold text-white tracking-tight">{currentTabLabel}</h2>
-                        <div className="h-4 w-px bg-admin-border mx-2" />
-                        <div className="flex items-center gap-2 text-sm text-admin-text-secondary">
-                            <span className="material-symbols-outlined text-base">home</span>
-                            <span>/</span>
-                            <span>Content</span>
-                            <span>/</span>
-                            <span className="text-white">{currentTabLabel}</span>
-                        </div>
-                    </div>
                     <div className="flex items-center gap-2">
-                        {/* Tab-specific View on Site */}
-                        {TAB_PAGE_MAP[activeTab] && (
-                            <a
-                                href={TAB_PAGE_MAP[activeTab].url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-admin-primary/10 text-admin-primary border border-admin-primary/20 hover:bg-admin-primary/20 transition-colors"
-                            >
-                                <span className="material-symbols-outlined text-base">visibility</span>
-                                View {TAB_PAGE_MAP[activeTab].label}
-                            </a>
-                        )}
-                        <a
-                            href="/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 text-admin-text-secondary hover:text-white hover:bg-admin-bg-lighter rounded-lg transition-colors text-sm flex items-center gap-1"
-                        >
-                            <span className="material-symbols-outlined text-lg">open_in_new</span>
-                            <span className="hidden sm:inline">Site</span>
-                        </a>
-                        <button className="relative p-2 text-admin-text-secondary hover:text-white hover:bg-admin-bg-lighter rounded-lg transition-colors">
-                            <span className="material-symbols-outlined">notifications</span>
-                            {draftCount > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-admin-primary rounded-full" />}
-                        </button>
+                        <div className="w-8 h-8 rounded-full bg-admin-red flex items-center justify-center text-white text-sm font-bold">▶</div>
+                        <span className="text-[15px] font-medium text-white hidden sm:block">TecSub Studio</span>
                     </div>
-                </header>
+                </div>
+                <div className="flex-1 max-w-lg mx-4 hidden md:block">
+                    <div className="relative">
+                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#717171] text-xl">search</span>
+                        <input type="text" value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }} placeholder="Search across your content"
+                            className="w-full bg-[#121212] border border-[#3f3f3f] text-white pl-10 pr-4 py-2 rounded-full focus:border-admin-primary placeholder:text-[#717171] text-sm outline-none" />
+                    </div>
+                </div>
+                <div className="flex items-center gap-1">
+                    <button onClick={() => { setShowAddModal(true); setWizardStep(1); }} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#3f3f3f] hover:bg-[#4f4f4f] rounded-lg transition-colors">
+                        <span className="material-symbols-outlined text-xl text-white">add</span>
+                        <span className="text-sm font-medium text-white hidden sm:block">Create</span>
+                    </button>
+                    <button className="relative p-2 hover:bg-[#3f3f3f] rounded-full transition-colors">
+                        <span className="material-symbols-outlined text-[22px] text-[#f1f1f1]">notifications</span>
+                        {draftCount > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-admin-red rounded-full" />}
+                    </button>
+                    <a href="/" target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-[#3f3f3f] rounded-full transition-colors" title="View your channel">
+                        <span className="material-symbols-outlined text-[22px] text-[#f1f1f1]">open_in_new</span>
+                    </a>
+                    <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs font-bold ml-1 cursor-pointer">HM</div>
+                </div>
+            </header>
 
-                {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto p-6 md:p-8 scroll-smooth" style={{ scrollbarColor: "#334155 #0f1115" }}>
-                    <div className="max-w-7xl mx-auto flex flex-col gap-6">
-                        {/* ── Stats Row ── */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="bg-admin-bg-card/70 backdrop-blur-xl border border-admin-border p-5 rounded-xl shadow-sm relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                    <span className="material-symbols-outlined text-6xl text-admin-primary">article</span>
-                                </div>
-                                <p className="text-admin-text-secondary text-sm font-medium mb-1">Total Items</p>
-                                <div className="flex items-baseline gap-2">
-                                    <h3 className="text-3xl font-space-grotesk font-bold text-white">{totalCount}</h3>
-                                    {totalCount > 0 && (
-                                        <span className="text-xs font-medium text-admin-success bg-admin-success/10 px-2 py-0.5 rounded-full flex items-center gap-0.5">
-                                            <span className="material-symbols-outlined text-[14px]">trending_up</span>
-                                            Active
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="bg-admin-bg-card/70 backdrop-blur-xl border border-admin-border p-5 rounded-xl shadow-sm relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                    <span className="material-symbols-outlined text-6xl text-admin-warning">pending_actions</span>
-                                </div>
-                                <p className="text-admin-text-secondary text-sm font-medium mb-1">Pending Review</p>
-                                <div className="flex items-baseline gap-2">
-                                    <h3 className="text-3xl font-space-grotesk font-bold text-white">{draftCount}</h3>
-                                    {draftCount > 0 && (
-                                        <span className="text-xs font-medium text-admin-warning bg-admin-warning/10 px-2 py-0.5 rounded-full">
-                                            Action Needed
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="bg-admin-bg-card/70 backdrop-blur-xl border border-admin-border p-5 rounded-xl shadow-sm relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                    <span className="material-symbols-outlined text-6xl text-admin-success">publish</span>
-                                </div>
-                                <p className="text-admin-text-secondary text-sm font-medium mb-1">Published</p>
-                                <div className="flex items-baseline gap-2">
-                                    <h3 className="text-3xl font-space-grotesk font-bold text-white">{publishedCount}</h3>
-                                    {publishedCount > 0 && (
-                                        <span className="text-xs font-medium text-admin-success bg-admin-success/10 px-2 py-0.5 rounded-full flex items-center gap-0.5">
-                                            <span className="material-symbols-outlined text-[14px]">trending_up</span>
-                                            Live
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        {activeTab === "overview" ? (
-                            /* ── OVERVIEW TAB ── */
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <div className="bg-admin-bg-card p-6 rounded-xl border border-admin-border">
-                                    <h3 className="text-lg font-space-grotesk font-bold text-white mb-4">Quick Actions</h3>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        {TABS.filter((t) => t.id !== "overview").map((tab) => (
-                                            <button
-                                                key={tab.id}
-                                                onClick={() => setActiveTab(tab.id)}
-                                                className="flex items-center gap-3 p-4 rounded-xl bg-admin-bg-lighter/30 border border-admin-border/50 hover:border-admin-primary/50 hover:bg-admin-primary/5 transition-all text-left"
-                                            >
-                                                <span className="material-symbols-outlined text-admin-primary">{tab.icon}</span>
-                                                <div>
-                                                    <p className="text-sm font-medium text-white">{tab.label}</p>
-                                                    <p className="text-xs text-admin-text-secondary">Manage</p>
-                                                </div>
+            <div className="flex flex-1 overflow-hidden">
+                {/* ─── SIDEBAR ─── */}
+                <aside className={`${sidebarOpen ? "w-56" : "w-[72px]"} h-full flex flex-col bg-[#0f0f0f] border-r border-[#272727] shrink-0 overflow-y-auto overflow-x-hidden transition-all duration-200`}>
+                    <nav className="flex-1 py-2 flex flex-col">
+                        {NAV_ITEMS.map(item => (
+                            <div key={item.id}>
+                                <button onClick={() => { if (item.children) { setContentExpanded(!contentExpanded); } else { setActiveTab(item.id); } }}
+                                    className={`flex items-center gap-3 w-full px-4 py-2.5 transition-colors text-left ${activeTab === item.id ? "bg-[#272727] text-white" : "text-[#aaa] hover:bg-[#1a1a1a] hover:text-white"} ${!sidebarOpen ? "justify-center px-0" : ""}`}>
+                                    <span className={`material-symbols-outlined text-[22px] ${activeTab === item.id ? "text-white" : ""}`}>{item.icon}</span>
+                                    {sidebarOpen && <span className="text-sm flex-1">{item.label}</span>}
+                                    {sidebarOpen && item.children && <span className="material-symbols-outlined text-lg">{contentExpanded ? "expand_less" : "expand_more"}</span>}
+                                </button>
+                                {item.children && contentExpanded && sidebarOpen && (
+                                    <div className="ml-4 border-l border-[#3f3f3f]">
+                                        {item.children.map(child => (
+                                            <button key={child.id} onClick={() => setActiveTab(child.id)}
+                                                className={`flex items-center gap-3 w-full pl-4 pr-3 py-2 transition-colors text-left text-sm ${activeTab === child.id ? "text-white bg-[#272727]" : "text-[#aaa] hover:bg-[#1a1a1a] hover:text-white"}`}>
+                                                <span className="material-symbols-outlined text-[18px]">{child.icon}</span>
+                                                <span>{child.label}</span>
                                             </button>
                                         ))}
                                     </div>
-                                </div>
-                                <div className="bg-admin-bg-card p-6 rounded-xl border border-admin-border flex flex-col gap-4">
-                                    <h3 className="text-lg font-space-grotesk font-bold text-white mb-2">System Health</h3>
-                                    <HealthCard icon="dns" label="Database" sub="Connected (12ms)" color="text-admin-success" />
-                                    <HealthCard icon="cloud_done" label="CDN Status" sub="Operational" color="text-admin-primary" />
-                                    <HealthCard icon="security" label="SSL Certificate" sub="Valid until 2027" color="text-admin-success" />
-                                </div>
+                                )}
                             </div>
-                        ) : (
-                            <>
-                                {/* ── Action Toolbar ── */}
-                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-admin-bg-card p-4 rounded-xl border border-admin-border">
-                                    <div className="flex flex-1 w-full sm:w-auto items-center gap-3">
-                                        <div className="relative w-full max-w-md">
-                                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-admin-text-secondary text-xl">search</span>
-                                            <input
-                                                type="text"
-                                                value={searchQuery}
-                                                onChange={(e) => {
-                                                    setSearchQuery(e.target.value);
-                                                    setCurrentPage(1);
-                                                }}
-                                                className="w-full bg-admin-bg-dark border border-admin-border text-white pl-10 pr-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent placeholder:text-slate-600 text-sm outline-none"
-                                                placeholder="Search articles, tags, or IDs..."
-                                            />
+                        ))}
+                    </nav>
+                    {sidebarOpen && <div className="p-4 border-t border-[#272727]">
+                        <button onClick={() => setIsLoggedIn(false)} className="flex items-center gap-2 text-[#aaa] hover:text-white text-sm w-full transition-colors">
+                            <span className="material-symbols-outlined text-lg">logout</span>Sign out
+                        </button>
+                        <p className="text-[10px] text-[#555] mt-3">TecSub Studio v2.0</p>
+                    </div>}
+                </aside>
+
+                {/* ─── MAIN CONTENT ─── */}
+                <main className="flex-1 flex flex-col h-full overflow-hidden">
+                    <div className="flex-1 overflow-y-auto p-6" style={{ scrollbarColor: "#3f3f3f #0f0f0f" }}>
+                        <div className="max-w-6xl mx-auto">
+
+                            {/* ═══ DASHBOARD ═══ */}
+                            {activeTab === "dashboard" && (<>
+                                <h1 className="text-2xl font-medium text-white mb-6">Channel dashboard</h1>
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                                    {[{ l: "Total Content", v: (() => { let t = 0;["news", "videos", "prompts", "software", "courses", "mod_apps", "new_releases", "online_assets", "shop"].forEach(k => { const s = localStorage.getItem(`tecsub-admin-${k}`); if (s) t += JSON.parse(s).length; }); return t; })(), ic: "video_library", c: "text-admin-primary" },
+                                    { l: "Published", v: (() => { let t = 0;["news", "videos", "prompts", "software", "courses", "mod_apps", "new_releases", "online_assets", "shop"].forEach(k => { const s = localStorage.getItem(`tecsub-admin-${k}`); if (s) t += JSON.parse(s).filter((x: ContentItem) => x.status === "published").length; }); return t; })(), ic: "check_circle", c: "text-green-400" },
+                                    { l: "Drafts", v: (() => { let t = 0;["news", "videos", "prompts", "software", "courses", "mod_apps", "new_releases", "online_assets", "shop"].forEach(k => { const s = localStorage.getItem(`tecsub-admin-${k}`); if (s) t += JSON.parse(s).filter((x: ContentItem) => x.status === "draft").length; }); return t; })(), ic: "edit_note", c: "text-yellow-400" }
+                                    ].map((card, i) => (
+                                        <div key={i} className="bg-[#272727] rounded-xl p-5 border border-[#3f3f3f] hover:border-[#555] transition-colors">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className="text-sm text-[#aaa]">{card.l}</span>
+                                                <span className={`material-symbols-outlined ${card.c}`}>{card.ic}</span>
+                                            </div>
+                                            <p className="text-3xl font-medium text-white">{card.v}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                    <div className="bg-[#272727] rounded-xl p-5 border border-[#3f3f3f]">
+                                        <h3 className="text-base font-medium text-white mb-4 flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-admin-primary">bolt</span>Quick actions
+                                        </h3>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            {NAV_ITEMS.find(n => n.id === "content")?.children?.map(child => (
+                                                <button key={child.id} onClick={() => setActiveTab(child.id)}
+                                                    className="flex items-center gap-2 p-3 rounded-lg bg-[#1a1a1a] border border-[#3f3f3f] hover:bg-[#3f3f3f] transition-colors text-left">
+                                                    <span className="material-symbols-outlined text-lg text-[#aaa]">{child.icon}</span>
+                                                    <span className="text-sm text-[#ddd]">{child.label}</span>
+                                                </button>
+                                            ))}
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={() => setShowAddModal(true)}
-                                        className="flex items-center justify-center gap-2 bg-admin-primary hover:bg-admin-primary-hover text-white px-5 py-2.5 rounded-lg font-medium text-sm transition-all shadow-lg shadow-admin-primary/20 w-full sm:w-auto"
-                                    >
-                                        <span className="material-symbols-outlined text-xl">add</span>
-                                        <span>Add New Item</span>
-                                    </button>
+                                    <div className="bg-[#272727] rounded-xl p-5 border border-[#3f3f3f]">
+                                        <h3 className="text-base font-medium text-white mb-4 flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-admin-primary">schedule</span>Recent activity
+                                        </h3>
+                                        {activity.length === 0 ? <p className="text-sm text-[#717171]">No recent activity. Start managing content!</p> :
+                                            <div className="space-y-2 max-h-60 overflow-y-auto">{activity.map((a, i) => (
+                                                <div key={i} className="flex items-start gap-2 text-sm py-1.5 border-b border-[#3f3f3f]/50 last:border-0">
+                                                    <span className="text-[10px] text-[#717171] mt-0.5 shrink-0">{a.time}</span>
+                                                    <span className="text-[#ddd]">{a.text}</span>
+                                                </div>
+                                            ))}</div>}
+                                    </div>
+                                </div>
+                            </>)}
+
+                            {/* ═══ ANALYTICS TAB ═══ */}
+                            {activeTab === "analytics" && (
+                                <div>
+                                    <h1 className="text-2xl font-medium text-white mb-6">Channel analytics</h1>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                        {[{ l: "Content Items", v: totalCount, d: "+12% this month" }, { l: "Published Rate", v: `${totalCount ? Math.round(publishedCount / totalCount * 100) : 0}%`, d: "Across all channels" }, { l: "Pending Review", v: draftCount, d: "Items in draft" }].map((c, i) => (
+                                            <div key={i} className="bg-[#272727] rounded-xl p-6 border border-[#3f3f3f]">
+                                                <p className="text-sm text-[#aaa] mb-2">{c.l}</p>
+                                                <p className="text-4xl font-medium text-white mb-1">{c.v}</p>
+                                                <p className="text-xs text-[#717171]">{c.d}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="bg-[#272727] rounded-xl p-6 border border-[#3f3f3f]">
+                                        <h3 className="text-base font-medium text-white mb-4">Content by category</h3>
+                                        <div className="space-y-3">
+                                            {NAV_ITEMS.find(n => n.id === "content")?.children?.map(child => {
+                                                const s = localStorage.getItem(`tecsub-admin-${child.id}`);
+                                                const count = s ? JSON.parse(s).length : 0;
+                                                return <div key={child.id} className="flex items-center gap-3">
+                                                    <span className="material-symbols-outlined text-lg text-[#aaa]">{child.icon}</span>
+                                                    <span className="text-sm text-[#ddd] w-28">{child.label}</span>
+                                                    <div className="flex-1 h-2 bg-[#1a1a1a] rounded-full overflow-hidden">
+                                                        <div className="h-full bg-admin-primary rounded-full transition-all" style={{ width: `${Math.min(100, count * 10)}%` }} />
+                                                    </div>
+                                                    <span className="text-sm text-[#aaa] w-8 text-right">{count}</span>
+                                                </div>;
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ═══ COMMENTS TAB ═══ */}
+                            {activeTab === "comments" && (
+                                <div>
+                                    <h1 className="text-2xl font-medium text-white mb-6">Comments</h1>
+                                    <div className="bg-[#272727] rounded-xl p-8 border border-[#3f3f3f] text-center">
+                                        <span className="material-symbols-outlined text-5xl text-[#3f3f3f] mb-3 block">chat_bubble_outline</span>
+                                        <p className="text-[#aaa] text-sm">Comments will appear here as your audience engages with your content.</p>
+                                        <p className="text-[#555] text-xs mt-2">This feature is coming soon</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ═══ SETTINGS TAB ═══ */}
+                            {activeTab === "settings" && (
+                                <div>
+                                    <h1 className="text-2xl font-medium text-white mb-6">Settings</h1>
+                                    <div className="bg-[#272727] rounded-xl p-6 border border-[#3f3f3f] space-y-4">
+                                        {[{ l: "Channel name", v: "TecSub Solutions" }, { l: "Admin email", v: "admin@tecsub.com" }, { l: "Storage", v: "localStorage (Client-side)" }].map((s, i) => (
+                                            <div key={i} className="flex items-center justify-between py-3 border-b border-[#3f3f3f] last:border-0">
+                                                <span className="text-sm text-[#aaa]">{s.l}</span><span className="text-sm text-white">{s.v}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ═══ CONTENT TABS ═══ */}
+                            {isContentTab && (<>
+                                <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+                                    <div className="flex items-center gap-3">
+                                        <h1 className="text-2xl font-medium text-white">Channel {currentLabel.toLowerCase()}</h1>
+                                        {TAB_PAGE_MAP[activeTab] && <a href={TAB_PAGE_MAP[activeTab].url} target="_blank" rel="noopener noreferrer" className="text-admin-primary text-sm hover:underline flex items-center gap-1">
+                                            <span className="material-symbols-outlined text-base">open_in_new</span>View live
+                                        </a>}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")} className="p-2 hover:bg-[#3f3f3f] rounded-lg transition-colors">
+                                            <span className="material-symbols-outlined text-xl text-[#aaa]">{viewMode === "grid" ? "view_list" : "grid_view"}</span>
+                                        </button>
+                                    </div>
                                 </div>
 
-                                {/* ── Data Table ── */}
-                                <div className="bg-admin-bg-card rounded-xl border border-admin-border overflow-hidden flex flex-col">
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full text-left border-collapse">
-                                            <thead>
-                                                <tr className="bg-admin-bg-lighter/50 border-b border-admin-border text-xs uppercase tracking-wider text-admin-text-secondary font-semibold">
-                                                    <th className="px-6 py-4 w-24">ID</th>
-                                                    <th className="px-6 py-4 min-w-[300px]">Title &amp; Author</th>
-                                                    <th className="px-6 py-4">Category</th>
-                                                    <th className="px-6 py-4">Date</th>
-                                                    <th className="px-6 py-4 text-center">Status</th>
-                                                    <th className="px-6 py-4 text-right">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-admin-border/50 text-sm">
-                                                {paginated.length === 0 ? (
-                                                    <tr>
-                                                        <td colSpan={6} className="px-6 py-16 text-center">
-                                                            <span className="material-symbols-outlined text-5xl text-admin-border mb-3 block">inbox</span>
-                                                            <p className="text-admin-text-secondary text-sm">No items found</p>
-                                                            <p className="text-slate-600 text-xs mt-1">Add your first item using the button above</p>
+                                {/* Filter pills */}
+                                <div className="flex items-center gap-2 mb-4 overflow-x-auto">
+                                    {["all", "published", "draft", "archived"].map(f => (
+                                        <button key={f} onClick={() => { setStatusFilter(f); setCurrentPage(1); }}
+                                            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${statusFilter === f ? "bg-white text-[#0f0f0f]" : "bg-[#272727] text-[#aaa] hover:bg-[#3f3f3f]"}`}>
+                                            {f.charAt(0).toUpperCase() + f.slice(1)}{f !== "all" && ` (${items.filter(i => f === "all" || i.status === f).length})`}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Content */}
+                                {paginated.length === 0 ? (
+                                    <div className="bg-[#272727] rounded-xl p-12 border border-[#3f3f3f] text-center">
+                                        <span className="material-symbols-outlined text-5xl text-[#3f3f3f] mb-3 block">inbox</span>
+                                        <p className="text-[#aaa] text-sm">No content found</p>
+                                        <button onClick={() => { setShowAddModal(true); setWizardStep(1); setWizardType(activeTab); }} className="mt-3 px-4 py-2 bg-admin-primary text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-admin-primary-hover transition-colors">
+                                            Create your first item
+                                        </button>
+                                    </div>
+                                ) : viewMode === "grid" ? (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                                        {paginated.map(item => (
+                                            <div key={item.id} onClick={() => setDetailItem(item)} className="bg-[#272727] rounded-xl border border-[#3f3f3f] hover:border-[#555] transition-all cursor-pointer group overflow-hidden">
+                                                <div className="aspect-video bg-[#1a1a1a] relative flex items-center justify-center">
+                                                    <span className="material-symbols-outlined text-4xl text-[#3f3f3f]">{NAV_ITEMS.find(n => n.id === "content")?.children?.find(c => c.id === activeTab)?.icon || "article"}</span>
+                                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                                        <button onClick={e => { e.stopPropagation(); setEditingItem(item); }} className="p-2 bg-black/70 rounded-full hover:bg-black/90"><span className="material-symbols-outlined text-white text-lg">edit</span></button>
+                                                        <button onClick={e => { e.stopPropagation(); deleteItem(item.id); }} className="p-2 bg-black/70 rounded-full hover:bg-black/90"><span className="material-symbols-outlined text-white text-lg">delete</span></button>
+                                                    </div>
+                                                    <div className="absolute top-2 right-2">{statusBadge(item.status)}</div>
+                                                </div>
+                                                <div className="p-3">
+                                                    <p className="text-sm font-medium text-white line-clamp-2 mb-1">{item.title}</p>
+                                                    <div className="flex items-center justify-between">
+                                                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${CAT_COLORS[item.category] || "bg-gray-500"} text-white`}>{item.category}</span>
+                                                        <span className="text-[11px] text-[#717171]">{item.createdAt}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="bg-[#272727] rounded-xl border border-[#3f3f3f] overflow-hidden">
+                                        <table className="w-full text-left">
+                                            <thead><tr className="border-b border-[#3f3f3f] text-xs text-[#aaa] uppercase">
+                                                <th className="px-4 py-3">Content</th><th className="px-4 py-3 hidden md:table-cell">Category</th><th className="px-4 py-3 hidden sm:table-cell">Date</th><th className="px-4 py-3 text-center">Status</th><th className="px-4 py-3 text-right">Actions</th>
+                                            </tr></thead>
+                                            <tbody className="divide-y divide-[#3f3f3f]/50">
+                                                {paginated.map(item => (
+                                                    <tr key={item.id} onClick={() => setDetailItem(item)} className="hover:bg-[#1a1a1a] cursor-pointer transition-colors group">
+                                                        <td className="px-4 py-3">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-28 h-16 rounded bg-[#1a1a1a] border border-[#3f3f3f] flex items-center justify-center shrink-0">
+                                                                    <span className="material-symbols-outlined text-[#3f3f3f]">{NAV_ITEMS.find(n => n.id === "content")?.children?.find(c => c.id === activeTab)?.icon || "article"}</span>
+                                                                </div>
+                                                                <div><p className="text-sm font-medium text-white">{item.title}</p><p className="text-xs text-[#717171]">{item.author}</p></div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-4 py-3 hidden md:table-cell"><span className={`text-xs px-2 py-0.5 rounded ${CAT_COLORS[item.category] || "bg-gray-500"} text-white`}>{item.category}</span></td>
+                                                        <td className="px-4 py-3 text-sm text-[#aaa] hidden sm:table-cell">{item.createdAt}</td>
+                                                        <td className="px-4 py-3 text-center"><button onClick={e => { e.stopPropagation(); cycleStatus(item); }}>{statusBadge(item.status)}</button></td>
+                                                        <td className="px-4 py-3 text-right">
+                                                            <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                <button onClick={e => { e.stopPropagation(); setEditingItem(item); }} className="p-1.5 hover:bg-[#3f3f3f] rounded"><span className="material-symbols-outlined text-lg text-[#aaa]">edit</span></button>
+                                                                <button onClick={e => { e.stopPropagation(); deleteItem(item.id); }} className="p-1.5 hover:bg-[#3f3f3f] rounded"><span className="material-symbols-outlined text-lg text-[#aaa]">delete</span></button>
+                                                            </div>
                                                         </td>
                                                     </tr>
-                                                ) : (
-                                                    paginated.map((item) => (
-                                                        <tr key={item.id} className="group hover:bg-admin-bg-lighter/30 transition-colors">
-                                                            <td className="px-6 py-4 text-admin-text-secondary font-mono">{item.id}</td>
-                                                            <td className="px-6 py-4">
-                                                                <div className="flex items-center gap-3">
-                                                                    <div className="w-10 h-10 rounded-lg bg-admin-bg-lighter border border-admin-border flex items-center justify-center shrink-0">
-                                                                        <span className="material-symbols-outlined text-admin-text-secondary text-lg">
-                                                                            {activeTab === "videos" ? "play_circle" : activeTab === "prompts" ? "smart_toy" : activeTab === "software" ? "folder_zip" : activeTab === "courses" ? "school" : activeTab === "mod_apps" ? "sports_esports" : activeTab === "new_releases" ? "new_releases" : activeTab === "online_assets" ? "cloud" : activeTab === "shop" ? "storefront" : "article"}
-                                                                        </span>
-                                                                    </div>
-                                                                    <div className="min-w-0">
-                                                                        <p className="font-medium text-white group-hover:text-admin-primary transition-colors truncate">{item.title}</p>
-                                                                        <p className="text-xs text-admin-text-secondary">
-                                                                            by {item.author}
-                                                                            {item.description && <span className="ml-2 text-slate-600">• {item.description.slice(0, 50)}…</span>}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td className="px-6 py-4">
-                                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${catStyle(item.category).bg} ${catStyle(item.category).text} border ${catStyle(item.category).border}`}>
-                                                                    {item.category}
-                                                                </span>
-                                                            </td>
-                                                            <td className="px-6 py-4 text-admin-text-secondary">{item.createdAt}</td>
-                                                            <td className="px-6 py-4 text-center">
-                                                                <button onClick={() => cycleStatus(item)} title="Click to change status">
-                                                                    {statusBadge(item.status)}
-                                                                </button>
-                                                            </td>
-                                                            <td className="px-6 py-4 text-right">
-                                                                <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                                                                    <button
-                                                                        onClick={() => setPreviewItem(item)}
-                                                                        className="p-1.5 hover:bg-admin-bg-lighter rounded text-admin-text-secondary hover:text-admin-primary transition-colors"
-                                                                        title="Preview"
-                                                                    >
-                                                                        <span className="material-symbols-outlined text-lg">visibility</span>
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={() => setEditingItem(item)}
-                                                                        className="p-1.5 hover:bg-admin-bg-lighter rounded text-admin-text-secondary hover:text-admin-primary transition-colors"
-                                                                        title="Edit"
-                                                                    >
-                                                                        <span className="material-symbols-outlined text-lg">edit</span>
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={() => deleteItem(item.id)}
-                                                                        className="p-1.5 hover:bg-admin-bg-lighter rounded text-admin-text-secondary hover:text-admin-danger transition-colors"
-                                                                        title="Delete"
-                                                                    >
-                                                                        <span className="material-symbols-outlined text-lg">delete</span>
-                                                                    </button>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    ))
-                                                )}
+                                                ))}
                                             </tbody>
                                         </table>
                                     </div>
+                                )}
 
-                                    {/* Pagination */}
-                                    <div className="border-t border-admin-border bg-admin-bg-card px-6 py-4 flex items-center justify-between">
-                                        <span className="text-xs text-admin-text-secondary">
-                                            Showing {filtered.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1}-
-                                            {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} items
-                                        </span>
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                                                disabled={currentPage === 1}
-                                                className="px-3 py-1.5 text-xs font-medium rounded-md border border-admin-border text-admin-text-secondary hover:text-white hover:bg-admin-bg-lighter disabled:opacity-50 transition-colors"
-                                            >
-                                                Previous
-                                            </button>
-                                            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((p) => (
-                                                <button
-                                                    key={p}
-                                                    onClick={() => setCurrentPage(p)}
-                                                    className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${currentPage === p
-                                                        ? "border-admin-primary bg-admin-primary/10 text-admin-primary hover:bg-admin-primary/20"
-                                                        : "border-admin-border text-admin-text-secondary hover:text-white hover:bg-admin-bg-lighter"
-                                                        }`}
-                                                >
-                                                    {p}
-                                                </button>
-                                            ))}
-                                            {totalPages > 5 && <span className="text-admin-text-secondary px-1">...</span>}
-                                            <button
-                                                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                                                disabled={currentPage === totalPages}
-                                                className="px-3 py-1.5 text-xs font-medium rounded-md border border-admin-border text-admin-text-secondary hover:text-white hover:bg-admin-bg-lighter disabled:opacity-50 transition-colors"
-                                            >
-                                                Next
-                                            </button>
-                                        </div>
+                                {/* Pagination */}
+                                {totalPages > 1 && <div className="flex items-center justify-between mt-4">
+                                    <span className="text-xs text-[#717171]">Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length}</span>
+                                    <div className="flex gap-1">
+                                        <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="px-3 py-1.5 text-xs rounded bg-[#272727] text-[#aaa] hover:bg-[#3f3f3f] disabled:opacity-40">Prev</button>
+                                        {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map(p => (
+                                            <button key={p} onClick={() => setCurrentPage(p)} className={`px-3 py-1.5 text-xs rounded ${currentPage === p ? "bg-white text-[#0f0f0f]" : "bg-[#272727] text-[#aaa] hover:bg-[#3f3f3f]"}`}>{p}</button>
+                                        ))}
+                                        <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="px-3 py-1.5 text-xs rounded bg-[#272727] text-[#aaa] hover:bg-[#3f3f3f] disabled:opacity-40">Next</button>
                                     </div>
-                                </div>
+                                </div>}
+                            </>)}
 
-                                {/* ── Bottom: Upload & System Health ── */}
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                    {/* File Upload */}
-                                    <div className="lg:col-span-2 bg-admin-bg-card p-6 rounded-xl border border-admin-border">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-lg font-space-grotesk font-bold text-white">Quick Upload</h3>
-                                        </div>
-                                        <div
-                                            className="border-2 border-dashed border-admin-border rounded-lg p-8 flex flex-col items-center justify-center text-center hover:border-admin-primary/50 hover:bg-admin-bg-lighter/20 transition-all cursor-pointer group"
-                                            onClick={() => simulateUpload(`demo_asset_${Date.now()}.png`)}
-                                        >
-                                            <div className="w-12 h-12 rounded-full bg-admin-bg-lighter flex items-center justify-center mb-3 group-hover:bg-admin-primary/20 transition-colors">
-                                                <span className="material-symbols-outlined text-2xl text-admin-text-secondary group-hover:text-admin-primary">cloud_upload</span>
-                                            </div>
-                                            <p className="text-sm text-white font-medium mb-1">Click to upload or drag and drop</p>
-                                            <p className="text-xs text-admin-text-secondary">SVG, PNG, JPG or GIF (max. 3MB)</p>
-                                            {uploadFile && (
-                                                <div className="w-full max-w-xs mt-6">
-                                                    <div className="flex justify-between text-xs text-admin-text-secondary mb-1">
-                                                        <span className="truncate max-w-[200px]">{uploadFile}</span>
-                                                        <span>{Math.min(100, Math.round(uploadProgress))}%</span>
-                                                    </div>
-                                                    <div className="w-full h-1.5 bg-admin-bg-dark rounded-full overflow-hidden">
-                                                        <div
-                                                            className="h-full bg-admin-primary rounded-full transition-all duration-300"
-                                                            style={{ width: `${Math.min(100, uploadProgress)}%` }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* System Status */}
-                                    <div className="bg-admin-bg-card p-6 rounded-xl border border-admin-border flex flex-col gap-4">
-                                        <h3 className="text-lg font-space-grotesk font-bold text-white mb-2">System Health</h3>
-                                        <HealthCard icon="dns" label="Database" sub="Connected (12ms)" color="text-admin-success" />
-                                        <HealthCard icon="cloud_done" label="CDN Status" sub="Operational" color="text-admin-primary" />
-                                        <div className="mt-auto">
-                                            <a
-                                                href="/"
-                                                className="w-full py-2.5 rounded-lg border border-admin-border text-sm font-medium text-admin-text-secondary hover:text-white hover:bg-admin-bg-lighter transition-colors flex items-center justify-center gap-2"
-                                            >
-                                                <span className="material-symbols-outlined text-lg">open_in_new</span>
-                                                View Public Site
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </>
-                        )}
-
-                        {/* Footer */}
-                        <div className="mt-12 text-center pb-6">
-                            <p className="text-xs text-admin-text-secondary">TecSub Admin Panel © 2026. Secure Environment.</p>
                         </div>
                     </div>
-                </div>
-            </main>
+                </main>
 
-            {/* ─── ADD ITEM MODAL ─── */}
-            {showAddModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowAddModal(false)}>
-                    <div className="w-full max-w-lg bg-admin-bg-card rounded-2xl border border-admin-border shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                        <div className="relative">
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-admin-primary to-transparent" />
-                            <div className="p-6">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-lg font-space-grotesk font-bold text-white">Add New Item — {currentTabLabel}</h3>
-                                    <button onClick={() => setShowAddModal(false)} className="p-1 text-admin-text-secondary hover:text-white transition-colors">
-                                        <span className="material-symbols-outlined">close</span>
-                                    </button>
-                                </div>
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Title</label>
-                                        <input
-                                            type="text"
-                                            value={newTitle}
-                                            onChange={(e) => setNewTitle(e.target.value)}
-                                            className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent placeholder:text-slate-600 text-sm outline-none"
-                                            placeholder="Enter item title..."
-                                            autoFocus
-                                        />
+                {/* ─── DETAIL DRAWER ─── */}
+                {detailItem && (
+                    <div className="w-96 h-full bg-[#272727] border-l border-[#3f3f3f] flex flex-col shrink-0 overflow-hidden animate-[slideIn_0.2s_ease-out]">
+                        <div className="flex items-center justify-between p-4 border-b border-[#3f3f3f]">
+                            <h3 className="text-sm font-medium text-white">Content details</h3>
+                            <button onClick={() => setDetailItem(null)} className="p-1 hover:bg-[#3f3f3f] rounded-full"><span className="material-symbols-outlined text-lg text-[#aaa]">close</span></button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                            <div className="aspect-video bg-[#1a1a1a] rounded-lg flex items-center justify-center border border-[#3f3f3f]">
+                                <span className="material-symbols-outlined text-4xl text-[#3f3f3f]">{NAV_ITEMS.find(n => n.id === "content")?.children?.find(c => c.id === detailItem.type)?.icon || "article"}</span>
+                            </div>
+                            <div>
+                                <h2 className="text-lg font-medium text-white mb-2">{detailItem.title}</h2>
+                                <div className="flex items-center gap-2 mb-3">{statusBadge(detailItem.status)}<span className={`text-xs px-2 py-0.5 rounded ${CAT_COLORS[detailItem.category] || "bg-gray-500"} text-white`}>{detailItem.category}</span></div>
+                            </div>
+                            {detailItem.description && <div className="bg-[#1a1a1a] rounded-lg p-3 border border-[#3f3f3f]"><p className="text-sm text-[#ddd] whitespace-pre-wrap">{detailItem.description}</p></div>}
+                            <div className="space-y-2">
+                                {[["Author", detailItem.author], ["Type", detailItem.type.replace("_", " ")], ["Created", detailItem.createdAt], ["ID", detailItem.id]].map(([l, v]) => (
+                                    <div key={l} className="flex items-center justify-between py-2 border-b border-[#3f3f3f]/50">
+                                        <span className="text-xs text-[#aaa]">{l}</span><span className="text-sm text-white">{v}</span>
                                     </div>
-                                    <div>
-                                        <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Description</label>
-                                        <textarea
-                                            value={newDescription}
-                                            onChange={(e) => setNewDescription(e.target.value)}
-                                            rows={3}
-                                            className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent placeholder:text-slate-600 text-sm outline-none resize-none"
-                                            placeholder="Enter a description (optional)..."
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Category</label>
-                                            <select
-                                                value={newCategory}
-                                                onChange={(e) => setNewCategory(e.target.value)}
-                                                className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent text-sm outline-none"
-                                            >
-                                                {Object.keys(CATEGORY_COLORS)
-                                                    .filter((c) => c !== "Default")
-                                                    .map((cat) => (
-                                                        <option key={cat} value={cat}>
-                                                            {cat}
-                                                        </option>
-                                                    ))}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Author</label>
-                                            <input
-                                                type="text"
-                                                value={newAuthor}
-                                                onChange={(e) => setNewAuthor(e.target.value)}
-                                                className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent placeholder:text-slate-600 text-sm outline-none"
-                                                placeholder="Author name..."
-                                            />
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={addItem}
-                                        className="w-full flex items-center justify-center gap-2 bg-admin-primary hover:bg-admin-primary-hover text-white px-5 py-3 rounded-lg font-medium text-sm transition-all shadow-lg shadow-admin-primary/20"
-                                    >
-                                        <span className="material-symbols-outlined text-xl">add</span>
-                                        Create Item
-                                    </button>
-                                </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="p-4 border-t border-[#3f3f3f] space-y-2">
+                            <button onClick={() => { setEditingItem(detailItem); setDetailItem(null); }} className="w-full py-2 bg-admin-primary text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-admin-primary-hover transition-colors flex items-center justify-center gap-1">
+                                <span className="material-symbols-outlined text-base">edit</span>Edit details
+                            </button>
+                            <div className="flex gap-2">
+                                <button onClick={() => cycleStatus(detailItem)} className="flex-1 py-2 bg-[#3f3f3f] rounded-lg text-sm text-white hover:bg-[#4f4f4f] transition-colors">Change status</button>
+                                <button onClick={() => { deleteItem(detailItem.id); }} className="px-4 py-2 bg-[#3f3f3f] rounded-lg text-sm text-admin-danger hover:bg-[#4f4f4f] transition-colors">
+                                    <span className="material-symbols-outlined text-base">delete</span>
+                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
-
-            {/* ─── PREVIEW MODAL ─── */}
-            {previewItem && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setPreviewItem(null)}>
-                    <div className="w-full max-w-2xl bg-admin-bg-card rounded-2xl border border-admin-border shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                        <div className="relative">
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-admin-success to-transparent" />
-                            <div className="p-6">
-                                {/* Header */}
-                                <div className="flex items-center justify-between mb-6">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 rounded-xl bg-admin-primary/10 border border-admin-primary/20 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-admin-primary text-2xl">
-                                                {TABS.find(t => t.id === activeTab)?.icon || "article"}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-lg font-space-grotesk font-bold text-white">Content Preview</h3>
-                                            <p className="text-xs text-admin-text-secondary">{currentTabLabel} • {previewItem.id}</p>
-                                        </div>
-                                    </div>
-                                    <button onClick={() => setPreviewItem(null)} className="p-1.5 text-admin-text-secondary hover:text-white transition-colors hover:bg-admin-bg-lighter rounded-lg">
-                                        <span className="material-symbols-outlined">close</span>
-                                    </button>
-                                </div>
-
-                                {/* Preview Content */}
-                                <div className="bg-admin-bg-dark rounded-xl border border-admin-border/50 p-5 mb-5">
-                                    <div className="flex items-start justify-between mb-4">
-                                        <h2 className="text-xl font-bold text-white flex-1">{previewItem.title}</h2>
-                                        {statusBadge(previewItem.status)}
-                                    </div>
-
-                                    {previewItem.description && (
-                                        <p className="text-sm text-admin-text-secondary leading-relaxed mb-4 whitespace-pre-wrap bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
-                                            {previewItem.description}
-                                        </p>
-                                    )}
-
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                        <div className="bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
-                                            <p className="text-[10px] uppercase tracking-wider text-admin-text-secondary mb-0.5">Category</p>
-                                            <p className="text-sm font-medium text-white">{previewItem.category}</p>
-                                        </div>
-                                        <div className="bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
-                                            <p className="text-[10px] uppercase tracking-wider text-admin-text-secondary mb-0.5">Author</p>
-                                            <p className="text-sm font-medium text-white">{previewItem.author}</p>
-                                        </div>
-                                        <div className="bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
-                                            <p className="text-[10px] uppercase tracking-wider text-admin-text-secondary mb-0.5">Created</p>
-                                            <p className="text-sm font-medium text-white">{previewItem.createdAt}</p>
-                                        </div>
-                                        <div className="bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
-                                            <p className="text-[10px] uppercase tracking-wider text-admin-text-secondary mb-0.5">Type</p>
-                                            <p className="text-sm font-medium text-white capitalize">{previewItem.type.replace("_", " ")}</p>
-                                        </div>
-                                        <div className="bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
-                                            <p className="text-[10px] uppercase tracking-wider text-admin-text-secondary mb-0.5">Status</p>
-                                            <p className="text-sm font-medium text-white capitalize">{previewItem.status}</p>
-                                        </div>
-                                        <div className="bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
-                                            <p className="text-[10px] uppercase tracking-wider text-admin-text-secondary mb-0.5">ID</p>
-                                            <p className="text-sm font-mono text-admin-primary">{previewItem.id}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex gap-3">
-                                    {TAB_PAGE_MAP[activeTab] && (
-                                        <a
-                                            href={TAB_PAGE_MAP[activeTab].url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium bg-admin-primary/10 text-admin-primary border border-admin-primary/20 hover:bg-admin-primary/20 transition-colors"
-                                        >
-                                            <span className="material-symbols-outlined text-base">open_in_new</span>
-                                            View on Site
-                                        </a>
-                                    )}
-                                    <button
-                                        onClick={() => { setEditingItem(previewItem); setPreviewItem(null); }}
-                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium bg-admin-bg-lighter text-white border border-admin-border hover:bg-admin-bg-lighter/80 transition-colors"
-                                    >
-                                        <span className="material-symbols-outlined text-base">edit</span>
-                                        Edit Item
-                                    </button>
-                                    <button
-                                        onClick={() => setPreviewItem(null)}
-                                        className="px-4 py-2.5 rounded-lg text-sm font-medium text-admin-text-secondary border border-admin-border hover:text-white hover:bg-admin-bg-lighter transition-colors"
-                                    >
-                                        Close
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* ─── EDIT ITEM MODAL ─── */}
-            {editingItem && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setEditingItem(null)}>
-                    <div className="w-full max-w-lg bg-admin-bg-card rounded-2xl border border-admin-border shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                        <div className="relative">
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
-                            <div className="p-6">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-lg font-space-grotesk font-bold text-white">Edit Item — {editingItem.id}</h3>
-                                    <button onClick={() => setEditingItem(null)} className="p-1 text-admin-text-secondary hover:text-white transition-colors">
-                                        <span className="material-symbols-outlined">close</span>
-                                    </button>
-                                </div>
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Title</label>
-                                        <input
-                                            type="text"
-                                            value={editingItem.title}
-                                            onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
-                                            className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent text-sm outline-none"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Description</label>
-                                        <textarea
-                                            value={editingItem.description || ""}
-                                            onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
-                                            rows={3}
-                                            className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent text-sm outline-none resize-none"
-                                            placeholder="Enter a description..."
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Category</label>
-                                            <select
-                                                value={editingItem.category}
-                                                onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
-                                                className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent text-sm outline-none"
-                                            >
-                                                {Object.keys(CATEGORY_COLORS)
-                                                    .filter((c) => c !== "Default")
-                                                    .map((cat) => (
-                                                        <option key={cat} value={cat}>
-                                                            {cat}
-                                                        </option>
-                                                    ))}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Author</label>
-                                            <input
-                                                type="text"
-                                                value={editingItem.author}
-                                                onChange={(e) => setEditingItem({ ...editingItem, author: e.target.value })}
-                                                className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent text-sm outline-none"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Status</label>
-                                            <select
-                                                value={editingItem.status}
-                                                onChange={(e) => setEditingItem({ ...editingItem, status: e.target.value as ContentItem["status"] })}
-                                                className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent text-sm outline-none"
-                                            >
-                                                <option value="draft">Draft</option>
-                                                <option value="published">Published</option>
-                                                <option value="archived">Archived</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Created At</label>
-                                            <input
-                                                type="text"
-                                                value={editingItem.createdAt}
-                                                readOnly
-                                                className="w-full bg-admin-bg-dark border border-admin-border text-admin-text-secondary px-4 py-2.5 rounded-lg text-sm outline-none cursor-not-allowed"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="flex gap-3">
-                                        <button
-                                            onClick={() => updateItem(editingItem)}
-                                            className="flex-1 flex items-center justify-center gap-2 bg-admin-primary hover:bg-admin-primary-hover text-white px-5 py-3 rounded-lg font-medium text-sm transition-all shadow-lg shadow-admin-primary/20"
-                                        >
-                                            <span className="material-symbols-outlined text-xl">save</span>
-                                            Save Changes
-                                        </button>
-                                        <button
-                                            onClick={() => setEditingItem(null)}
-                                            className="px-5 py-3 border border-admin-border text-admin-text-secondary rounded-lg text-sm font-medium hover:text-white hover:bg-admin-bg-lighter transition-colors"
-                                        >
-                                            Cancel
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-}
-
-/* ─── Small reusable sub-component ─── */
-function HealthCard({ icon, label, sub, color }: { icon: string; label: string; sub: string; color: string }) {
-    return (
-        <div className="flex items-center justify-between p-3 rounded-lg bg-admin-bg-lighter/30 border border-admin-border/50">
-            <div className="flex items-center gap-3">
-                <span className={`material-symbols-outlined ${color}`}>{icon}</span>
-                <div className="flex flex-col">
-                    <span className="text-sm font-medium text-white">{label}</span>
-                    <span className="text-xs text-admin-text-secondary">{sub}</span>
-                </div>
+                )}
             </div>
-            <div className="w-2 h-2 bg-admin-success rounded-full animate-pulse" />
+
+            {/* ─── CREATE MODAL (Wizard) ─── */}
+            {showAddModal && (
+                <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => { setShowAddModal(false); setWizardStep(1); }}>
+                    <div className="w-full max-w-lg bg-[#272727] rounded-xl border border-[#3f3f3f] shadow-2xl" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between p-4 border-b border-[#3f3f3f]">
+                            <h3 className="text-base font-medium text-white">{wizardStep === 1 ? "Choose content type" : "Add details"}</h3>
+                            <button onClick={() => { setShowAddModal(false); setWizardStep(1); }} className="p-1 hover:bg-[#3f3f3f] rounded-full"><span className="material-symbols-outlined text-lg text-[#aaa]">close</span></button>
+                        </div>
+                        <div className="p-4">
+                            {/* Step indicator */}
+                            <div className="flex items-center gap-2 mb-5">
+                                {[1, 2].map(s => <div key={s} className="flex items-center gap-2">{s > 1 && <div className="w-12 h-0.5 bg-[#3f3f3f]" />}<div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${wizardStep >= s ? "bg-admin-primary text-[#0f0f0f]" : "bg-[#3f3f3f] text-[#aaa]"}`}>{s}</div></div>)}
+                            </div>
+                            {wizardStep === 1 ? (
+                                <div className="grid grid-cols-3 gap-2">
+                                    {NAV_ITEMS.find(n => n.id === "content")?.children?.map(child => (
+                                        <button key={child.id} onClick={() => { setWizardType(child.id); setWizardStep(2); }}
+                                            className={`flex flex-col items-center gap-2 p-4 rounded-lg border transition-colors ${wizardType === child.id ? "border-admin-primary bg-admin-primary/10" : "border-[#3f3f3f] bg-[#1a1a1a] hover:bg-[#3f3f3f]"}`}>
+                                            <span className="material-symbols-outlined text-2xl text-[#aaa]">{child.icon}</span>
+                                            <span className="text-xs text-[#ddd]">{child.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    <div><label className="text-xs text-[#aaa] mb-1 block">Title *</label>
+                                        <input type="text" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full bg-[#121212] border border-[#3f3f3f] text-white px-3 py-2.5 rounded-lg text-sm outline-none focus:border-admin-primary" placeholder="Enter title" autoFocus />
+                                    </div>
+                                    <div><label className="text-xs text-[#aaa] mb-1 block">Description</label>
+                                        <textarea value={newDescription} onChange={e => setNewDescription(e.target.value)} rows={3} className="w-full bg-[#121212] border border-[#3f3f3f] text-white px-3 py-2.5 rounded-lg text-sm outline-none focus:border-admin-primary resize-none" placeholder="Add a description..." />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div><label className="text-xs text-[#aaa] mb-1 block">Category</label>
+                                            <select value={newCategory} onChange={e => setNewCategory(e.target.value)} className="w-full bg-[#121212] border border-[#3f3f3f] text-white px-3 py-2.5 rounded-lg text-sm outline-none">
+                                                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                                            </select>
+                                        </div>
+                                        <div><label className="text-xs text-[#aaa] mb-1 block">Author</label>
+                                            <input type="text" value={newAuthor} onChange={e => setNewAuthor(e.target.value)} className="w-full bg-[#121212] border border-[#3f3f3f] text-white px-3 py-2.5 rounded-lg text-sm outline-none focus:border-admin-primary" />
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2 pt-2">
+                                        <button onClick={() => setWizardStep(1)} className="px-4 py-2.5 bg-[#3f3f3f] rounded-lg text-sm text-white hover:bg-[#4f4f4f]">Back</button>
+                                        <button onClick={addItem} className="flex-1 py-2.5 bg-admin-primary text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-admin-primary-hover transition-colors">Create</button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ─── EDIT MODAL ─── */}
+            {editingItem && (
+                <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setEditingItem(null)}>
+                    <div className="w-full max-w-lg bg-[#272727] rounded-xl border border-[#3f3f3f] shadow-2xl" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between p-4 border-b border-[#3f3f3f]">
+                            <h3 className="text-base font-medium text-white">Edit — {editingItem.id}</h3>
+                            <button onClick={() => setEditingItem(null)} className="p-1 hover:bg-[#3f3f3f] rounded-full"><span className="material-symbols-outlined text-lg text-[#aaa]">close</span></button>
+                        </div>
+                        <div className="p-4 space-y-3">
+                            <div><label className="text-xs text-[#aaa] mb-1 block">Title</label>
+                                <input type="text" value={editingItem.title} onChange={e => setEditingItem({ ...editingItem, title: e.target.value })} className="w-full bg-[#121212] border border-[#3f3f3f] text-white px-3 py-2.5 rounded-lg text-sm outline-none focus:border-admin-primary" />
+                            </div>
+                            <div><label className="text-xs text-[#aaa] mb-1 block">Description</label>
+                                <textarea value={editingItem.description || ""} onChange={e => setEditingItem({ ...editingItem, description: e.target.value })} rows={3} className="w-full bg-[#121212] border border-[#3f3f3f] text-white px-3 py-2.5 rounded-lg text-sm outline-none focus:border-admin-primary resize-none" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div><label className="text-xs text-[#aaa] mb-1 block">Category</label>
+                                    <select value={editingItem.category} onChange={e => setEditingItem({ ...editingItem, category: e.target.value })} className="w-full bg-[#121212] border border-[#3f3f3f] text-white px-3 py-2.5 rounded-lg text-sm outline-none">
+                                        {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
+                                </div>
+                                <div><label className="text-xs text-[#aaa] mb-1 block">Status</label>
+                                    <select value={editingItem.status} onChange={e => setEditingItem({ ...editingItem, status: e.target.value as ContentItem["status"] })} className="w-full bg-[#121212] border border-[#3f3f3f] text-white px-3 py-2.5 rounded-lg text-sm outline-none">
+                                        <option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="flex gap-2 pt-2">
+                                <button onClick={() => setEditingItem(null)} className="px-4 py-2.5 bg-[#3f3f3f] rounded-lg text-sm text-white hover:bg-[#4f4f4f]">Cancel</button>
+                                <button onClick={() => updateItem(editingItem)} className="flex-1 py-2.5 bg-admin-primary text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-admin-primary-hover transition-colors">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ─── TOASTS ─── */}
+            <div className="fixed bottom-4 left-4 z-50 space-y-2">
+                {toasts.map(t => (
+                    <div key={t.id} className={`flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg text-sm animate-[slideIn_0.3s_ease-out] ${t.type === "success" ? "bg-admin-success text-white" : t.type === "error" ? "bg-admin-danger text-white" : "bg-[#3f3f3f] text-white"}`}>
+                        <span className="material-symbols-outlined text-lg">{t.type === "success" ? "check_circle" : t.type === "error" ? "error" : "info"}</span>
+                        {t.message}
+                    </div>
+                ))}
+            </div>
+
+            <style jsx global>{`
+                @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+                select option { background: #272727; color: #f1f1f1; }
+            `}</style>
         </div>
     );
 }
