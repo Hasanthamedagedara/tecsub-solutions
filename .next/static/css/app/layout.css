@@ -2609,6 +2609,10 @@ body {
     gap: 1.5rem;
   }
 
+  .sm\:gap-5{
+    gap: 1.25rem;
+  }
+
   .sm\:p-10{
     padding: 2.5rem;
   }

@@ -74,6 +74,40 @@ export default function Footer() {
                         </a>
                     </div>
 
+                    {/* Contact Email */}
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.15)" }}>
+                            <svg className="w-4 h-4 text-tecsubCyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <a
+                            href="mailto:tecsubsolutions@gmail.com"
+                            className="text-sm sm:text-base font-semibold hover:text-tecsubCyan transition-colors duration-300 tracking-wide"
+                            style={{ color: "var(--text-primary)" }}
+                        >
+                            tecsubsolutions@gmail.com
+                        </a>
+                    </div>
+
+                    {/* Legal Links — Privacy, Refund, Terms */}
+                    <div className="flex items-center gap-3 sm:gap-5 flex-wrap justify-center">
+                        {[
+                            { label: "Privacy Policy", href: "/privacy policy" },
+                            { label: "Refund Policy", href: "/Refund" },
+                            { label: "Terms of Service", href: "/Terms" },
+                        ].map((link, i) => (
+                            <a
+                                key={link.label}
+                                href={link.href}
+                                className="text-xs sm:text-sm font-medium hover:text-tecsubCyan transition-colors duration-300"
+                                style={{ color: "var(--text-secondary)" }}
+                            >
+                                {link.label}
+                            </a>
+                        ))}
+                    </div>
+
                     {/* Social Icons */}
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-6 w-full">
                         <div className="flex items-center gap-4 flex-wrap justify-center">
