@@ -65,6 +65,7 @@ const features: Feature[] = [
         color: "#C084FC",
         href: "#ai-lab",
         subs: [
+            { label: "📝 AI Prompts", href: "/prompts" },
             { label: "AI Website Auditor", href: "#ai-lab" },
             { label: "Performance Analytics", href: "#ai-lab" },
             { label: "Smart Recommendations", href: "#ai-lab" },

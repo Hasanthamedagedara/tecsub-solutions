@@ -35,7 +35,14 @@ export default function Navbar() {
         },
         { label: t(language, "nav_software"), href: "#software" },
         { label: t(language, "nav_news"), href: "#news" },
-        { label: "AI Tool", href: "#ai-lab" },
+        {
+            label: "AI Tool",
+            href: "#ai-lab",
+            subs: [
+                { label: "🤖 AI Lab", href: "#ai-lab" },
+                { label: "📝 AI Prompts", href: "/prompts" },
+            ],
+        },
         { label: t(language, "nav_courses"), href: "/courses" },
         {
             label: "Apps",
