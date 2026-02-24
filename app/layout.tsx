@@ -5,14 +5,40 @@ import ScrollToTop from "@/components/ScrollToTop";
 import SidePanel from "@/components/SidePanel";
 
 export const metadata: Metadata = {
-    title: "Tecsub Solutions | Engineering the Future",
+    metadataBase: new URL("https://tecsubsolutions.com"),
+    title: {
+        default: "Tecsub Solutions | Engineering the Future",
+        template: "%s | Tecsub Solutions",
+    },
     description:
         "AI-driven reviews, high-performance applications, scalable software, and next-gen technology solutions by Tecsub Solutions.",
-    keywords: ["Tecsub", "AI", "Software", "Web Development", "Technology", "Solutions"],
+    keywords: ["Tecsub", "AI", "Software", "Web Development", "Technology", "Solutions", "Tech News", "Online Tools", "Courses", "AI Prompts"],
+    authors: [{ name: "Tecsub Solutions", url: "https://tecsubsolutions.com" }],
+    creator: "Tecsub Solutions",
+    publisher: "Tecsub Solutions",
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: { index: true, follow: true, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 },
+    },
+    verification: {
+        google: "ZPljKHMes5GVg_2Y3XubDmSRrLmCR9KXvOSC5fDNQ0k",
+    },
     openGraph: {
         title: "Tecsub Solutions",
-        description: "Engineering the Future.",
+        description: "Engineering the Future — AI-driven reviews, high-performance apps & scalable software.",
+        url: "https://tecsubsolutions.com",
+        siteName: "Tecsub Solutions",
         type: "website",
+        locale: "en_US",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Tecsub Solutions",
+        description: "Engineering the Future — AI-driven reviews, high-performance apps & scalable software.",
+    },
+    alternates: {
+        canonical: "https://tecsubsolutions.com",
     },
 };
 
