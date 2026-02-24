@@ -11,6 +11,20 @@ type ContentItem = {
     category: string;
     author: string;
     createdAt: string;
+    description?: string;
+};
+
+/* ─── Tab → Public Page URL mapping ─── */
+const TAB_PAGE_MAP: Record<string, { url: string; label: string }> = {
+    news: { url: "/#news", label: "News Section" },
+    videos: { url: "/#videos", label: "Video Gallery" },
+    prompts: { url: "/prompts", label: "AI Prompts" },
+    software: { url: "/#software", label: "Software Hub" },
+    courses: { url: "/courses", label: "Courses Page" },
+    mod_apps: { url: "/apps/mod", label: "Mod Apps" },
+    new_releases: { url: "/apps/new-releases", label: "New Releases" },
+    online_assets: { url: "/assets", label: "Online Assets" },
+    shop: { url: "/shop", label: "Shop Page" },
 };
 
 type Tab = {
@@ -68,9 +82,11 @@ export default function AdminPage() {
     /* Editing / Adding */
     const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [previewItem, setPreviewItem] = useState<ContentItem | null>(null);
     const [newTitle, setNewTitle] = useState("");
     const [newCategory, setNewCategory] = useState("Tech News");
     const [newAuthor, setNewAuthor] = useState("Admin");
+    const [newDescription, setNewDescription] = useState("");
 
     /* Upload simulation */
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -107,12 +123,14 @@ export default function AdminPage() {
             status: "draft",
             category: newCategory,
             author: newAuthor,
+            description: newDescription || undefined,
             createdAt: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
         };
         saveItems([item, ...items]);
         setNewTitle("");
         setNewCategory("Tech News");
         setNewAuthor("Admin");
+        setNewDescription("");
         setShowAddModal(false);
     };
 
@@ -307,19 +325,30 @@ export default function AdminPage() {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
+                        {/* Tab-specific View on Site */}
+                        {TAB_PAGE_MAP[activeTab] && (
+                            <a
+                                href={TAB_PAGE_MAP[activeTab].url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-admin-primary/10 text-admin-primary border border-admin-primary/20 hover:bg-admin-primary/20 transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-base">visibility</span>
+                                View {TAB_PAGE_MAP[activeTab].label}
+                            </a>
+                        )}
                         <a
                             href="/"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="p-2 text-admin-text-secondary hover:text-white hover:bg-admin-bg-lighter rounded-lg transition-colors text-sm flex items-center gap-1"
                         >
                             <span className="material-symbols-outlined text-lg">open_in_new</span>
-                            <span className="hidden sm:inline">View Site</span>
+                            <span className="hidden sm:inline">Site</span>
                         </a>
                         <button className="relative p-2 text-admin-text-secondary hover:text-white hover:bg-admin-bg-lighter rounded-lg transition-colors">
                             <span className="material-symbols-outlined">notifications</span>
                             {draftCount > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-admin-primary rounded-full" />}
-                        </button>
-                        <button className="p-2 text-admin-text-secondary hover:text-white hover:bg-admin-bg-lighter rounded-lg transition-colors">
-                            <span className="material-symbols-outlined">help</span>
                         </button>
                     </div>
                 </header>
@@ -459,40 +488,20 @@ export default function AdminPage() {
                                                         <tr key={item.id} className="group hover:bg-admin-bg-lighter/30 transition-colors">
                                                             <td className="px-6 py-4 text-admin-text-secondary font-mono">{item.id}</td>
                                                             <td className="px-6 py-4">
-                                                                {editingItem?.id === item.id ? (
-                                                                    <div className="flex items-center gap-2">
-                                                                        <input
-                                                                            type="text"
-                                                                            value={editingItem.title}
-                                                                            onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
-                                                                            className="flex-1 bg-admin-bg-dark border border-admin-primary/50 text-white px-3 py-1.5 rounded-lg text-sm outline-none focus:ring-1 focus:ring-admin-primary"
-                                                                        />
-                                                                        <button
-                                                                            onClick={() => updateItem(editingItem)}
-                                                                            className="px-3 py-1.5 bg-admin-primary text-white text-xs rounded-lg hover:bg-admin-primary-hover"
-                                                                        >
-                                                                            Save
-                                                                        </button>
-                                                                        <button
-                                                                            onClick={() => setEditingItem(null)}
-                                                                            className="px-3 py-1.5 border border-admin-border text-admin-text-secondary text-xs rounded-lg hover:text-white"
-                                                                        >
-                                                                            Cancel
-                                                                        </button>
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="w-10 h-10 rounded-lg bg-admin-bg-lighter border border-admin-border flex items-center justify-center shrink-0">
+                                                                        <span className="material-symbols-outlined text-admin-text-secondary text-lg">
+                                                                            {activeTab === "videos" ? "play_circle" : activeTab === "prompts" ? "smart_toy" : activeTab === "software" ? "folder_zip" : activeTab === "courses" ? "school" : activeTab === "mod_apps" ? "sports_esports" : activeTab === "new_releases" ? "new_releases" : activeTab === "online_assets" ? "cloud" : activeTab === "shop" ? "storefront" : "article"}
+                                                                        </span>
                                                                     </div>
-                                                                ) : (
-                                                                    <div className="flex items-center gap-3">
-                                                                        <div className="w-10 h-10 rounded-lg bg-admin-bg-lighter border border-admin-border flex items-center justify-center shrink-0">
-                                                                            <span className="material-symbols-outlined text-admin-text-secondary text-lg">
-                                                                                {activeTab === "videos" ? "play_circle" : activeTab === "prompts" ? "smart_toy" : activeTab === "software" ? "folder_zip" : activeTab === "courses" ? "school" : activeTab === "mod_apps" ? "sports_esports" : activeTab === "new_releases" ? "new_releases" : activeTab === "online_assets" ? "cloud" : activeTab === "shop" ? "storefront" : "article"}
-                                                                            </span>
-                                                                        </div>
-                                                                        <div>
-                                                                            <p className="font-medium text-white group-hover:text-admin-primary transition-colors">{item.title}</p>
-                                                                            <p className="text-xs text-admin-text-secondary">by {item.author}</p>
-                                                                        </div>
+                                                                    <div className="min-w-0">
+                                                                        <p className="font-medium text-white group-hover:text-admin-primary transition-colors truncate">{item.title}</p>
+                                                                        <p className="text-xs text-admin-text-secondary">
+                                                                            by {item.author}
+                                                                            {item.description && <span className="ml-2 text-slate-600">• {item.description.slice(0, 50)}…</span>}
+                                                                        </p>
                                                                     </div>
-                                                                )}
+                                                                </div>
                                                             </td>
                                                             <td className="px-6 py-4">
                                                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${catStyle(item.category).bg} ${catStyle(item.category).text} border ${catStyle(item.category).border}`}>
@@ -507,6 +516,13 @@ export default function AdminPage() {
                                                             </td>
                                                             <td className="px-6 py-4 text-right">
                                                                 <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                                                                    <button
+                                                                        onClick={() => setPreviewItem(item)}
+                                                                        className="p-1.5 hover:bg-admin-bg-lighter rounded text-admin-text-secondary hover:text-admin-primary transition-colors"
+                                                                        title="Preview"
+                                                                    >
+                                                                        <span className="material-symbols-outlined text-lg">visibility</span>
+                                                                    </button>
                                                                     <button
                                                                         onClick={() => setEditingItem(item)}
                                                                         className="p-1.5 hover:bg-admin-bg-lighter rounded text-admin-text-secondary hover:text-admin-primary transition-colors"
@@ -631,12 +647,12 @@ export default function AdminPage() {
             {/* ─── ADD ITEM MODAL ─── */}
             {showAddModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowAddModal(false)}>
-                    <div className="w-full max-w-md bg-admin-bg-card rounded-2xl border border-admin-border shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                    <div className="w-full max-w-lg bg-admin-bg-card rounded-2xl border border-admin-border shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
                         <div className="relative">
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-admin-primary to-transparent" />
                             <div className="p-6">
                                 <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-lg font-space-grotesk font-bold text-white">Add New Item</h3>
+                                    <h3 className="text-lg font-space-grotesk font-bold text-white">Add New Item — {currentTabLabel}</h3>
                                     <button onClick={() => setShowAddModal(false)} className="p-1 text-admin-text-secondary hover:text-white transition-colors">
                                         <span className="material-symbols-outlined">close</span>
                                     </button>
@@ -651,6 +667,16 @@ export default function AdminPage() {
                                             className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent placeholder:text-slate-600 text-sm outline-none"
                                             placeholder="Enter item title..."
                                             autoFocus
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Description</label>
+                                        <textarea
+                                            value={newDescription}
+                                            onChange={(e) => setNewDescription(e.target.value)}
+                                            rows={3}
+                                            className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent placeholder:text-slate-600 text-sm outline-none resize-none"
+                                            placeholder="Enter a description (optional)..."
                                         />
                                     </div>
                                     <div className="grid grid-cols-2 gap-3">
@@ -688,6 +714,210 @@ export default function AdminPage() {
                                         <span className="material-symbols-outlined text-xl">add</span>
                                         Create Item
                                     </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ─── PREVIEW MODAL ─── */}
+            {previewItem && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setPreviewItem(null)}>
+                    <div className="w-full max-w-2xl bg-admin-bg-card rounded-2xl border border-admin-border shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                        <div className="relative">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-admin-success to-transparent" />
+                            <div className="p-6">
+                                {/* Header */}
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 rounded-xl bg-admin-primary/10 border border-admin-primary/20 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-admin-primary text-2xl">
+                                                {TABS.find(t => t.id === activeTab)?.icon || "article"}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-lg font-space-grotesk font-bold text-white">Content Preview</h3>
+                                            <p className="text-xs text-admin-text-secondary">{currentTabLabel} • {previewItem.id}</p>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setPreviewItem(null)} className="p-1.5 text-admin-text-secondary hover:text-white transition-colors hover:bg-admin-bg-lighter rounded-lg">
+                                        <span className="material-symbols-outlined">close</span>
+                                    </button>
+                                </div>
+
+                                {/* Preview Content */}
+                                <div className="bg-admin-bg-dark rounded-xl border border-admin-border/50 p-5 mb-5">
+                                    <div className="flex items-start justify-between mb-4">
+                                        <h2 className="text-xl font-bold text-white flex-1">{previewItem.title}</h2>
+                                        {statusBadge(previewItem.status)}
+                                    </div>
+
+                                    {previewItem.description && (
+                                        <p className="text-sm text-admin-text-secondary leading-relaxed mb-4 whitespace-pre-wrap bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
+                                            {previewItem.description}
+                                        </p>
+                                    )}
+
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                        <div className="bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
+                                            <p className="text-[10px] uppercase tracking-wider text-admin-text-secondary mb-0.5">Category</p>
+                                            <p className="text-sm font-medium text-white">{previewItem.category}</p>
+                                        </div>
+                                        <div className="bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
+                                            <p className="text-[10px] uppercase tracking-wider text-admin-text-secondary mb-0.5">Author</p>
+                                            <p className="text-sm font-medium text-white">{previewItem.author}</p>
+                                        </div>
+                                        <div className="bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
+                                            <p className="text-[10px] uppercase tracking-wider text-admin-text-secondary mb-0.5">Created</p>
+                                            <p className="text-sm font-medium text-white">{previewItem.createdAt}</p>
+                                        </div>
+                                        <div className="bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
+                                            <p className="text-[10px] uppercase tracking-wider text-admin-text-secondary mb-0.5">Type</p>
+                                            <p className="text-sm font-medium text-white capitalize">{previewItem.type.replace("_", " ")}</p>
+                                        </div>
+                                        <div className="bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
+                                            <p className="text-[10px] uppercase tracking-wider text-admin-text-secondary mb-0.5">Status</p>
+                                            <p className="text-sm font-medium text-white capitalize">{previewItem.status}</p>
+                                        </div>
+                                        <div className="bg-admin-bg-lighter/30 rounded-lg p-3 border border-admin-border/30">
+                                            <p className="text-[10px] uppercase tracking-wider text-admin-text-secondary mb-0.5">ID</p>
+                                            <p className="text-sm font-mono text-admin-primary">{previewItem.id}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex gap-3">
+                                    {TAB_PAGE_MAP[activeTab] && (
+                                        <a
+                                            href={TAB_PAGE_MAP[activeTab].url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium bg-admin-primary/10 text-admin-primary border border-admin-primary/20 hover:bg-admin-primary/20 transition-colors"
+                                        >
+                                            <span className="material-symbols-outlined text-base">open_in_new</span>
+                                            View on Site
+                                        </a>
+                                    )}
+                                    <button
+                                        onClick={() => { setEditingItem(previewItem); setPreviewItem(null); }}
+                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium bg-admin-bg-lighter text-white border border-admin-border hover:bg-admin-bg-lighter/80 transition-colors"
+                                    >
+                                        <span className="material-symbols-outlined text-base">edit</span>
+                                        Edit Item
+                                    </button>
+                                    <button
+                                        onClick={() => setPreviewItem(null)}
+                                        className="px-4 py-2.5 rounded-lg text-sm font-medium text-admin-text-secondary border border-admin-border hover:text-white hover:bg-admin-bg-lighter transition-colors"
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ─── EDIT ITEM MODAL ─── */}
+            {editingItem && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setEditingItem(null)}>
+                    <div className="w-full max-w-lg bg-admin-bg-card rounded-2xl border border-admin-border shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                        <div className="relative">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
+                            <div className="p-6">
+                                <div className="flex items-center justify-between mb-6">
+                                    <h3 className="text-lg font-space-grotesk font-bold text-white">Edit Item — {editingItem.id}</h3>
+                                    <button onClick={() => setEditingItem(null)} className="p-1 text-admin-text-secondary hover:text-white transition-colors">
+                                        <span className="material-symbols-outlined">close</span>
+                                    </button>
+                                </div>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Title</label>
+                                        <input
+                                            type="text"
+                                            value={editingItem.title}
+                                            onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
+                                            className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent text-sm outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Description</label>
+                                        <textarea
+                                            value={editingItem.description || ""}
+                                            onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
+                                            rows={3}
+                                            className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent text-sm outline-none resize-none"
+                                            placeholder="Enter a description..."
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Category</label>
+                                            <select
+                                                value={editingItem.category}
+                                                onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
+                                                className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent text-sm outline-none"
+                                            >
+                                                {Object.keys(CATEGORY_COLORS)
+                                                    .filter((c) => c !== "Default")
+                                                    .map((cat) => (
+                                                        <option key={cat} value={cat}>
+                                                            {cat}
+                                                        </option>
+                                                    ))}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Author</label>
+                                            <input
+                                                type="text"
+                                                value={editingItem.author}
+                                                onChange={(e) => setEditingItem({ ...editingItem, author: e.target.value })}
+                                                className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent text-sm outline-none"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Status</label>
+                                            <select
+                                                value={editingItem.status}
+                                                onChange={(e) => setEditingItem({ ...editingItem, status: e.target.value as ContentItem["status"] })}
+                                                className="w-full bg-admin-bg-dark border border-admin-border text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-admin-primary focus:border-transparent text-sm outline-none"
+                                            >
+                                                <option value="draft">Draft</option>
+                                                <option value="published">Published</option>
+                                                <option value="archived">Archived</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-medium text-admin-text-secondary uppercase tracking-wider mb-1 block">Created At</label>
+                                            <input
+                                                type="text"
+                                                value={editingItem.createdAt}
+                                                readOnly
+                                                className="w-full bg-admin-bg-dark border border-admin-border text-admin-text-secondary px-4 py-2.5 rounded-lg text-sm outline-none cursor-not-allowed"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => updateItem(editingItem)}
+                                            className="flex-1 flex items-center justify-center gap-2 bg-admin-primary hover:bg-admin-primary-hover text-white px-5 py-3 rounded-lg font-medium text-sm transition-all shadow-lg shadow-admin-primary/20"
+                                        >
+                                            <span className="material-symbols-outlined text-xl">save</span>
+                                            Save Changes
+                                        </button>
+                                        <button
+                                            onClick={() => setEditingItem(null)}
+                                            className="px-5 py-3 border border-admin-border text-admin-text-secondary rounded-lg text-sm font-medium hover:text-white hover:bg-admin-bg-lighter transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
