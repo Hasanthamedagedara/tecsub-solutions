@@ -733,6 +733,9 @@ video {
 .mt-auto{
   margin-top: auto;
 }
+.mb-10{
+  margin-bottom: 2.5rem;
+}
 .line-clamp-2{
   overflow: hidden;
   display: -webkit-box;
@@ -847,6 +850,9 @@ video {
 .h-screen{
   height: 100vh;
 }
+.h-11{
+  height: 2.75rem;
+}
 .max-h-64{
   max-height: 16rem;
 }
@@ -942,6 +948,9 @@ video {
 }
 .w-screen{
   width: 100vw;
+}
+.w-11{
+  width: 2.75rem;
 }
 .min-w-0{
   min-width: 0px;
@@ -1184,6 +1193,9 @@ video {
 }
 .rounded-xl{
   border-radius: 0.75rem;
+}
+.rounded-3xl{
+  border-radius: 1.5rem;
 }
 .rounded-b-xl{
   border-bottom-right-radius: 0.75rem;
@@ -1651,6 +1663,15 @@ video {
 }
 .pt-8{
   padding-top: 2rem;
+}
+.pb-20{
+  padding-bottom: 5rem;
+}
+.pt-10{
+  padding-top: 2.5rem;
+}
+.pt-24{
+  padding-top: 6rem;
 }
 .text-left{
   text-align: left;
@@ -2542,6 +2563,10 @@ body {
     margin-bottom: 0.75rem;
   }
 
+  .sm\:mb-20{
+    margin-bottom: 5rem;
+  }
+
   .sm\:block{
     display: block;
   }
@@ -2686,6 +2711,10 @@ body {
     padding-top: 6rem;
   }
 
+  .sm\:pt-28{
+    padding-top: 7rem;
+  }
+
   .sm\:text-2xl{
     font-size: 1.5rem;
     line-height: 2rem;
@@ -2734,6 +2763,11 @@ body {
   .sm\:text-xs{
     font-size: 0.75rem;
     line-height: 1rem;
+  }
+
+  .sm\:text-xl{
+    font-size: 1.25rem;
+    line-height: 1.75rem;
   }
 }
 @media (min-width: 768px){

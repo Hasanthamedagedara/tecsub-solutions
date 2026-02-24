@@ -22,6 +22,7 @@ export default function Navbar() {
         { label: t(language, "nav_prompts"), href: "#prompts" },
         { label: t(language, "nav_courses"), href: "#courses" },
         { label: "Apps", href: "/apps" },
+        { label: "About", href: "/about" },
     ];
 
     const langLabels: Record<string, string> = { en: "EN", si: "සි", ta: "ත" };
