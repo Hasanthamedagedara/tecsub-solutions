@@ -565,6 +565,9 @@ video {
 .relative{
   position: relative;
 }
+.sticky{
+  position: sticky;
+}
 .inset-0{
   inset: 0px;
 }
@@ -617,6 +620,9 @@ video {
 .top-full{
   top: 100%;
 }
+.top-\[50\%\]{
+  top: 50%;
+}
 .z-10{
   z-index: 10;
 }
@@ -634,6 +640,12 @@ video {
 }
 .z-\[60\]{
   z-index: 60;
+}
+.z-\[55\]{
+  z-index: 55;
+}
+.z-\[56\]{
+  z-index: 56;
 }
 .mx-2{
   margin-left: 0.5rem;
@@ -952,6 +964,9 @@ video {
 .w-11{
   width: 2.75rem;
 }
+.w-\[280px\]{
+  width: 280px;
+}
 .min-w-0{
   min-width: 0px;
 }
@@ -1135,6 +1150,11 @@ video {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+}
+.space-y-0\.5 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.125rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.125rem * var(--tw-space-y-reverse));
 }
 .divide-y > :not([hidden]) ~ :not([hidden]){
   --tw-divide-y-reverse: 0;
@@ -1447,6 +1467,9 @@ video {
 .bg-tecsubCyan\/20{
   background-color: rgb(0 229 255 / 0.2);
 }
+.bg-black\/50{
+  background-color: rgb(0 0 0 / 0.5);
+}
 .bg-gradient-to-br{
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
 }
@@ -1637,6 +1660,10 @@ video {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
+.py-5{
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
 .pb-2{
   padding-bottom: 0.5rem;
 }
@@ -1672,6 +1699,9 @@ video {
 }
 .pt-24{
   padding-top: 6rem;
+}
+.pl-3{
+  padding-left: 0.75rem;
 }
 .text-left{
   text-align: left;
@@ -1754,6 +1784,12 @@ video {
 .text-xs{
   font-size: 0.75rem;
   line-height: 1rem;
+}
+.text-\[12px\]{
+  font-size: 12px;
+}
+.text-\[13px\]{
+  font-size: 13px;
 }
 .font-bold{
   font-weight: 700;
@@ -2040,6 +2076,9 @@ video {
 }
 .duration-500{
   transition-duration: 500ms;
+}
+.duration-200{
+  transition-duration: 200ms;
 }
 .text-fluid-hero {
     font-size: clamp(3rem, 2rem + 5vw, 10rem);
@@ -2531,6 +2570,9 @@ body {
 .group:hover .group-hover\:opacity-20{
   opacity: 0.2;
 }
+.group:hover .group-hover\:opacity-60{
+  opacity: 0.6;
+}
 @media (min-width: 640px){
 
   .sm\:inset-8{
@@ -2625,6 +2667,10 @@ body {
 
   .sm\:w-auto{
     width: auto;
+  }
+
+  .sm\:w-\[300px\]{
+    width: 300px;
   }
 
   .sm\:flex-1{
