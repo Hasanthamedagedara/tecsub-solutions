@@ -30,10 +30,6 @@ export default function Home() {
             <div className="relative" style={{ zIndex: 10 }}>
                 <Navbar />
 
-                {/* ─── Ad: Top Banner (728×90 / 320×50) ─── */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24">
-                    <AdPlacement format="banner" />
-                </div>
 
                 {/* ─── Hero Section ─── */}
                 <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-8">
@@ -123,10 +119,6 @@ export default function Home() {
                 {/* ─── YouTube Banner ─── */}
                 <YouTubeBanner />
 
-                {/* ─── Ad: Banner after hero (728×90 / 320×50) ─── */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-                    <AdPlacement format="banner" />
-                </div>
 
                 {/* ─── Online Tools ─── */}
                 <OnlineTools />

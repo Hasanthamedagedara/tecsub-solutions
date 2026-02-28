@@ -52,10 +52,7 @@ export default function RootLayout({
             <head>
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                {/* Adsterra Popunder */}
-                <script src="https://pl28783989.effectivegatecpm.com/21/d9/12/21d912ad932565986d377b0f9218591e.js" async></script>
-                {/* Adsterra Social Bar */}
-                <script src="https://pl28783991.effectivegatecpm.com/9f/11/ec/9f11ec79f50dce3ab003f8f489f55e95.js" async></script>
+
             </head>
             <body className="font-inter antialiased">
                 <ThemeProvider>
