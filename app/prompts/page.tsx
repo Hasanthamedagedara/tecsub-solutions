@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AdPlacement from "@/components/AdPlacement";
 
 /* ─── Types ─── */
 interface Prompt {
@@ -340,6 +341,11 @@ export default function PromptsPage() {
                         return null; // The expand/collapse is inline — no modal needed
                     })()}
                 </AnimatePresence>
+
+                {/* ─── Ad: Banner ─── */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-6">
+                    <AdPlacement format="banner" />
+                </div>
 
                 <Footer />
             </div>

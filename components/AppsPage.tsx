@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { downloads } from "@/data/product";
+import AdPlacement from "@/components/AdPlacement";
 
 const TECSUB_APK_URL = "https://drive.google.com/file/d/1Pk7gpQAWMkWvfevSTZPF6_5EwzaFVcdn/view?usp=sharing";
 
@@ -358,6 +359,11 @@ export default function AppsPage() {
                             </div>
                         </motion.div>
                     ))}
+                </div>
+
+                {/* ─── Ad: Banner ─── */}
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-6">
+                    <AdPlacement format="banner" />
                 </div>
 
                 {/* Coming Soon Notice */}

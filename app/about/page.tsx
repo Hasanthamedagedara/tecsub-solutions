@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AdPlacement from "@/components/AdPlacement";
 
 const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 30 },
@@ -226,6 +227,11 @@ export default function AboutPage() {
                         </p>
                     </motion.div>
                 </div>
+                {/* ─── Ad: Banner ─── */}
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 my-6">
+                    <AdPlacement format="banner" />
+                </div>
+
                 <Footer />
             </div>
         </div>
