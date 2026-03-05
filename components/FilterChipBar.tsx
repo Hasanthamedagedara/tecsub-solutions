@@ -198,7 +198,7 @@ export default function FilterChipBar() {
     return (
         <motion.div
             ref={barRef}
-            className="chip-bar"
+            className="chip-bar hidden lg:block"
             initial={{ y: -60, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
