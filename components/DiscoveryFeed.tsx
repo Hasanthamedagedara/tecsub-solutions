@@ -239,8 +239,8 @@ export default function DiscoveryFeed() {
     return (
         <section className="relative z-10 py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
 
-            {/* ─── Filter Chips ─── */}
-            <div className="relative mb-8">
+            {/* ─── Filter Chips (desktop only) ─── */}
+            <div className="relative mb-8 hidden lg:block">
                 {/* Fade edges */}
                 <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-[var(--navy)] to-transparent z-10 pointer-events-none" />
                 <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[var(--navy)] to-transparent z-10 pointer-events-none" />
