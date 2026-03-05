@@ -179,6 +179,11 @@ export default function FilterChipBar() {
         if (tab.scrollTo) {
             handleNav(`#${tab.scrollTo}`);
         }
+
+        // Dispatch reshuffle event when "All" is clicked
+        if (tab.key === "all") {
+            window.dispatchEvent(new CustomEvent("tecsub-reshuffle-feed"));
+        }
     };
 
     /* ─── Dropdown item click ─── */
@@ -191,14 +196,30 @@ export default function FilterChipBar() {
     };
 
     return (
-        <div ref={barRef} className="chip-bar lg:hidden">
+        <motion.div
+            ref={barRef}
+            className="chip-bar"
+            initial={{ y: -60, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+        >
             {/* Scroll container */}
             <div
                 ref={scrollRef}
                 className="chip-bar-scroll"
             >
-                {CHIP_TABS.map((tab) => (
-                    <div key={tab.key} className="relative">
+                {CHIP_TABS.map((tab, index) => (
+                    <motion.div
+                        key={tab.key}
+                        className="relative"
+                        initial={{ opacity: 0, x: -30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{
+                            duration: 0.35,
+                            delay: 0.15 + index * 0.05,
+                            ease: [0.25, 0.46, 0.45, 0.94],
+                        }}
+                    >
                         {/* Chip button */}
                         <motion.button
                             whileTap={{ scale: 0.93 }}
@@ -235,22 +256,25 @@ export default function FilterChipBar() {
                                     transition={{ duration: 0.18 }}
                                     className="chip-dropdown"
                                 >
-                                    {tab.dropdown.map((item) => (
-                                        <button
+                                    {tab.dropdown.map((item, di) => (
+                                        <motion.button
                                             key={item.label}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: di * 0.04, duration: 0.15 }}
                                             onClick={() => handleDropdownClick(item)}
                                             className="chip-dropdown-item"
                                         >
                                             <span className="chip-dropdown-icon">{item.icon}</span>
                                             <span>{item.label}</span>
-                                        </button>
+                                        </motion.button>
                                     ))}
                                 </motion.div>
                             )}
                         </AnimatePresence>
-                    </div>
+                    </motion.div>
                 ))}
             </div>
-        </div>
+        </motion.div>
     );
 }

@@ -164,6 +164,13 @@ export default function DiscoveryFeed() {
         initFeed();
     }, [initFeed]);
 
+    /* ─── Listen for external reshuffle event (e.g. "All" tab click) ─── */
+    useEffect(() => {
+        const handleReshuffle = () => initFeed();
+        window.addEventListener("tecsub-reshuffle-feed", handleReshuffle);
+        return () => window.removeEventListener("tecsub-reshuffle-feed", handleReshuffle);
+    }, [initFeed]);
+
     /* ─── Filtered items ─── */
     const filtered = useMemo(() => {
         if (activeFilter === "All") return shuffledPool;

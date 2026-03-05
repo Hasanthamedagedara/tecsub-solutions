@@ -1736,6 +1736,9 @@ video {
 .pt-8{
   padding-top: 2rem;
 }
+.pt-14{
+  padding-top: 3.5rem;
+}
 .text-left{
   text-align: left;
 }
@@ -2079,6 +2082,9 @@ video {
 .duration-500{
   transition-duration: 500ms;
 }
+.text-fluid-xl {
+    font-size: clamp(2rem, 1.5rem + 2vw, 4rem);
+  }
 .text-fluid-hero {
     font-size: clamp(3rem, 2rem + 5vw, 10rem);
   }
@@ -3585,6 +3591,10 @@ body {
   .lg\:px-8{
     padding-left: 2rem;
     padding-right: 2rem;
+  }
+
+  .lg\:pt-24{
+    padding-top: 6rem;
   }
 
   .lg\:text-9xl{

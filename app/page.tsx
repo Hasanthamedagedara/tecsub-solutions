@@ -31,20 +31,25 @@ export default function Home() {
             <div className="relative" style={{ zIndex: 10 }}>
                 <Navbar />
 
+                {/* ─── Discovery Feed (Primary Home Content) ─── */}
+                <div id="discovery-feed" className="pt-14 lg:pt-24">
+                    <DiscoveryFeed />
+                </div>
+                <div className="section-divider mx-4" />
 
-                {/* ─── Hero Section ─── */}
-                <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-8">
+                {/* ─── Hero Brand Banner ─── */}
+                <section className="py-16 sm:py-24 flex items-center justify-center px-4 sm:px-6">
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1, delay: 0.5 }}
+                        transition={{ duration: 1, delay: 0.3 }}
                         className="text-center max-w-5xl mx-auto"
                     >
                         <motion.h1
-                            className="font-bebas text-fluid-hero leading-[0.85] tracking-tight glow-text"
+                            className="font-bebas text-fluid-xl leading-[0.85] tracking-tight glow-text"
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 1.2, delay: 0.3 }}
+                            transition={{ duration: 1.2, delay: 0.2 }}
                         >
                             {product.name.split(" ").map((word, i) => (
                                 <span key={i} className="block">
@@ -54,69 +59,45 @@ export default function Home() {
                         </motion.h1>
 
                         <motion.p
-                            className="mt-6 font-bebas text-xl sm:text-3xl md:text-4xl tracking-wider gradient-text"
+                            className="mt-4 font-bebas text-xl sm:text-2xl md:text-3xl tracking-wider gradient-text"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ delay: 1 }}
+                            transition={{ delay: 0.6 }}
                         >
                             {t(language, "hero_tagline")}
                         </motion.p>
 
                         <motion.p
-                            className="mt-4 text-xs sm:text-sm uppercase tracking-[0.3em]"
+                            className="mt-3 text-xs sm:text-sm uppercase tracking-[0.3em]"
                             style={{ color: "var(--text-secondary)" }}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ delay: 1.5 }}
+                            transition={{ delay: 0.9 }}
                         >
                             {t(language, "hero_subtitle")}
                         </motion.p>
 
                         {/* Core Specs */}
                         <motion.div
-                            className="mt-10 flex flex-wrap justify-center gap-4 sm:gap-6"
+                            className="mt-8 flex flex-wrap justify-center gap-3 sm:gap-5"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 1.8 }}
+                            transition={{ delay: 1.1 }}
                         >
                             {product.coreSpecs.map((spec) => (
                                 <div
                                     key={spec.label}
-                                    className="flex items-center gap-2 glass-panel px-4 py-2"
+                                    className="flex items-center gap-2 glass-panel px-3 py-1.5"
                                 >
-                                    <span className="text-lg">{spec.icon}</span>
-                                    <span className="text-xs sm:text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                                    <span className="text-base">{spec.icon}</span>
+                                    <span className="text-xs font-medium" style={{ color: "var(--text-primary)" }}>
                                         {spec.label}
                                     </span>
                                 </div>
                             ))}
                         </motion.div>
-
-                        {/* Scroll Indicator */}
-                        <motion.div
-                            className="mt-16"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 2.2 }}
-                        >
-                            <p className="text-xs uppercase tracking-[0.3em] mb-4" style={{ color: "var(--text-secondary)" }}>
-                                {t(language, "scroll_explore")}
-                            </p>
-                            <motion.div
-                                animate={{ y: [0, 10, 0] }}
-                                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                                className="mx-auto w-6 h-10 rounded-full border-2 border-tecsubCyan/30 flex items-start justify-center pt-2"
-                            >
-                                <div className="w-1 h-2 rounded-full bg-tecsubCyan" />
-                            </motion.div>
-                        </motion.div>
                     </motion.div>
                 </section>
-
-                {/* ─── Discovery Feed ─── */}
-                <div id="discovery-feed">
-                    <DiscoveryFeed />
-                </div>
                 <div className="section-divider mx-4" />
 
                 {/* ─── Recent Updates ─── */}
