@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
@@ -14,10 +14,8 @@ interface NavItem {
 }
 
 export default function Navbar() {
-    const [isOpen, setIsOpen] = useState(false);
     const [langOpen, setLangOpen] = useState(false);
     const [hoverDropdown, setHoverDropdown] = useState<string | null>(null);
-    const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
     const { theme, toggleTheme, language, setLanguage } = useAppContext();
     const router = useRouter();
     const pathname = usePathname();
@@ -61,28 +59,11 @@ export default function Navbar() {
 
     const langLabels: Record<string, string> = { en: "EN", si: "සි", ta: "ත" };
 
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth >= 1024) setIsOpen(false);
-        };
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
 
-    useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "";
-        }
-        return () => { document.body.style.overflow = ""; };
-    }, [isOpen]);
 
     const handleNavClick = (href: string) => {
-        setIsOpen(false);
         setLangOpen(false);
         setHoverDropdown(null);
-        setMobileExpanded(null);
 
         if (href.startsWith("/")) {
             router.push(href);
@@ -238,139 +219,13 @@ export default function Navbar() {
                                 {t(language, "get_solutions")}
                             </a>
 
-                            <button
-                                onClick={() => { setIsOpen(!isOpen); setLangOpen(false); }}
-                                className="lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center border border-white/10 hover:border-tecsubCyan/30 transition-colors ml-1"
-                                aria-label="Toggle menu"
-                            >
-                                <div className="flex flex-col items-center justify-center gap-[5px] w-4">
-                                    <motion.span
-                                        animate={isOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
-                                        className="block w-full h-[2px] rounded-full bg-current transition-colors"
-                                        style={{ color: isOpen ? "#00E5FF" : "var(--text-primary)" }}
-                                    />
-                                    <motion.span
-                                        animate={isOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
-                                        className="block w-full h-[2px] rounded-full bg-current"
-                                        style={{ color: "var(--text-primary)" }}
-                                    />
-                                    <motion.span
-                                        animate={isOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
-                                        className="block w-full h-[2px] rounded-full bg-current transition-colors"
-                                        style={{ color: isOpen ? "#00E5FF" : "var(--text-primary)" }}
-                                    />
-                                </div>
-                            </button>
+
                         </div>
                     </div>
                 </div>
             </motion.nav>
 
-            {/* ═══ Mobile Menu ═══ */}
-            <AnimatePresence>
-                {isOpen && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
-                            onClick={() => setIsOpen(false)}
-                        />
 
-                        <motion.div
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3, ease: "easeOut" }}
-                            className="fixed top-16 sm:top-20 left-0 right-0 z-50 lg:hidden overflow-y-auto"
-                            style={{ maxHeight: "calc(100vh - 4rem)" }}
-                        >
-                            <div
-                                className="mx-3 sm:mx-4 rounded-2xl p-4 sm:p-6 shadow-2xl"
-                                style={{
-                                    background: "rgba(10, 10, 11, 0.95)",
-                                    backdropFilter: "blur(24px)",
-                                    border: "1px solid rgba(0, 229, 255, 0.1)",
-                                }}
-                            >
-                                <div className="space-y-1 mb-4">
-                                    {navLinks.map((link, i) => (
-                                        <div key={link.label}>
-                                            <motion.button
-                                                initial={{ opacity: 0, x: -20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                transition={{ delay: i * 0.04, duration: 0.3 }}
-                                                onClick={() => {
-                                                    if (link.subs) {
-                                                        setMobileExpanded(mobileExpanded === link.label ? null : link.label);
-                                                    } else {
-                                                        handleNavClick(link.href);
-                                                    }
-                                                }}
-                                                className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium uppercase tracking-wider hover:bg-tecsubCyan/10 hover:text-tecsubCyan transition-all duration-300 text-left"
-                                                style={{ color: "var(--text-primary)" }}
-                                            >
-                                                <span className="flex items-center gap-3">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-tecsubCyan/40 flex-shrink-0" />
-                                                    {link.label}
-                                                </span>
-                                                {link.subs && (
-                                                    <motion.span
-                                                        animate={{ rotate: mobileExpanded === link.label ? 180 : 0 }}
-                                                        className="text-xs opacity-50"
-                                                    >
-                                                        ▼
-                                                    </motion.span>
-                                                )}
-                                            </motion.button>
-
-                                            {/* Mobile Sub-dropdown */}
-                                            <AnimatePresence>
-                                                {link.subs && mobileExpanded === link.label && (
-                                                    <motion.div
-                                                        initial={{ height: 0, opacity: 0 }}
-                                                        animate={{ height: "auto", opacity: 1 }}
-                                                        exit={{ height: 0, opacity: 0 }}
-                                                        transition={{ duration: 0.25 }}
-                                                        className="overflow-hidden"
-                                                    >
-                                                        <div className="ml-8 mt-1 mb-2 space-y-0.5 pl-3" style={{ borderLeft: "2px solid rgba(0,229,255,0.2)" }}>
-                                                            {link.subs.map((sub) => (
-                                                                <button
-                                                                    key={sub.label}
-                                                                    onClick={() => handleNavClick(sub.href)}
-                                                                    className="w-full text-left px-3 py-2 rounded-lg text-[13px] hover:bg-white/5 transition-all"
-                                                                    style={{ color: "rgba(255,255,255,0.8)" }}
-                                                                >
-                                                                    {sub.label}
-                                                                </button>
-                                                            ))}
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="h-px my-3" style={{ background: "linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent)" }} />
-
-                                <motion.button
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.3, duration: 0.3 }}
-                                    onClick={() => { handleNavClick("#contact"); }}
-                                    className="w-full py-3 rounded-full bg-gradient-to-r from-tecsubCyan to-tecsubBlue text-tecsubNavy font-bold text-sm uppercase tracking-wider hover:shadow-[0_0_30px_rgba(0,229,255,0.4)] transition-all duration-300"
-                                >
-                                    {t(language, "get_solutions")}
-                                </motion.button>
-                            </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
         </>
     );
 }
