@@ -215,13 +215,16 @@ body {
   transition: border-color 0.2s;
   resize: vertical;
 }
+
 .tool-input:focus {
   border-color: rgba(0, 229, 255, 0.3);
 }
+
 .tool-input option {
   background: #0a0a0b;
   color: #fff;
 }
+
 .tool-btn {
   padding: 8px 16px;
   border-radius: 0.625rem;
@@ -235,10 +238,12 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+
 .tool-btn:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(0, 229, 255, 0.2);
 }
+
 .tool-btn-primary {
   padding: 10px 20px;
   border-radius: 0.75rem;
@@ -252,6 +257,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+
 .tool-btn-primary:hover {
   box-shadow: 0 0 25px rgba(0, 229, 255, 0.35);
 }
@@ -261,6 +267,7 @@ body {
   position: relative;
   margin-top: 0.75rem;
 }
+
 .engagement-bar {
   display: flex;
   align-items: center;
@@ -272,10 +279,12 @@ body {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
 }
+
 .engagement-bar-compact {
   padding: 0.35rem 0.5rem;
   gap: 0.15rem;
 }
+
 .engagement-btn {
   display: inline-flex;
   align-items: center;
@@ -290,24 +299,30 @@ body {
   font-size: 12px;
   white-space: nowrap;
 }
+
 .engagement-btn:hover {
   background: rgba(0, 229, 255, 0.08);
   color: var(--text-primary);
 }
+
 .engagement-btn.active {
   color: #FF4444;
 }
+
 .engagement-btn.active.reposted {
   color: #22C55E;
 }
+
 .engagement-btn.active.saved {
   color: var(--cyan);
 }
+
 .engagement-count {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
+
 .views-badge {
   display: inline-flex;
   align-items: center;
@@ -320,6 +335,7 @@ body {
   color: var(--text-secondary);
   white-space: nowrap;
 }
+
 .engagement-toast {
   position: absolute;
   bottom: -2rem;
@@ -349,12 +365,15 @@ body {
   outline: none;
   transition: border-color 0.2s;
 }
+
 .light .comment-input {
   background: rgba(0, 0, 0, 0.04);
 }
+
 .comment-input:focus {
   border-color: rgba(0, 229, 255, 0.35);
 }
+
 .comment-post-btn {
   padding: 0.35rem 0.75rem;
   border-radius: 0.625rem;
@@ -369,19 +388,23 @@ body {
   letter-spacing: 0.03em;
   white-space: nowrap;
 }
+
 .comment-post-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
 .comment-post-btn:not(:disabled):hover {
   box-shadow: 0 0 16px rgba(0, 229, 255, 0.3);
 }
+
 .comment-card {
   padding: 0.6rem 0.75rem;
   border-radius: 0.75rem;
   background: var(--card-bg);
   border: 1px solid var(--glass-border);
 }
+
 .comment-action-btn {
   display: inline-flex;
   align-items: center;
@@ -394,6 +417,436 @@ body {
   transition: color 0.2s;
   padding: 0;
 }
+
 .comment-action-btn:hover {
   color: var(--text-primary);
+}
+
+/* ─── Discovery Feed ─── */
+.feed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.feed-card {
+  position: relative;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    border-color 0.35s;
+}
+
+.feed-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 50px rgba(0, 229, 255, 0.08);
+  border-color: rgba(0, 229, 255, 0.18);
+}
+
+.light .feed-card:hover {
+  box-shadow: 0 18px 50px rgba(0, 114, 188, 0.06);
+}
+
+.feed-card-thumbnail {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: rgba(0, 229, 255, 0.03);
+}
+
+/* Video cards get a taller thumbnail for TikTok-style feel */
+.feed-card-thumbnail-video {
+  aspect-ratio: 4 / 3;
+}
+
+/* YouTube iframe overlay for hover preview */
+.feed-video-iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  z-index: 2;
+}
+
+/* Play button overlay */
+.feed-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.25);
+  transition: opacity 0.4s ease;
+  z-index: 3;
+}
+
+.feed-play-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 68, 68, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(255, 68, 68, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feed-card:hover .feed-play-icon {
+  transform: scale(1.1);
+  box-shadow: 0 0 40px rgba(255, 68, 68, 0.6);
+}
+
+/* LIVE badge */
+.feed-live-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: rgba(255, 68, 68, 0.9);
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  z-index: 5;
+  animation: fadeIn 0.3s ease;
+}
+
+.feed-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: white;
+  animation: livePulse 1.2s infinite;
+}
+
+@keyframes livePulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Category badge */
+.feed-category-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 4;
+}
+
+.feed-card-body {
+  padding: 0.875rem 1rem 1rem;
+}
+
+.feed-card-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.feed-card-desc {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+}
+
+/* ─── Filter Chips ─── */
+.feed-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.feed-chip:hover {
+  background: rgba(0, 229, 255, 0.06);
+  border-color: rgba(0, 229, 255, 0.2);
+  color: var(--text-primary);
+}
+
+.feed-chip-active {
+  font-weight: 700;
+}
+
+/* ─── Refresh Button ─── */
+.feed-refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  color: var(--cyan);
+  cursor: pointer;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+.feed-refresh-btn:hover {
+  border-color: rgba(0, 229, 255, 0.5);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+}
+
+/* ─── Skeleton Shimmer ─── */
+.feed-skeleton {
+  pointer-events: none;
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.03) 25%,
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite ease-in-out;
+  border-radius: 0.5rem;
+}
+
+.light .skeleton-shimmer {
+  background: linear-gradient(90deg,
+      rgba(0, 0, 0, 0.04) 25%,
+      rgba(0, 0, 0, 0.08) 50%,
+      rgba(0, 0, 0, 0.04) 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Filter Chip Bar (Mobile) ─── */
+.chip-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 55;
+  background: rgba(10, 10, 11, 0.82);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.08);
+  padding: 10px 0 10px 0;
+}
+
+.light .chip-bar {
+  background: rgba(255, 255, 255, 0.85);
+  border-bottom: 1px solid rgba(0, 114, 188, 0.1);
+}
+
+.chip-bar-scroll {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chip-bar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Individual Chip ─── */
+.chip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 16px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Outlined + Elevated */
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18),
+              0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.chip-item:hover {
+  border-color: rgba(0, 229, 255, 0.3);
+  background: rgba(0, 229, 255, 0.06);
+  color: var(--text-primary);
+  box-shadow: 0 3px 12px rgba(0, 229, 255, 0.08),
+              0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.chip-item-active {
+  border-color: rgba(0, 229, 255, 0.5) !important;
+  background: rgba(0, 229, 255, 0.12) !important;
+  color: #00E5FF !important;
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.15),
+              0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.light .chip-item {
+  border-color: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06),
+              0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.light .chip-item:hover {
+  border-color: rgba(0, 114, 188, 0.3);
+  background: rgba(0, 114, 188, 0.06);
+}
+
+.light .chip-item-active {
+  border-color: rgba(0, 114, 188, 0.5) !important;
+  background: rgba(0, 114, 188, 0.1) !important;
+  color: #0072BC !important;
+  box-shadow: 0 0 14px rgba(0, 114, 188, 0.1),
+              0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.chip-arrow {
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
+.chip-item-active .chip-arrow {
+  opacity: 0.9;
+}
+
+/* ─── Chip Dropdown Panel ─── */
+.chip-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 170px;
+  padding: 6px 0;
+  border-radius: 14px;
+  z-index: 60;
+
+  background: rgba(12, 12, 14, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 229, 255, 0.1);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5),
+              0 0 0 1px rgba(0, 229, 255, 0.05);
+}
+
+.light .chip-dropdown {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 114, 188, 0.12);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+}
+
+.chip-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.chip-dropdown-item:hover {
+  background: rgba(0, 229, 255, 0.08);
+  color: #00E5FF;
+}
+
+.light .chip-dropdown-item {
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.light .chip-dropdown-item:hover {
+  background: rgba(0, 114, 188, 0.06);
+  color: #0072BC;
+}
+
+.chip-dropdown-icon {
+  font-size: 16px;
+  flex-shrink: 0;
 }

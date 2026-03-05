@@ -17,6 +17,7 @@ import CoursePlatform from "@/components/CoursePlatform";
 import BetaCommunity from "@/components/BetaCommunity";
 import AdPlacement from "@/components/AdPlacement";
 import Footer from "@/components/Footer";
+import DiscoveryFeed from "@/components/DiscoveryFeed";
 
 export default function Home() {
     const { language } = useAppContext();
@@ -112,8 +113,16 @@ export default function Home() {
                     </motion.div>
                 </section>
 
+                {/* ─── Discovery Feed ─── */}
+                <div id="discovery-feed">
+                    <DiscoveryFeed />
+                </div>
+                <div className="section-divider mx-4" />
+
                 {/* ─── Recent Updates ─── */}
-                <RecentUpdates />
+                <div id="recent-updates">
+                    <RecentUpdates />
+                </div>
                 <div className="section-divider mx-4" />
 
                 {/* ─── YouTube Banner ─── */}
@@ -121,7 +130,9 @@ export default function Home() {
 
 
                 {/* ─── Online Tools ─── */}
-                <OnlineTools />
+                <div id="online-tools">
+                    <OnlineTools />
+                </div>
 
                 <div className="section-divider mx-4" />
 
@@ -133,12 +144,16 @@ export default function Home() {
 
 
                 {/* ─── AI Lab, App Forge, Software, Videos, Social ─── */}
-                <ContentSections />
+                <div id="content-sections">
+                    <ContentSections />
+                </div>
 
                 <div className="section-divider mx-4" />
 
                 {/* ─── AI Prompts ─── */}
-                <AIPromptHub />
+                <div id="ai-prompts">
+                    <AIPromptHub />
+                </div>
 
                 <div className="section-divider mx-4" />
 

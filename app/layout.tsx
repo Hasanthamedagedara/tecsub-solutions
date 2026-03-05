@@ -3,6 +3,7 @@ import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import ScrollToTop from "@/components/ScrollToTop";
 import SidePanel from "@/components/SidePanel";
+import FilterChipBar from "@/components/FilterChipBar";
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://tecsubsolutions.com"),
@@ -56,6 +57,7 @@ export default function RootLayout({
             </head>
             <body className="font-inter antialiased">
                 <ThemeProvider>
+                    <FilterChipBar />
                     {children}
                     <ScrollToTop />
                     <SidePanel />
