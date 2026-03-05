@@ -6,6 +6,7 @@ import { aiPrompts } from "@/data/product";
 import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
 import { useAdminContent, adminToPrompts } from "@/hooks/useAdminContent";
+import EngagementBar from "@/components/EngagementBar";
 
 function PromptModal({
     prompt,
@@ -183,6 +184,9 @@ export default function AIPromptHub() {
                                 {t(language, "preview")}
                             </div>
 
+                            <div onClick={(e) => e.stopPropagation()}>
+                                <EngagementBar contentId={`prompt-${prompt.title.replace(/\s+/g, '-').slice(0, 30)}`} contentType="prompt" compact />
+                            </div>
                             <div className="absolute bottom-0 left-0 right-0 h-px rounded-b-xl bg-gradient-to-r from-transparent via-tecsubCyan/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         </motion.div>
                     ))}

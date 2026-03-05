@@ -12,6 +12,7 @@ import SocialIcon from "@/components/SocialIcon";
 import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
 import { useAdminContent, adminToVideos, adminToDownloads } from "@/hooks/useAdminContent";
+import EngagementBar from "@/components/EngagementBar";
 
 /* ─── Section Wrapper ─── */
 function Section({
@@ -129,6 +130,7 @@ function VideoCard({ videoId, title, index }: { videoId: string; title: string; 
                 )}
             </div>
             <p className="mt-3 text-sm font-medium truncate" style={{ color: "var(--text-secondary)" }}>{title}</p>
+            <EngagementBar contentId={`video-${videoId}`} contentType="video" compact />
         </motion.div>
     );
 }
@@ -228,6 +230,7 @@ export default function ContentSections() {
                                 </a>
                             </div>
 
+                            <EngagementBar contentId={`software-${sw.name.replace(/\s+/g, '-')}`} contentType="software" compact />
                             <div className="absolute bottom-0 left-0 right-0 h-px rounded-b-xl bg-gradient-to-r from-transparent via-tecsubCyan/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         </motion.div>
                     ))}

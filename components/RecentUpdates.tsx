@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useAppContext } from "@/components/ThemeProvider";
+import EngagementBar from "@/components/EngagementBar";
 
 /* ─── Update Data ─── */
 const recentUpdates = [
@@ -245,6 +246,9 @@ export default function RecentUpdates() {
                                     <p className="text-xs leading-relaxed line-clamp-2" style={{ color: "var(--text-secondary)" }}>
                                         {update.description}
                                     </p>
+                                    <div onClick={(e) => e.stopPropagation()}>
+                                        <EngagementBar contentId={`update-${update.id}`} contentType="update" compact />
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}

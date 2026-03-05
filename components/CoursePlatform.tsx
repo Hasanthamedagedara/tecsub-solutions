@@ -7,6 +7,7 @@ import { courses, wallets } from "@/data/product";
 import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
 import { useAdminContent } from "@/hooks/useAdminContent";
+import EngagementBar from "@/components/EngagementBar";
 
 export default function CoursePlatform() {
     const { language } = useAppContext();
@@ -106,6 +107,7 @@ export default function CoursePlatform() {
                                 {course.price === 0 ? t(language, "access_now") : t(language, "enroll_now")}
                             </button>
                         </div>
+                        <EngagementBar contentId={`course-${course.title.replace(/\s+/g, '-').slice(0, 30)}`} contentType="course" compact />
                     </motion.div>
                 ))}
             </div>
