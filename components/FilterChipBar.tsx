@@ -27,12 +27,42 @@ const TABS: ChipTab[] = [
     { key: "live", label: "Live", scrollTo: "videos" },
 ];
 
+/* ─── Detect if running inside Android WebView app ─── */
+function isAppWebView(): boolean {
+    if (typeof window === "undefined") return false;
+
+    const ua = navigator.userAgent || "";
+
+    // Detect Android WebView: contains "wv" (WebView marker)
+    // or custom app identifier "TecsubApp"
+    if (/; wv\)/.test(ua) || /TecsubApp/i.test(ua)) return true;
+
+    // Also detect via URL parameter: ?app=1 or ?mode=app
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("app") === "1" || params.get("mode") === "app") return true;
+
+    return false;
+}
+
 /* ─── Component ─── */
 export default function FilterChipBar() {
     const [activeTab, setActiveTab] = useState("all");
+    const [isApp, setIsApp] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const pathname = usePathname();
+
+    /* ─── Detect app on mount ─── */
+    useEffect(() => {
+        const inApp = isAppWebView();
+        setIsApp(inApp);
+
+        // When running in app, set CSS variable to 0 so content
+        // margin-top adjusts (no chip bar height)
+        if (inApp) {
+            document.documentElement.style.setProperty("--yt-chipbar-height", "0px");
+        }
+    }, []);
 
     const handleChipClick = useCallback(
         (tab: ChipTab) => {
@@ -64,6 +94,9 @@ export default function FilterChipBar() {
         },
         [pathname, router]
     );
+
+    /* ─── Hide completely when inside app ─── */
+    if (isApp) return null;
 
     return (
         <div className="chip-bar" id="yt-chip-bar">
