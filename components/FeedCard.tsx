@@ -2,15 +2,14 @@
 
 import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import EngagementBar from "@/components/EngagementBar";
 
 /* ─── Category Color Map ─── */
 const categoryColors: Record<string, string> = {
-    Video: "#FF4444",
-    Tool: "#22C55E",
+    Video: "#FF0000",
+    Tool: "#2ba640",
     News: "#F59E0B",
     Prompt: "#A855F7",
-    Course: "#3B82F6",
+    Course: "#3ea6ff",
     Software: "#00E5FF",
     Update: "#EC4899",
 };
@@ -37,6 +36,26 @@ export interface FeedItem {
     link?: string;
 }
 
+/* ─── Random view / time helpers ─── */
+function randomViews(): string {
+    const n = Math.floor(Math.random() * 500) + 1;
+    if (n >= 100) return `${(n / 10).toFixed(0)}K views`;
+    return `${n} views`;
+}
+
+function randomTimeAgo(): string {
+    const units = ["hours", "days", "weeks", "months"];
+    const unit = units[Math.floor(Math.random() * units.length)];
+    const n = Math.floor(Math.random() * 11) + 1;
+    return `${n} ${unit} ago`;
+}
+
+function randomDuration(): string {
+    const min = Math.floor(Math.random() * 25) + 1;
+    const sec = Math.floor(Math.random() * 60);
+    return `${min}:${sec.toString().padStart(2, "0")}`;
+}
+
 /* ─── Card Component ─── */
 export default function FeedCard({
     item,
@@ -47,7 +66,7 @@ export default function FeedCard({
     index: number;
     onItemClick?: (item: FeedItem) => void;
 }) {
-    const color = categoryColors[item.category] || "#00E5FF";
+    const color = categoryColors[item.category] || "#3ea6ff";
     const emoji = categoryEmojis[item.category] || "📌";
     const isVideo = item.category === "Video" || (item.category === "Course" && !!item.videoId);
 
@@ -58,10 +77,9 @@ export default function FeedCard({
 
     const handleMouseEnter = useCallback(() => {
         if (!isVideo || !item.videoId) return;
-        // Small delay to avoid loading iframes on quick scroll-by
         hoverTimer.current = setTimeout(() => {
             setIsHovering(true);
-        }, 400);
+        }, 500);
     }, [isVideo, item.videoId]);
 
     const handleMouseLeave = useCallback(() => {
@@ -75,27 +93,27 @@ export default function FeedCard({
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.4, delay: (index % 12) * 0.04 }}
-            className={`feed-card group ${isVideo ? "feed-card-video" : ""}`}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: (index % 12) * 0.03 }}
+            className="feed-card group"
             onClick={() => onItemClick?.(item)}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            {/* ─── Thumbnail / Video Preview Area ─── */}
-            <div className={`feed-card-thumbnail ${isVideo ? "feed-card-thumbnail-video" : ""}`}>
+            {/* ─── Thumbnail ─── */}
+            <div className="feed-card-thumbnail">
                 {isVideo && item.videoId ? (
                     <>
-                        {/* Poster / Thumbnail Image */}
+                        {/* Poster Image */}
                         <img
-                            src={`https://img.youtube.com/vi/${item.videoId}/hqdefault.jpg`}
+                            src={`https://img.youtube.com/vi/${item.videoId}/mqdefault.jpg`}
                             alt={item.title}
                             className={`w-full h-full object-cover transition-opacity duration-300 ${isHovering && iframeLoaded ? "opacity-0" : "opacity-100"}`}
                             loading="lazy"
                         />
 
-                        {/* YouTube iframe — loads on hover for live preview */}
+                        {/* YouTube iframe on hover */}
                         {isHovering && (
                             <iframe
                                 className="feed-video-iframe"
@@ -107,20 +125,18 @@ export default function FeedCard({
                             />
                         )}
 
-                        {/* Play Icon Overlay — fades out on hover/play */}
-                        <div className={`feed-play-overlay ${isHovering ? "opacity-0" : "opacity-100"}`}>
-                            <div className="feed-play-icon">
-                                <svg className="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
-                            </div>
-                        </div>
-
-                        {/* LIVE badge for playing videos */}
+                        {/* LIVE badge when playing */}
                         {isHovering && iframeLoaded && (
                             <div className="feed-live-badge">
                                 <span className="feed-live-dot" />
                                 LIVE
+                            </div>
+                        )}
+
+                        {/* Duration badge (bottom right) */}
+                        {!isHovering && (
+                            <div className="feed-duration-badge">
+                                {randomDuration()}
                             </div>
                         )}
                     </>
@@ -129,54 +145,58 @@ export default function FeedCard({
                     <div
                         className="w-full h-full flex items-center justify-center"
                         style={{
-                            background: `linear-gradient(135deg, ${color}15, ${color}08)`,
+                            background: `linear-gradient(135deg, ${color}20, ${color}10)`,
                         }}
                     >
-                        <span className="text-4xl opacity-80 group-hover:scale-110 transition-transform duration-300">
+                        <span className="text-5xl opacity-70 group-hover:scale-110 transition-transform duration-200">
                             {item.icon}
                         </span>
                     </div>
                 )}
 
-                {/* Category Badge */}
-                <div
-                    className="feed-category-badge"
-                    style={{
-                        background: `${color}20`,
-                        color: color,
-                        border: `1px solid ${color}35`,
-                        backdropFilter: "blur(8px)",
-                    }}
-                >
-                    <span>{emoji}</span>
-                    {item.category}
-                </div>
+                {/* Category Badge (non-video) */}
+                {!isVideo && (
+                    <div className="feed-category-badge">
+                        <span>{emoji}</span>
+                        {item.category}
+                    </div>
+                )}
             </div>
 
-            {/* ─── Content ─── */}
+            {/* ─── YouTube-Style Card Body: Avatar + Meta ─── */}
             <div className="feed-card-body">
-                <h3 className="feed-card-title">
-                    {item.title}
-                </h3>
-                <p className="feed-card-desc">
-                    {item.description}
-                </p>
-
-                {/* ─── Engagement Bar ─── */}
-                <div onClick={(e) => e.stopPropagation()}>
-                    <EngagementBar
-                        contentId={`feed-${item.id}`}
-                        contentType={item.category.toLowerCase()}
-                        compact
-                    />
+                {/* Channel avatar */}
+                <div
+                    className="feed-card-avatar"
+                    style={{ background: `linear-gradient(135deg, ${color}80, ${color}40)` }}
+                >
+                    {emoji}
                 </div>
-            </div>
 
-            {/* Bottom glow line */}
-            <div
-                className="absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{ background: `linear-gradient(90deg, transparent, ${color}60, transparent)` }}
-            />
+                {/* Meta info */}
+                <div className="feed-card-meta">
+                    <h3 className="feed-card-title">
+                        {item.title}
+                    </h3>
+                    <div className="feed-card-channel">
+                        Tecsub Solutions
+                    </div>
+                    <div className="feed-card-stats">
+                        {randomViews()} · {randomTimeAgo()}
+                    </div>
+                </div>
+
+                {/* Three dot menu */}
+                <button
+                    className="opacity-0 group-hover:opacity-100 transition-opacity self-start mt-1 p-1"
+                    onClick={(e) => { e.stopPropagation(); }}
+                    aria-label="More options"
+                >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#aaa">
+                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                    </svg>
+                </button>
+            </div>
         </motion.div>
     );
 }

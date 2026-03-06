@@ -6,7 +6,6 @@ import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
 
 import Navbar from "@/components/Navbar";
-import HeroCanvas from "@/components/HeroCanvas";
 import RecentUpdates from "@/components/RecentUpdates";
 import YouTubeBanner from "@/components/YouTubeBanner";
 import OnlineTools from "@/components/OnlineTools";
@@ -24,32 +23,31 @@ export default function Home() {
 
     return (
         <>
-            {/* Fixed Background — Canvas animation */}
-            <HeroCanvas />
+            {/* ─── YouTube Header Bar ─── */}
+            <Navbar />
 
-            {/* Foreground — All interactive content */}
-            <div className="relative" style={{ zIndex: 10 }}>
-                <Navbar />
+            {/* ─── Content Area (with sidebar margin on desktop) ─── */}
+            <div className="yt-content" id="yt-content">
 
                 {/* ─── Discovery Feed (Primary Home Content) ─── */}
-                <div id="discovery-feed" className="pt-14 lg:pt-24">
-                    <DiscoveryFeed />
-                </div>
-                <div className="section-divider mx-4" />
+                <DiscoveryFeed />
+
+                <div className="section-divider my-8" />
 
                 {/* ─── Hero Brand Banner ─── */}
-                <section className="py-16 sm:py-24 flex items-center justify-center px-4 sm:px-6">
+                <section className="py-12 sm:py-16 flex items-center justify-center px-4">
                     <motion.div
-                        initial={{ opacity: 0, y: 40 }}
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1, delay: 0.3 }}
-                        className="text-center max-w-5xl mx-auto"
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="text-center max-w-4xl mx-auto"
                     >
                         <motion.h1
-                            className="font-bebas text-fluid-xl leading-[0.85] tracking-tight glow-text"
-                            initial={{ opacity: 0, scale: 0.9 }}
+                            className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight"
+                            style={{ color: "var(--yt-text-primary)" }}
+                            initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 1.2, delay: 0.2 }}
+                            transition={{ duration: 0.8, delay: 0.1 }}
                         >
                             {product.name.split(" ").map((word, i) => (
                                 <span key={i} className="block">
@@ -59,38 +57,43 @@ export default function Home() {
                         </motion.h1>
 
                         <motion.p
-                            className="mt-4 font-bebas text-xl sm:text-2xl md:text-3xl tracking-wider gradient-text"
+                            className="mt-4 text-lg sm:text-xl md:text-2xl font-medium"
+                            style={{ color: "var(--yt-accent)" }}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ delay: 0.6 }}
+                            transition={{ delay: 0.4 }}
                         >
                             {t(language, "hero_tagline")}
                         </motion.p>
 
                         <motion.p
-                            className="mt-3 text-xs sm:text-sm uppercase tracking-[0.3em]"
-                            style={{ color: "var(--text-secondary)" }}
+                            className="mt-3 text-sm uppercase tracking-[0.2em]"
+                            style={{ color: "var(--yt-text-secondary)" }}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ delay: 0.9 }}
+                            transition={{ delay: 0.6 }}
                         >
                             {t(language, "hero_subtitle")}
                         </motion.p>
 
                         {/* Core Specs */}
                         <motion.div
-                            className="mt-8 flex flex-wrap justify-center gap-3 sm:gap-5"
-                            initial={{ opacity: 0, y: 20 }}
+                            className="mt-6 flex flex-wrap justify-center gap-3"
+                            initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 1.1 }}
+                            transition={{ delay: 0.8 }}
                         >
                             {product.coreSpecs.map((spec) => (
                                 <div
                                     key={spec.label}
-                                    className="flex items-center gap-2 glass-panel px-3 py-1.5"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-lg"
+                                    style={{
+                                        background: "var(--yt-bg-secondary)",
+                                        border: "1px solid var(--yt-border)",
+                                    }}
                                 >
                                     <span className="text-base">{spec.icon}</span>
-                                    <span className="text-xs font-medium" style={{ color: "var(--text-primary)" }}>
+                                    <span className="text-xs font-medium" style={{ color: "var(--yt-text-primary)" }}>
                                         {spec.label}
                                     </span>
                                 </div>
@@ -98,58 +101,51 @@ export default function Home() {
                         </motion.div>
                     </motion.div>
                 </section>
-                <div className="section-divider mx-4" />
+
+                <div className="section-divider my-4" />
 
                 {/* ─── Recent Updates ─── */}
                 <div id="recent-updates">
                     <RecentUpdates />
                 </div>
-                <div className="section-divider mx-4" />
+                <div className="section-divider my-4" />
 
                 {/* ─── YouTube Banner ─── */}
                 <YouTubeBanner />
-
 
                 {/* ─── Online Tools ─── */}
                 <div id="online-tools">
                     <OnlineTools />
                 </div>
-
-                <div className="section-divider mx-4" />
+                <div className="section-divider my-4" />
 
                 {/* ─── Tech News ─── */}
                 <TechNews />
-
-                <div className="section-divider mx-4 mt-8" />
-
-
+                <div className="section-divider my-4" />
 
                 {/* ─── AI Lab, App Forge, Software, Videos, Social ─── */}
                 <div id="content-sections">
                     <ContentSections />
                 </div>
-
-                <div className="section-divider mx-4" />
+                <div className="section-divider my-4" />
 
                 {/* ─── AI Prompts ─── */}
                 <div id="ai-prompts">
                     <AIPromptHub />
                 </div>
-
-                <div className="section-divider mx-4" />
+                <div className="section-divider my-4" />
 
                 {/* ─── Courses & Payments ─── */}
                 <CoursePlatform />
-                <div className="section-divider mx-4" />
+                <div className="section-divider my-4" />
 
                 {/* ─── Beta Community ─── */}
                 <BetaCommunity />
 
-                {/* ─── Ad: Full banner + native before footer ─── */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
+                {/* ─── Ad ─── */}
+                <div className="max-w-full mx-auto mb-4 mt-8">
                     <AdPlacement format="banner" />
                 </div>
-
 
                 {/* ─── Footer ─── */}
                 <Footer />
