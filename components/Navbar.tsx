@@ -152,11 +152,12 @@ export default function Navbar() {
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95, y: -8 }}
                                 transition={{ duration: 0.15 }}
-                                className="absolute right-0 top-full mt-2 w-[300px] rounded-xl overflow-hidden z-[70]"
+                                className="absolute right-0 top-full mt-2 rounded-xl overflow-hidden z-[70]"
                                 style={{
                                     background: "#282828",
                                     border: "1px solid #3f3f3f",
                                     boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+                                    width: "min(300px, calc(100vw - 32px))",
                                 }}
                             >
                                 {/* Profile header */}
