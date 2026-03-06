@@ -50,6 +50,20 @@ export default function RootLayout({
     return (
         <html lang="en" className="dark" suppressHydrationWarning>
             <head>
+                {/* Instantly detect app WebView before paint — prevents header flash */}
+                <script dangerouslySetInnerHTML={{ __html: `
+                    (function(){
+                        var ua = navigator.userAgent || '';
+                        var sp = new URLSearchParams(window.location.search);
+                        if (ua.indexOf('TECSUB_APP_USER_AGENT') !== -1 ||
+                            ua.indexOf('TecsubApp') !== -1 ||
+                            /; wv\\)/.test(ua) ||
+                            sp.get('app') === '1' ||
+                            sp.get('mode') === 'app') {
+                            document.documentElement.classList.add('is-app');
+                        }
+                    })();
+                `}} />
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link

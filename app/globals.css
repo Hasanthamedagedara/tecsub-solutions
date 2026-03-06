@@ -1194,3 +1194,23 @@ body {
     background-position: 100% 50%;
   }
 }
+
+/* ═══════════════════════════════════════════════
+   App WebView: Instantly hide header & chip bar
+   when TECSUB_APP_USER_AGENT is detected.
+   The "is-app" class is added by an inline script
+   in <head> BEFORE first paint, so there is zero
+   flash / flicker.
+   ═══════════════════════════════════════════════ */
+html.is-app #yt-header,
+html.is-app #yt-chip-bar {
+  display: none !important;
+}
+
+html.is-app .yt-content {
+  margin-top: 0 !important;
+}
+
+html.is-app .yt-sidebar {
+  top: 0 !important;
+}

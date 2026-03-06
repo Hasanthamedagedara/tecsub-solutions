@@ -6,16 +6,32 @@ import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
 import { useRouter, usePathname } from "next/navigation";
 
+/* ─── Detect if running inside Android WebView app ─── */
+function isAppWebView(): boolean {
+    if (typeof window === "undefined") return false;
+    const ua = navigator.userAgent || "";
+    if (ua.includes("TECSUB_APP_USER_AGENT") || /TecsubApp/i.test(ua) || /; wv\)/.test(ua)) return true;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("app") === "1" || params.get("mode") === "app") return true;
+    return false;
+}
+
 /* ─── YouTube-Style Header Bar ─── */
 export default function Navbar() {
     const [searchFocused, setSearchFocused] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
+    const [isApp, setIsApp] = useState(false);
     const { theme, toggleTheme, language, setLanguage } = useAppContext();
     const router = useRouter();
     const searchRef = useRef<HTMLInputElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
+
+    /* ─── Detect app on mount ─── */
+    useEffect(() => {
+        setIsApp(isAppWebView());
+    }, []);
 
     /* ─── Close profile menu on outside click ─── */
     useEffect(() => {
@@ -39,6 +55,10 @@ export default function Navbar() {
             console.log("Search:", searchQuery);
         }
     };
+
+    /* ─── Hide completely when inside app ─── */
+    if (isApp) return null;
+
 
     return (
         <header className="yt-header" id="yt-header">
