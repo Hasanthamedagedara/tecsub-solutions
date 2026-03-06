@@ -278,7 +278,7 @@ body {
   padding: 12px;
   transition: width 0.2s ease;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.2) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 .yt-sidebar::-webkit-scrollbar {
@@ -362,17 +362,12 @@ body {
    ═══════════════════════════════════════════════ */
 .yt-content {
   margin-top: calc(var(--yt-header-height) + var(--yt-chipbar-height));
-  padding: 16px 16px 16px 16px;
-  transition: margin-left 0.2s ease, padding 0.2s ease;
+  padding: 16px;
 }
 
 @media (min-width: 1024px) {
   .yt-content {
-    margin-left: var(--yt-sidebar-width);
-    padding: 24px 24px 24px 32px;
-  }
-  .yt-content-mini {
-    margin-left: var(--yt-sidebar-mini-width);
+    padding: 24px 32px;
   }
 }
 
@@ -514,8 +509,15 @@ body {
 }
 
 @keyframes livePulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
 }
 
 /* Category badge */
@@ -662,8 +664,13 @@ body {
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* ═══════════════════════════════════════════════
@@ -1082,11 +1089,25 @@ body {
    Animations
    ═══════════════════════════════════════════════ */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmerGradient {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
 }

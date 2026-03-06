@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import ScrollToTop from "@/components/ScrollToTop";
-import SidePanel from "@/components/SidePanel";
 import FilterChipBar from "@/components/FilterChipBar";
 
 export const metadata: Metadata = {
@@ -61,7 +60,6 @@ export default function RootLayout({
             <body className="font-roboto antialiased">
                 <ThemeProvider>
                     <FilterChipBar />
-                    <SidePanel />
                     {children}
                     <ScrollToTop />
                 </ThemeProvider>

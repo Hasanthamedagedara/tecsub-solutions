@@ -44,16 +44,6 @@ export default function Navbar() {
         <header className="yt-header" id="yt-header">
             {/* ─── Left: Hamburger + Logo ─── */}
             <div className="yt-header-left">
-                <button
-                    onClick={toggleSidebar}
-                    className="yt-icon-btn"
-                    aria-label="Toggle sidebar"
-                >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-                    </svg>
-                </button>
-
                 <a href="/" className="flex items-center gap-2 group flex-shrink-0">
                     <div className="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center bg-yt-red p-1">
                         <img
