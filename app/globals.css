@@ -433,33 +433,33 @@ body {
 .feed-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 24px;
 }
 
 @media (min-width: 480px) {
   .feed-grid {
-    gap: 16px;
+    gap: 24px;
   }
 }
 
 @media (min-width: 640px) {
   .feed-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: 24px;
   }
 }
 
 @media (min-width: 1024px) {
   .feed-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 24px;
   }
 }
 
 @media (min-width: 1536px) {
   .feed-grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    gap: 24px;
   }
 }
 
@@ -469,8 +469,8 @@ body {
 .feed-card {
   position: relative;
   cursor: pointer;
-  border-radius: 0;
-  overflow: visible;
+  border-radius: 16px;
+  overflow: hidden;
   background: transparent;
   border: none;
   transition: none;
@@ -1584,12 +1584,7 @@ html.is-app .yt-sidebar {
 
 @media (max-width: 768px) {
   .bottom-nav {
-    display: flex;
-  }
-
-  /* Add padding to content for bottom nav */
-  .yt-content {
-    padding-bottom: 70px !important;
+    display: none;
   }
 }
 
@@ -2128,14 +2123,15 @@ html.is-app .yt-sidebar {
 .feed-card-glow {
   position: relative;
   background: var(--yt-bg-secondary);
-  border-radius: 12px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(var(--glow-color-rgb), 0.3);
 }
 
 .feed-card-glow::before {
   content: "";
   position: absolute;
   inset: -2px;
-  border-radius: 14px;
+  border-radius: 18px;
   background: conic-gradient(
     from var(--glow-angle, 0deg),
     transparent 0%,
@@ -2144,8 +2140,7 @@ html.is-app .yt-sidebar {
     transparent 45%
   );
   z-index: -1;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  opacity: 1; /* Always glowing */
   animation: rotateGlowBorder 4s linear infinite;
   pointer-events: none;
 }
@@ -2155,10 +2150,6 @@ html.is-app .yt-sidebar {
   100% { --glow-angle: 360deg; }
 }
 
-.feed-card-glow:hover::before {
-  opacity: 1;
-}
-
 .feed-card-glow:hover {
-  box-shadow: 0 0 20px rgba(var(--glow-color-rgb), 0.3);
+  box-shadow: 0 0 30px rgba(var(--glow-color-rgb), 0.5); /* extra glow on hover */
 }

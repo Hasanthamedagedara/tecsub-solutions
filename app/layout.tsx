@@ -3,7 +3,6 @@ import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import ScrollToTop from "@/components/ScrollToTop";
 import FilterChipBar from "@/components/FilterChipBar";
-import BottomNav from "@/components/BottomNav";
 import ChatPanel from "@/components/ChatPanel";
 
 export const metadata: Metadata = {
@@ -78,7 +77,6 @@ export default function RootLayout({
                 <ThemeProvider>
                     <FilterChipBar />
                     {children}
-                    <BottomNav />
                     <ChatPanel />
                     <ScrollToTop />
                 </ThemeProvider>
