@@ -5,7 +5,6 @@ import ScrollToTop from "@/components/ScrollToTop";
 import FilterChipBar from "@/components/FilterChipBar";
 import ChatPanel from "@/components/ChatPanel";
 import PdfModal from "@/components/PdfModal";
-import ShareToChatModal from "@/components/ShareToChatModal";
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://tecsubsolutions.com"),
@@ -81,7 +80,6 @@ export default function RootLayout({
                     {children}
                     <ChatPanel />
                     <PdfModal />
-                    <ShareToChatModal />
                     <ScrollToTop />
                 </ThemeProvider>
             </body>

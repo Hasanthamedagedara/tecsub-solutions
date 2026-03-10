@@ -6,7 +6,6 @@ import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
 import FeedCard from "@/components/FeedCard";
 import type { FeedItem, ContentType } from "@/components/FeedCard";
-import ShortsShelf from "@/components/ShortsShelf";
 import {
     videos,
     onlineTools,
@@ -296,11 +295,8 @@ export default function DiscoveryFeed() {
         };
     }, [initFeed]);
 
-    const shortsPool = useMemo(() => shuffledPool.filter(item => item.contentType === "short-video"), [shuffledPool]);
-    const standardPool = useMemo(() => shuffledPool.filter(item => item.contentType !== "short-video"), [shuffledPool]);
-
-    const displayed = standardPool.slice(0, displayCount);
-    const hasMore = displayCount < standardPool.length;
+    const displayed = shuffledPool.slice(0, displayCount);
+    const hasMore = displayCount < shuffledPool.length;
 
     /* ─── Infinite Scroll ─── */
     useEffect(() => {
@@ -310,18 +306,18 @@ export default function DiscoveryFeed() {
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting && hasMore && !isLoading) {
-                    setDisplayCount((prev) => Math.min(prev + BATCH_SIZE, standardPool.length));
+                    setDisplayCount((prev) => Math.min(prev + BATCH_SIZE, shuffledPool.length));
                 }
             },
             { rootMargin: "200px" }
         );
         observer.observe(el);
         return () => observer.disconnect();
-    }, [hasMore, isLoading, standardPool.length]);
+    }, [hasMore, isLoading, shuffledPool.length]);
 
     const handleItemClick = (item: FeedItem) => {
         if (item.videoId) {
-            window.open(`https://www.youtube.com/watch?v=\${item.videoId}`, "_blank");
+            window.open(`https://www.youtube.com/watch?v=${item.videoId}`, "_blank");
         } else if (item.link && item.link !== "#") {
             if (item.link.startsWith("http")) {
                 window.open(item.link, "_blank");
@@ -337,38 +333,15 @@ export default function DiscoveryFeed() {
             <div className="feed-grid">
                 <AnimatePresence mode="popLayout">
                     {isLoading
-                        ? Array.from({ length: BATCH_SIZE }).map((_, i) => <SkeletonCard key={`skel-\${i}`} />)
-                        : (
-                            <>
-                                {/* Render First 4 Standard Items */}
-                                {displayed.slice(0, 4).map((item, i) => (
-                                    <FeedCard
-                                        key={item.id}
-                                        item={item}
-                                        index={i}
-                                        onItemClick={handleItemClick}
-                                    />
-                                ))}
-
-                                {/* Inject Shorts Shelf Natively into the Flow */}
-                                {displayed.length >= 4 && shortsPool.length > 0 && (
-                                    <div className="col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4 w-full" key="shorts-shelf-injection">
-                                        <ShortsShelf shorts={shortsPool} />
-                                    </div>
-                                )}
-
-                                {/* Render Remainder of Standard Items */}
-                                {displayed.slice(4).map((item, i) => (
-                                    <FeedCard
-                                        key={item.id}
-                                        item={item}
-                                        index={i + 4} // Maintain staggering animation indices
-                                        onItemClick={handleItemClick}
-                                    />
-                                ))}
-                            </>
-                        )
-                    }
+                        ? Array.from({ length: BATCH_SIZE }).map((_, i) => <SkeletonCard key={`skel-${i}`} />)
+                        : displayed.map((item, i) => (
+                            <FeedCard
+                                key={item.id}
+                                item={item}
+                                index={i}
+                                onItemClick={handleItemClick}
+                            />
+                        ))}
                 </AnimatePresence>
             </div>
 
