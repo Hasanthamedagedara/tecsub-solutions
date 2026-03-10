@@ -5,6 +5,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { onlineTools } from "@/data/product";
 import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
+import AdPlacement from "@/components/AdPlacement";
 
 /* ─── Tool Logic Functions ─── */
 
@@ -143,7 +144,8 @@ function QRCodeGenerator() {
 }
 
 function MarkdownEditor() {
-    const [md, setMd] = useState("# Hello World\n\nType **markdown** here...\n\n- Item 1\n- Item 2\n\n> Blockquote");
+    const [md, setMd] = useState("# Hello World\n\nType **markdown** here...\n\n- Item 1\n- Item 2\n\n> Blockquote\n\nAnother paragraph here to see the ad.\n\nMore content for spacing.");
+
     const renderMd = (text: string) => {
         return text
             .replace(/^### (.+)$/gm, '<h3 style="font-size:16px;font-weight:bold;margin:8px 0">$1</h3>')
@@ -156,10 +158,27 @@ function MarkdownEditor() {
             .replace(/^- (.+)$/gm, '<li style="margin-left:16px;list-style:disc">$1</li>')
             .replace(/\n/g, "<br/>");
     };
+
+    const paragraphs = md.split(/\n\n+/);
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <textarea value={md} onChange={(e) => setMd(e.target.value)} rows={10} className="tool-input font-mono text-xs" />
-            <div className="tool-input overflow-y-auto text-sm" style={{ minHeight: "200px" }} dangerouslySetInnerHTML={{ __html: renderMd(md) }} />
+            <div className="tool-input overflow-y-auto text-sm" style={{ minHeight: "200px" }}>
+                {paragraphs.map((para, index) => (
+                    <div key={index}>
+                        <div dangerouslySetInnerHTML={{ __html: renderMd(para) }} />
+
+                        {/* 468x60 Banner Ad insertion (max 2 ads) */}
+                        {index > 0 && index % 2 === 0 && (index / 2) <= 2 && (
+                            <div className="my-4 flex justify-center w-full overflow-hidden">
+                                <AdPlacement format="468x60" />
+                            </div>
+                        )}
+                        {index < paragraphs.length - 1 && <br />}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

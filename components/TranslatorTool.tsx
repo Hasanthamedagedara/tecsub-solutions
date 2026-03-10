@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import * as mammoth from "mammoth";
+import AdPlacement from "@/components/AdPlacement";
 
 // Dynamically import html2pdf
 const html2pdf = async () => {
@@ -183,75 +184,83 @@ export default function TranslatorTool() {
     };
 
     return (
-        <div className="w-full max-w-2xl mx-auto mt-6 bg-[#2c3e50] rounded-xl shadow-lg border border-[rgba(255,255,255,0.05)] overflow-hidden">
-            <div className="p-6 md:p-8 flex flex-col gap-6">
+        <div className="w-full flex flex-col gap-6 items-center">
+            {/* Adsterra Header Banner (728x90) */}
+            <AdPlacement format="728x90" webOnly />
 
-                {/* 1. File Upload */}
-                <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-gray-300">1. Upload Document (DOCX, TXT, PDF, PPTX)</label>
-                    <div className="relative border-2 border-dashed border-[#46627f] rounded-lg p-6 bg-[#34495e] flex flex-col items-center justify-center text-center transition-colors hover:border-[#1abc9c]">
-                        <input
-                            type="file"
-                            accept=".docx, .txt, .md, .pdf, .pptx"
-                            onChange={(e) => setFileToUpload(e.target.files?.[0] || null)}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="#aaa" className="mb-2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zM6 20V4h6v6h6v10H6z" />
-                        </svg>
-                        <span className="text-white font-medium">
-                            {fileToUpload ? fileToUpload.name : "Click or drag a file to upload"}
-                        </span>
-                    </div>
-                </div>
+            <div className="w-full max-w-2xl mx-auto bg-[#2c3e50] rounded-xl shadow-lg border border-[rgba(255,255,255,0.05)] overflow-hidden">
+                <div className="p-6 md:p-8 flex flex-col gap-6">
 
-                {/* 2. Language & GAS API Config */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* 1. File Upload */}
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-300">2. Target Language</label>
-                        <select
-                            value={targetLang}
-                            onChange={(e) => setTargetLang(e.target.value)}
-                            className="bg-[#34495e] text-white px-4 py-3 rounded-lg border border-[#46627f] outline-none hover:border-[#aaa]"
-                        >
-                            {languages.map(lang => (
-                                <option key={lang.code} value={lang.code}>{lang.label} ({lang.code})</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-300">
-                            3. Google Script Web App URL
-                            <span className="text-xs text-gray-400 font-normal ml-2">(Required)</span>
-                        </label>
-                        <input
-                            type="text"
-                            value={gasUrl}
-                            onChange={(e) => setGasUrl(e.target.value)}
-                            placeholder="https://script.google.com/macros/s/..."
-                            className="bg-[#34495e] text-white px-4 py-3 rounded-lg border border-[#46627f] outline-none text-sm placeholder-gray-500 hover:border-[#aaa] focus:border-[#1abc9c]"
-                        />
-                    </div>
-                </div>
-
-                {/* Action Area */}
-                <div className="mt-4 pt-4 border-t border-[#46627f] flex flex-col gap-4">
-                    <button
-                        onClick={translateAndDownload}
-                        disabled={isProcessing}
-                        className={`w-full py-4 rounded-lg font-bold text-lg text-white transition-all shadow-md \${isProcessing ? 'bg-gray-600 cursor-not-allowed' : 'bg-[#27ae60] hover:bg-[#219150] shadow-green-900/40'}`}
-                    >
-                        {isProcessing ? "Processing..." : "Translate & Download PDF"}
-                    </button>
-
-                    {status && (
-                        <div className={`text-center font-medium p-3 rounded-md \${status.includes('Error') ? 'bg-red-900/50 text-red-200' : 'bg-blue-900/30 text-blue-300'}`}>
-                            {status}
+                        <label className="text-sm font-semibold text-gray-300">1. Upload Document (DOCX, TXT, PDF, PPTX)</label>
+                        <div className="relative border-2 border-dashed border-[#46627f] rounded-lg p-6 bg-[#34495e] flex flex-col items-center justify-center text-center transition-colors hover:border-[#1abc9c]">
+                            <input
+                                type="file"
+                                accept=".docx, .txt, .md, .pdf, .pptx"
+                                onChange={(e) => setFileToUpload(e.target.files?.[0] || null)}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            />
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="#aaa" className="mb-2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zM6 20V4h6v6h6v10H6z" />
+                            </svg>
+                            <span className="text-white font-medium">
+                                {fileToUpload ? fileToUpload.name : "Click or drag a file to upload"}
+                            </span>
                         </div>
-                    )}
+                    </div>
+
+                    {/* 2. Language & GAS API Config */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-semibold text-gray-300">2. Target Language</label>
+                            <select
+                                value={targetLang}
+                                onChange={(e) => setTargetLang(e.target.value)}
+                                className="bg-[#34495e] text-white px-4 py-3 rounded-lg border border-[#46627f] outline-none hover:border-[#aaa]"
+                            >
+                                {languages.map(lang => (
+                                    <option key={lang.code} value={lang.code}>{lang.label} ({lang.code})</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-semibold text-gray-300">
+                                3. Google Script Web App URL
+                                <span className="text-xs text-gray-400 font-normal ml-2">(Required)</span>
+                            </label>
+                            <input
+                                type="text"
+                                value={gasUrl}
+                                onChange={(e) => setGasUrl(e.target.value)}
+                                placeholder="https://script.google.com/macros/s/..."
+                                className="bg-[#34495e] text-white px-4 py-3 rounded-lg border border-[#46627f] outline-none text-sm placeholder-gray-500 hover:border-[#aaa] focus:border-[#1abc9c]"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Action Area */}
+                    <div className="mt-4 pt-4 border-t border-[#46627f] flex flex-col gap-4">
+                        <button
+                            onClick={translateAndDownload}
+                            disabled={isProcessing}
+                            className={`w-full py-4 rounded-lg font-bold text-lg text-white transition-all shadow-md \${isProcessing ? 'bg-gray-600 cursor-not-allowed' : 'bg-[#27ae60] hover:bg-[#219150] shadow-green-900/40'}`}
+                        >
+                            {isProcessing ? "Processing..." : "Translate & Download PDF"}
+                        </button>
+
+                        {status && (
+                            <div className={`text-center font-medium p-3 rounded-md \${status.includes('Error') ? 'bg-red-900/50 text-red-200' : 'bg-blue-900/30 text-blue-300'}`}>
+                                {status}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
+
+            {/* Adsterra Footer Banner (728x90) */}
+            <AdPlacement format="728x90" webOnly />
         </div>
     );
 }

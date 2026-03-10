@@ -362,8 +362,9 @@ export default function AppsPage() {
                 </div>
 
                 {/* ─── Ad: Banner ─── */}
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-6">
-                    <AdPlacement format="banner" />
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-6 flex flex-col items-center gap-4">
+                    <AdPlacement format="728x90" webOnly />
+                    <AdPlacement format="300x250" mobileOnly />
                 </div>
 
                 {/* Coming Soon Notice */}

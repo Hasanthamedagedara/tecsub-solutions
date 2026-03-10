@@ -1,31 +1,31 @@
 "use client";
 
-/* ─── Adsterra Ad Placement Component ───
-   Each ad renders inside its own <iframe srcdoc> so that
-   the global `atOptions` variable doesn't get overwritten
-   by other ad instances on the same page.
-   
-   Formats:
-   - "banner"    → 728×90 (desktop) / 320×50 (mobile)
-   - "banner-md" → 468×60 (desktop) / 320×50 (mobile)
-*/
-
 import { useEffect, useState } from "react";
 
-type AdFormat =
-    | "banner"
-    | "banner-md";
+export type AdFormat =
+    | "300x250"
+    | "728x90"
+    | "160x600"
+    | "468x60"
+    | "320x100";
 
 interface AdPlacementProps {
     format: AdFormat;
     className?: string;
+    mobileOnly?: boolean;
+    webOnly?: boolean;
 }
 
-/* ── Banner ad configs ── */
-const ADS = {
-    "728x90": { key: "fab4548b5efa7488bcf199573cb1b9d3", w: 728, h: 90 },
-    "320x50": { key: "17d6c09433ad372ba0f0e5dc446424f6", w: 320, h: 50 },
-    "468x60": { key: "d313f4b4ab4a261aaa073a211f1ba03b", w: 468, h: 60 },
+/* ── Adsterra Banner Ad Configs ── 
+   Placeholder keys are used. 
+   Replace with the actual keys from the dashboard when requested.
+*/
+const ADS: Record<AdFormat, { key: string; w: number; h: number }> = {
+    "300x250": { key: "YOUR_300X250_ID_HERE", w: 300, h: 250 },
+    "728x90": { key: "YOUR_728X90_ID_HERE", w: 728, h: 90 },
+    "160x600": { key: "YOUR_160X600_ID_HERE", w: 160, h: 600 },
+    "468x60": { key: "YOUR_468X60_ID_HERE", w: 468, h: 60 },
+    "320x100": { key: "YOUR_320X100_ID_HERE", w: 320, h: 100 },
 };
 
 /* ── Generates a self-contained HTML doc for banner ads ── */
@@ -33,58 +33,45 @@ function bannerHtml(ad: { key: string; w: number; h: number }) {
     return `<!DOCTYPE html>
 <html><head><style>*{margin:0;padding:0;overflow:hidden}body{display:flex;align-items:center;justify-content:center;min-height:100%;background:transparent}</style></head>
 <body>
-<script>atOptions={'key':'${ad.key}','format':'iframe','height':${ad.h},'width':${ad.w},'params':{}};<\/script>
-<script src="https://www.highperformanceformat.com/${ad.key}/invoke.js"><\/script>
+<script type="text/javascript">
+    atOptions = {
+        'key' : '${ad.key}',
+        'format' : 'iframe',
+        'height' : ${ad.h},
+        'width' : ${ad.w},
+        'params' : {}
+    };
+</script>
+<script type="text/javascript" src="https://www.highperformanceformat.com/${ad.key}/invoke.js"></script>
 </body></html>`;
 }
 
-
-
-export default function AdPlacement({ format, className = "" }: AdPlacementProps) {
-    const [isMobile, setIsMobile] = useState(false);
+export default function AdPlacement({ format, className = "", mobileOnly = false, webOnly = false }: AdPlacementProps) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setIsMobile(window.innerWidth < 768);
         setMounted(true);
-        const onResize = () => setIsMobile(window.innerWidth < 768);
-        window.addEventListener("resize", onResize);
-        return () => window.removeEventListener("resize", onResize);
     }, []);
 
-    if (!mounted) return null;
+    if (!mounted) return <div style={{ width: ADS[format].w, height: ADS[format].h }} className={`bg-gray-800/20 animate-pulse mx-auto ${className}`} />;
 
-    /* ── Determine which ad config & dimensions to use ── */
-    let adConfig: { key: string; w: number; h: number } | null = null;
-    let frameW = 0;
-    let frameH = 0;
+    const adConfig = ADS[format];
 
-    switch (format) {
-        case "banner":
-            adConfig = isMobile ? ADS["320x50"] : ADS["728x90"];
-            break;
-        case "banner-md":
-            adConfig = isMobile ? ADS["320x50"] : ADS["468x60"];
-            break;
-    }
-
-    if (adConfig) {
-        frameW = adConfig.w;
-        frameH = adConfig.h;
-    }
-
-    const srcDoc = adConfig ? bannerHtml(adConfig) : "";
+    // Build the responsive class constraints as requested by the user
+    let visibilityClass = "";
+    if (webOnly) visibilityClass = "hidden sm:flex"; // Hide on mobile, show on web
+    if (mobileOnly) visibilityClass = "flex sm:hidden"; // Show on mobile, hide on web
 
     return (
         <div
             data-ad-format={format}
-            className={`flex items-center justify-center mx-auto ${className}`}
-            style={{ maxWidth: `${frameW}px`, width: "100%" }}
+            className={`flex items-center justify-center mx-auto ${visibilityClass} ${className}`}
+            style={{ maxWidth: `${adConfig.w}px`, width: "100%", overflow: "hidden" }}
         >
             <iframe
-                srcDoc={srcDoc}
-                width={frameW}
-                height={frameH}
+                srcDoc={bannerHtml(adConfig)}
+                width={adConfig.w}
+                height={adConfig.h}
                 scrolling="no"
                 style={{
                     border: "none",

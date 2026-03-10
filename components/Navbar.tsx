@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
 import { useRouter, usePathname } from "next/navigation";
+import AuthButton from "@/components/AuthButton";
 
 /* ─── Detect if running inside Android WebView app ─── */
 function isAppWebView(): boolean {
@@ -121,27 +122,10 @@ export default function Navbar() {
                     </svg>
                 </button>
 
-                {/* Create / Upload */}
-                <button className="yt-icon-btn hidden sm:flex" aria-label="Create">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M14,13h-3v3H9v-3H6v-2h3V8h2v3h3V13z M17,6H3v12h14v-6.39l4,1.83V8.56l-4,1.83V6 M18,5v3.83L22,7v10l-4-1.83V19H2V5H18L18,5z" />
-                    </svg>
-                </button>
-
-                {/* Notifications */}
-                <button className="yt-icon-btn hidden sm:flex relative" aria-label="Notifications">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z" />
-                    </svg>
-                    <span className="absolute top-1 right-1 w-[18px] h-[18px] rounded-full bg-yt-red text-[10px] font-medium text-white flex items-center justify-center">
-                        3
-                    </span>
-                </button>
-
                 {/* Theme toggle */}
                 <button
                     onClick={toggleTheme}
-                    className="yt-icon-btn"
+                    className="yt-icon-btn mr-2"
                     aria-label="Toggle theme"
                 >
                     {theme === "dark" ? (
@@ -155,80 +139,10 @@ export default function Navbar() {
                     )}
                 </button>
 
-                {/* Profile avatar */}
-                <div ref={profileRef} className="relative">
-                    <button
-                        onClick={() => setProfileOpen(!profileOpen)}
-                        className="yt-avatar"
-                        aria-label="Profile menu"
-                    >
-                        T
-                    </button>
-
-                    <AnimatePresence>
-                        {profileOpen && (
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95, y: -8 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95, y: -8 }}
-                                transition={{ duration: 0.15 }}
-                                className="absolute right-0 top-full mt-2 rounded-xl overflow-hidden z-[70]"
-                                style={{
-                                    background: "#282828",
-                                    border: "1px solid #3f3f3f",
-                                    boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
-                                    width: "min(300px, calc(100vw - 32px))",
-                                }}
-                            >
-                                {/* Profile header */}
-                                <div className="p-4 flex items-center gap-3 border-b border-[#3f3f3f]">
-                                    <div className="yt-avatar w-10 h-10 text-base">T</div>
-                                    <div>
-                                        <div className="text-sm font-medium text-[#f1f1f1]">Tecsub Solutions</div>
-                                        <div className="text-xs text-[#aaa]">@tecsubsolutions</div>
-                                    </div>
-                                </div>
-
-                                {/* Menu items */}
-                                <div className="py-2">
-                                    {[
-                                        { icon: "👤", label: "Your channel", href: "/about" },
-                                        { icon: "🎬", label: "Studio", href: "/admin" },
-                                        { icon: "🛒", label: "Shop", href: "/shop" },
-                                        { icon: "📚", label: "Courses", href: "/courses" },
-                                    ].map((item) => (
-                                        <button
-                                            key={item.label}
-                                            onClick={() => { setProfileOpen(false); router.push(item.href); }}
-                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#f1f1f1] hover:bg-white/10 transition-colors text-left"
-                                        >
-                                            <span className="text-lg">{item.icon}</span>
-                                            {item.label}
-                                        </button>
-                                    ))}
-                                </div>
-
-                                {/* Language section */}
-                                <div className="border-t border-[#3f3f3f] py-2">
-                                    <div className="px-4 py-1 text-xs text-[#aaa] uppercase tracking-wider">Language</div>
-                                    <div className="flex gap-1 px-4 py-2">
-                                        {(["en", "si", "ta"] as const).map((lang) => (
-                                            <button
-                                                key={lang}
-                                                onClick={() => { setLanguage(lang); setProfileOpen(false); }}
-                                                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${language === lang
-                                                    ? "bg-yt-accent text-[#0f0f0f]"
-                                                    : "bg-white/10 text-[#f1f1f1] hover:bg-white/20"
-                                                    }`}
-                                            >
-                                                {lang === "en" ? "EN" : lang === "si" ? "සිං" : "தமி"}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                {/* Login / Sign Up */}
+                <div className="flex items-center gap-2">
+                    <AuthButton variant="primary" onClick={() => router.push('/login')}>Login</AuthButton>
+                    <AuthButton variant="secondary" className="hidden sm:flex" onClick={() => router.push('/signup')}>Sign Up</AuthButton>
                 </div>
             </div>
 

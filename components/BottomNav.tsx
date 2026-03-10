@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, usePathname } from "next/navigation";
+import AdPlacement from "@/components/AdPlacement";
 
 /* ─── Detect if running inside Android WebView app ─── */
 function isAppWebView(): boolean {
@@ -100,18 +101,25 @@ export default function BottomNav() {
     };
 
     return (
-        <nav className="bottom-nav" id="bottom-nav">
-            {navItems.map((item) => (
-                <button
-                    key={item.key}
-                    onClick={() => handleNavClick(item)}
-                    className={`bottom-nav-item ${activeTab === item.key ? "bottom-nav-item-active" : ""}`}
-                    aria-label={item.label}
-                >
-                    <span className="bottom-nav-icon">{item.icon}</span>
-                    <span className="bottom-nav-label">{item.label}</span>
-                </button>
-            ))}
-        </nav>
+        <div className="fixed bottom-0 left-0 right-0 z-[60] flex flex-col items-center pointer-events-none pb-[env(safe-area-inset-bottom)] md:pb-0">
+            {/* 320x100 Sticky Mobile Ad just above the nav */}
+            <div className="pointer-events-auto w-full flex justify-center bg-black/50 backdrop-blur-sm border-t border-white/10 md:hidden pt-2 pb-1">
+                <AdPlacement format="320x100" mobileOnly />
+            </div>
+
+            <nav className="bottom-nav pointer-events-auto w-full relative h-[65px]" id="bottom-nav">
+                {navItems.map((item) => (
+                    <button
+                        key={item.key}
+                        onClick={() => handleNavClick(item)}
+                        className={`bottom-nav-item ${activeTab === item.key ? "bottom-nav-item-active" : ""}`}
+                        aria-label={item.label}
+                    >
+                        <span className="bottom-nav-icon">{item.icon}</span>
+                        <span className="bottom-nav-label">{item.label}</span>
+                    </button>
+                ))}
+            </nav>
+        </div>
     );
 }
