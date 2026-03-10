@@ -163,7 +163,20 @@ export default function FeedCard({
             transition={{ duration: 0.3, delay: (index % 12) * 0.03 }}
             className={`feed-card group feed-card-glow ${isShort ? "feed-card-short" : ""}`}
             style={glowStyle}
-            onClick={() => onItemClick?.(item)}
+            onClick={() => {
+                if (isPDF) {
+                    window.dispatchEvent(
+                        new CustomEvent("tecsub-open-pdf", {
+                            detail: {
+                                url: item.link || item.pdfUrl || "/sample.pdf",
+                                title: item.title,
+                            },
+                        })
+                    );
+                } else {
+                    onItemClick?.(item);
+                }
+            }}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >

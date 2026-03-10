@@ -2153,3 +2153,90 @@ html.is-app .yt-sidebar {
 .feed-card-glow:hover {
   box-shadow: 0 0 30px rgba(var(--glow-color-rgb), 0.5); /* extra glow on hover */
 }
+
+/* ═══════════════════════════════════════════════
+   PDF Previewer Modal
+   ═══════════════════════════════════════════════ */
+.pdf-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.preview-card {
+  width: 100%;
+  max-width: 900px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
+}
+
+.preview-header {
+  background: #2c3e50;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.preview-body {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  min-height: 400px;
+  max-height: 800px;
+  background: #f4f7f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#file-iframe, .markdown-content {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.markdown-content {
+  padding: 30px;
+  overflow-y: auto;
+  text-align: left;
+  background: white;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  position: absolute;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.btn-dl {
+  background: #27ae60;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.btn-dl:hover { background: #219150; }
