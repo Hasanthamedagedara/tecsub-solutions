@@ -34,7 +34,7 @@ export default function DocumentEditor() {
         if (!file) return;
 
         const fileExtension = file.name.split(".").pop()?.toLowerCase() || "";
-        
+
         setIsProcessing(true);
         setStatusMessage("Analyzing document...");
 
@@ -53,7 +53,7 @@ export default function DocumentEditor() {
                 const arrayBuffer = await file.arrayBuffer();
                 const result = await mammoth.convertToHtml({ arrayBuffer });
                 setEditorHtml(result.value);
-            } 
+            }
             else if (fileExtension === "txt" || fileExtension === "md") {
                 const text = await file.text();
                 if (fileExtension === "md") {
@@ -61,7 +61,7 @@ export default function DocumentEditor() {
                 } else {
                     setEditorHtml(`<p>${text.replace(/\n/g, "<br/>")}</p>`);
                 }
-            } 
+            }
             else if (['png', 'jpg', 'jpeg'].includes(fileExtension)) {
                 setStatusMessage("Running AI Optical Character Recognition on image...");
                 await loadScript("https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js");
@@ -72,20 +72,20 @@ export default function DocumentEditor() {
             else if (fileExtension === "pdf") {
                 setStatusMessage("Loading PDF parsing engine...");
                 let finalHtml = "";
-                
+
                 await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
                 const pdfjsLib = (window as any)['pdfjs-dist/build/pdf'];
                 pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-                
+
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-                
+
                 for (let i = 1; i <= pdf.numPages; i++) {
                     setStatusMessage(`Scanning PDF page ${i} of ${pdf.numPages}...`);
                     const page = await pdf.getPage(i);
                     const textContent = await page.getTextContent();
                     const pageText = textContent.items.map((item: any) => item.str).join(" ");
-                    
+
                     // If no native text layer exists, assumption: Scanned image/photo PDF -> Run OCR
                     if (pageText.trim().length < 50) {
                         setStatusMessage(`Page ${i} appears to be a scan. Running OCR engine (this may take a moment)...`);
@@ -99,7 +99,7 @@ export default function DocumentEditor() {
                         canvas.width = viewport.width;
 
                         await page.render({ canvasContext: context, viewport: viewport }).promise;
-                        
+
                         // Convert canvas to image and OCR it
                         const imgDataUrl = canvas.toDataURL("image/jpeg");
                         const result = await Tesseract.recognize(imgDataUrl, 'eng');
@@ -109,29 +109,29 @@ export default function DocumentEditor() {
                     }
                 }
                 setEditorHtml(finalHtml);
-            } 
+            }
             else if (fileExtension === "pptx") {
                 setStatusMessage("Extracting text contents from ZIP/PPTX archive...");
                 await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
                 const JSZip = (window as any).JSZip;
-                
+
                 const arrayBuffer = await file.arrayBuffer();
                 const zip = await JSZip.loadAsync(arrayBuffer);
-                
+
                 let slidesHtml = "";
                 const slideFiles = Object.keys(zip.files).filter(name => name.startsWith("ppt/slides/slide") && name.endsWith(".xml"));
-                
+
                 for (let i = 0; i < slideFiles.length; i++) {
                     const xml = await zip.files[slideFiles[i]].async("string");
                     const matches = xml.match(/<a:t.*?>(.*?)<\/a:t>/g) || [];
                     const slideText = matches.map((m: string) => m.replace(/<\/?([^>]+)>/g, "")).join(" ");
-                    
+
                     if (slideText) {
                         slidesHtml += `<h3>Slide ${i + 1}</h3><p>${slideText}</p><br/>`;
                     }
                 }
                 setEditorHtml(slidesHtml || "<p>No text found in presentation.</p>");
-            } 
+            }
             else {
                 alert("Please upload a supported format (.docx, .txt, .pdf, .pptx, or images).");
             }
@@ -139,7 +139,7 @@ export default function DocumentEditor() {
             console.error("Error processing document:", err);
             alert("Error processing document. Ensure it's not password protected or corrupted.");
         }
-        
+
         setIsProcessing(false);
         setStatusMessage("");
         e.target.value = "";
@@ -174,7 +174,7 @@ export default function DocumentEditor() {
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = editorHtml;
             const plainText = tempDiv.textContent || tempDiv.innerText || "";
-            
+
             const blob = new Blob([plainText], { type: "text/plain" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
@@ -189,7 +189,7 @@ export default function DocumentEditor() {
         <div className="editor-interface max-w-5xl mx-auto w-full flex flex-col items-center">
             {/* ─── Toolbar ─── */}
             <div className="w-full bg-[#2c3e50] text-white p-4 rounded-t-xl flex flex-col md:flex-row gap-4 items-center justify-between shadow-lg mt-6">
-                
+
                 {/* Upload Button */}
                 <div className="flex items-center gap-3 w-full md:w-auto">
                     <label className="bg-[#34495e] hover:bg-[#46627f] cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors border border-[rgba(255,255,255,0.1)] flex items-center gap-2">
@@ -197,19 +197,19 @@ export default function DocumentEditor() {
                             <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z" />
                         </svg>
                         Upload Doc
-                        <input 
-                            type="file" 
-                            className="hidden" 
-                            accept=".docx, .md, .txt" 
-                            onChange={handleFileUpload} 
+                        <input
+                            type="file"
+                            className="hidden"
+                            accept=".docx, .md, .txt, .pdf, .pptx, image/png, image/jpeg, image/jpg"
+                            onChange={handleFileUpload}
                         />
                     </label>
-                    <span className="text-xs text-gray-400">Supports .docx, .md, .txt</span>
+                    <span className="text-xs text-gray-400">Supports DOCX, PDF, PPTX, TXT, Images</span>
                 </div>
 
                 {/* Export Config */}
                 <div className="flex items-center gap-3 w-full md:w-auto">
-                    <select 
+                    <select
                         className="bg-[#34495e] text-white px-3 py-2 rounded-lg border border-[rgba(255,255,255,0.1)] outline-none"
                         value={exportType}
                         onChange={(e) => setExportType(e.target.value)}
@@ -217,9 +217,9 @@ export default function DocumentEditor() {
                         <option value="pdf">Export as PDF</option>
                         <option value="txt">Export as Text</option>
                     </select>
-                    
-                    <button 
-                        onClick={downloadFile} 
+
+                    <button
+                        onClick={downloadFile}
                         disabled={isExporting}
                         className={`bg-[#27ae60] hover:bg-[#219150] text-white px-5 py-2 rounded-lg font-medium transition-colors whitespace-nowrap \${isExporting ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
@@ -241,9 +241,9 @@ export default function DocumentEditor() {
 
             {/* ─── Quill Editor Container ─── */}
             <div className="w-full bg-white rounded-b-xl shadow-lg border-x border-b border-gray-200" style={{ height: "65vh" }}>
-                <ReactQuill 
+                <ReactQuill
                     ref={quillRef}
-                    theme="snow" 
+                    theme="snow"
                     value={editorHtml}
                     onChange={setEditorHtml}
                     className="h-full pb-[42px]" // Offset Quill's inner height quirks
@@ -252,7 +252,7 @@ export default function DocumentEditor() {
                             [{ 'header': [1, 2, 3, false] }],
                             ['bold', 'italic', 'underline', 'strike'],
                             [{ 'color': [] }, { 'background': [] }],
-                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                             ['link', 'image', 'code-block'],
                             ['clean']
                         ]
