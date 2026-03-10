@@ -55,9 +55,8 @@ const MenuIcon = () => (
 
 const navItems: NavItem[] = [
     { key: "home", label: "Home", icon: <HomeIcon />, href: "/" },
-    { key: "explore", label: "Explore", icon: <ExploreIcon />, href: "/tools" },
+    { key: "explore", label: "Explore", icon: <ExploreIcon />, href: "/explore" },
     { key: "chat", label: "Chat", icon: <ChatIcon />, action: "open-chat" },
-    { key: "notifications", label: "Alerts", icon: <NotifIcon />, href: "#" },
     { key: "menu", label: "Menu", icon: <MenuIcon />, action: "toggle-sidebar" },
 ];
 
