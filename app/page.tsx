@@ -104,43 +104,10 @@ export default function Home() {
 
                 <div className="section-divider my-4" />
 
-                {/* ─── Recent Updates ─── */}
-                <div id="recent-updates">
-                    <RecentUpdates />
-                </div>
-                <div className="section-divider my-4" />
-
                 {/* ─── YouTube Banner ─── */}
                 <YouTubeBanner />
 
-                {/* ─── Online Tools ─── */}
-                <div id="online-tools">
-                    <OnlineTools />
-                </div>
                 <div className="section-divider my-4" />
-
-                {/* ─── Tech News ─── */}
-                <TechNews />
-                <div className="section-divider my-4" />
-
-                {/* ─── AI Lab, App Forge, Software, Videos, Social ─── */}
-                <div id="content-sections">
-                    <ContentSections />
-                </div>
-                <div className="section-divider my-4" />
-
-                {/* ─── AI Prompts ─── */}
-                <div id="ai-prompts">
-                    <AIPromptHub />
-                </div>
-                <div className="section-divider my-4" />
-
-                {/* ─── Courses & Payments ─── */}
-                <CoursePlatform />
-                <div className="section-divider my-4" />
-
-                {/* ─── Beta Community ─── */}
-                <BetaCommunity />
 
                 {/* ─── Ad ─── */}
                 <div className="max-w-full mx-auto mb-4 mt-8">
