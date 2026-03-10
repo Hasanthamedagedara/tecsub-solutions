@@ -80,6 +80,28 @@ const sampleConversations: ChatConversation[] = [
         online: false,
         isGroup: false,
     },
+    {
+        id: "channel-1",
+        name: "Official Announcements",
+        avatar: "📢",
+        lastMessage: "Version 2.0 is officially live! Read the patch notes...",
+        time: "10m",
+        unread: 1,
+        online: true,
+        isGroup: true,
+        members: ["14.2k subscribers"],
+    },
+    {
+        id: "channel-2",
+        name: "Daily Tech Prompts",
+        avatar: "🤖",
+        lastMessage: "Prompt #442: How to jailbreak an LLM securely...",
+        time: "5h",
+        unread: 0,
+        online: false,
+        isGroup: true,
+        members: ["8.5k subscribers"],
+    },
 ];
 
 const sampleMessages: ChatMessage[] = [
@@ -102,11 +124,26 @@ export default function ChatPanel() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    /* ─── Listen for toggle event ─── */
+    /* ─── Tabs State ─── */
+    type ChatTab = "Inbox" | "Groups" | "Channels";
+    const [activeTab, setActiveTab] = useState<ChatTab>("Inbox");
+    const [shareContent, setShareContent] = useState<any>(null);
+
+    /* ─── Listen for toggles & shares ─── */
     useEffect(() => {
-        const handler = () => setIsOpen((prev) => !prev);
-        window.addEventListener("tecsub-toggle-chat", handler);
-        return () => window.removeEventListener("tecsub-toggle-chat", handler);
+        const toggleHandler = () => setIsOpen((prev) => !prev);
+        const shareHandler = (e: any) => {
+            setShareContent(e.detail);
+            setIsOpen(true);
+            setActiveTab("Inbox");
+        };
+
+        window.addEventListener("tecsub-toggle-chat", toggleHandler);
+        window.addEventListener("tecsub-share-content", shareHandler);
+        return () => {
+            window.removeEventListener("tecsub-toggle-chat", toggleHandler);
+            window.removeEventListener("tecsub-share-content", shareHandler);
+        };
     }, []);
 
     /* ─── Auto scroll to bottom ─── */
@@ -114,13 +151,18 @@ export default function ChatPanel() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    /* ─── Send message ─── */
+    /* ─── Send message / Share ─── */
     const sendMessage = useCallback(() => {
-        if (!inputText.trim()) return;
+        if (!inputText.trim() && !shareContent) return;
+
+        let msgText = inputText.trim();
+        if (shareContent) {
+            msgText = `Check out this \${shareContent.category}: \${shareContent.title}\n\${msgText}`;
+        }
 
         const newMsg: ChatMessage = {
-            id: `m-${Date.now()}`,
-            text: inputText.trim(),
+            id: `m-\${Date.now()}`,
+            text: msgText,
             sender: "me",
             senderName: "You",
             time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
@@ -129,14 +171,15 @@ export default function ChatPanel() {
 
         setMessages((prev) => [...prev, newMsg]);
         setInputText("");
+        setShareContent(null);
 
         // Simulate typing indicator
         setIsTyping(true);
         setTimeout(() => {
             setIsTyping(false);
             const reply: ChatMessage = {
-                id: `m-reply-${Date.now()}`,
-                text: "Thanks for the message! 👍 Our community is here to help.",
+                id: `m-reply-\${Date.now()}`,
+                text: shareContent ? "Thanks for sharing! 🔥" : "Got it! 👍 Our community is here to help.",
                 sender: "other",
                 senderName: activeConv?.name || "Tecsub",
                 time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
@@ -144,67 +187,107 @@ export default function ChatPanel() {
             };
             setMessages((prev) => [...prev, reply]);
         }, 1500);
-    }, [inputText, activeConv]);
+    }, [inputText, activeConv, shareContent]);
+
+    /* ─── Filtering Logic ─── */
+    const filteredConversations = sampleConversations.filter(conv => {
+        if (activeTab === "Inbox") return !conv.isGroup && !conv.id.includes("channel");
+        if (activeTab === "Groups") return conv.isGroup;
+        if (activeTab === "Channels") return conv.id.includes("channel"); // Assuming channels might have a specific ID flag later
+        return true;
+    });
 
     /* ─── Conversation List View ─── */
     const renderConversationList = () => (
-        <div className="chat-conv-list">
+        <div className="chat-conv-list h-full flex flex-col bg-black text-white">
             {/* Header */}
-            <div className="chat-conv-header">
-                <h3 className="chat-conv-title">Messages</h3>
-                <div className="chat-header-actions">
+            <div className="chat-conv-header p-4 border-b border-[#222] flex justify-between items-center bg-[#0a0a0a]">
+                <h3 className="text-xl font-bold tracking-tight">Messages</h3>
+                <div className="flex gap-3">
                     <button
                         onClick={() => setShowCreateGroup(true)}
-                        className="chat-action-btn"
-                        title="Create Group"
+                        className="p-2 bg-[#222] hover:bg-[#333] rounded-full transition-colors"
+                        title="Create New"
                     >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                         </svg>
                     </button>
-                    <button onClick={() => setIsOpen(false)} className="chat-action-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <button onClick={() => setIsOpen(false)} className="p-2 bg-[#222] hover:bg-[#333] rounded-full transition-colors">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                         </svg>
                     </button>
                 </div>
             </div>
 
-            {/* E2E Badge */}
-            <div className="chat-e2e-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#2ba640">
-                    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z" />
-                </svg>
-                <span>End-to-end encrypted</span>
+            {/* Tabs */}
+            <div className="flex px-4 py-2 gap-2 overflow-x-auto no-scrollbar border-b border-[#222]">
+                <button
+                    onClick={() => setActiveTab("Inbox")}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors \${activeTab === "Inbox" ? "bg-white text-black" : "bg-[#222] text-gray-300 hover:bg-[#333]"}`}
+                >
+                    Inbox
+                </button>
+                <button
+                    onClick={() => setActiveTab("Groups")}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors \${activeTab === "Groups" ? "bg-green-500 text-white" : "bg-[#222] text-gray-300 hover:bg-[#333]"}`}
+                >
+                    Groups
+                </button>
+                <button
+                    onClick={() => setActiveTab("Channels")}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors \${activeTab === "Channels" ? "bg-blue-500 text-white" : "bg-[#222] text-gray-300 hover:bg-[#333]"}`}
+                >
+                    Channels
+                </button>
             </div>
 
             {/* Conversations */}
-            <div className="chat-conv-items">
-                {sampleConversations.map((conv) => (
+            <div className="flex-1 overflow-y-auto w-full p-2 space-y-1">
+                {filteredConversations.map((conv) => (
                     <button
                         key={conv.id}
                         onClick={() => setActiveConv(conv)}
-                        className="chat-conv-item"
+                        className="w-full flex items-center p-3 hover:bg-[#1a1a1a] rounded-xl transition-colors text-left group"
                     >
-                        <div className="chat-conv-avatar-wrap">
-                            <span className="chat-conv-avatar">{conv.avatar}</span>
-                            {conv.online && <span className="chat-online-dot" />}
+                        <div className="relative flex-shrink-0 w-12 h-12 rounded-full overflow-hidden bg-[#222] flex items-center justify-center text-xl shadow-md border border-[#333]">
+                            {conv.avatar}
+                            {conv.online && <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-black rounded-full" />}
                         </div>
-                        <div className="chat-conv-info">
-                            <div className="chat-conv-name-row">
-                                <span className="chat-conv-name">
+                        <div className="ml-4 flex-1 min-w-0">
+                            <div className="flex justify-between items-baseline mb-1">
+                                <span className="font-semibold text-gray-100 truncate pr-2">
                                     {conv.isGroup && "👥 "}{conv.name}
                                 </span>
-                                <span className="chat-conv-time">{conv.time}</span>
+                                <span className="text-xs text-gray-500 flex-shrink-0">{conv.time}</span>
                             </div>
-                            <p className="chat-conv-last">{conv.lastMessage}</p>
+                            <p className="text-sm text-gray-400 truncate group-hover:text-gray-300 transition-colors">
+                                {conv.lastMessage}
+                            </p>
                         </div>
                         {conv.unread > 0 && (
-                            <span className="chat-unread-badge">{conv.unread}</span>
+                            <span className="ml-3 flex-shrink-0 w-5 h-5 bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full">
+                                {conv.unread}
+                            </span>
                         )}
                     </button>
                 ))}
+
+                {filteredConversations.length === 0 && (
+                    <div className="flex flex-col items-center justify-center h-40 text-gray-500">
+                        <span className="text-4xl mb-3">👻</span>
+                        <p>No messages in {activeTab}</p>
+                    </div>
+                )}
             </div>
+
+            {/* Share Tooltip Alert */}
+            {shareContent && (
+                <div className="bg-purple-600/20 text-purple-300 p-3 text-sm border-t border-purple-500/30 font-medium">
+                    ✨ Select a conversation below to share <strong>{shareContent.title}</strong>
+                </div>
+            )}
         </div>
     );
 

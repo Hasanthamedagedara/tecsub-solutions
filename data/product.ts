@@ -256,7 +256,7 @@ export const courses = [
     {
         title: "AI Website Review Masterclass",
         description: "Learn to leverage AI tools for comprehensive website audits and performance optimization.",
-        price: 49.99,
+        price: 0,
         currency: "USD",
         duration: "6 hours",
         lessons: 24,
@@ -268,7 +268,7 @@ export const courses = [
     {
         title: "Full-Stack App Development",
         description: "Build production-ready applications from scratch using modern tech stacks.",
-        price: 79.99,
+        price: 0,
         currency: "USD",
         duration: "12 hours",
         lessons: 48,

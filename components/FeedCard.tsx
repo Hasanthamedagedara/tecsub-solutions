@@ -351,6 +351,54 @@ export default function FeedCard({
                     </svg>
                 </button>
             </div>
+            {/* ─── Social Action Bar ─── */}
+            <div className="flex items-center justify-between w-full px-2 pt-2 pb-1 border-t border-[rgba(255,255,255,0.05)] mt-2">
+                <button
+                    onClick={(e) => { e.stopPropagation(); /* Add Like Logic */ }}
+                    className="flex items-center gap-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 hover:shadow-[0_0_10px_rgba(239,68,68,0.3)] transition-all px-3 py-1.5 rounded-full"
+                    title="Like"
+                >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+                    <span className="text-xs font-medium">1.2k</span>
+                </button>
+
+                <button
+                    onClick={(e) => { e.stopPropagation(); /* Add Comment Logic */ }}
+                    className="flex items-center gap-2 text-gray-400 hover:text-blue-400 hover:bg-blue-400/10 hover:shadow-[0_0_10px_rgba(96,165,250,0.3)] transition-all px-3 py-1.5 rounded-full"
+                    title="Comment"
+                >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg>
+                    <span className="text-xs font-medium">48</span>
+                </button>
+
+                <button
+                    onClick={(e) => { e.stopPropagation(); /* Add Repost Logic */ }}
+                    className="flex items-center gap-2 text-gray-400 hover:text-green-400 hover:bg-green-400/10 hover:shadow-[0_0_10px_rgba(74,222,128,0.3)] transition-all px-3 py-1.5 rounded-full"
+                    title="Repost"
+                >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 7v4H5.83l3.58-3.59L8 6l-6 6 6 6 1.41-1.41L5.83 13H21V7h-2z" /></svg>
+                </button>
+
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        /* Add Share to Chat Logic */
+                        window.dispatchEvent(new CustomEvent("tecsub-share-content", { detail: item }));
+                    }}
+                    className="flex items-center gap-2 text-gray-400 hover:text-purple-400 hover:bg-purple-400/10 hover:shadow-[0_0_10px_rgba(192,132,252,0.3)] transition-all px-3 py-1.5 rounded-full"
+                    title="Share"
+                >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z" /></svg>
+                </button>
+
+                <button
+                    onClick={(e) => { e.stopPropagation(); /* Fixed Save Logic */ }}
+                    className="flex items-center gap-2 text-gray-400 hover:text-yellow-400 hover:bg-yellow-400/10 hover:shadow-[0_0_10px_rgba(250,204,21,0.3)] transition-all px-3 py-1.5 rounded-full ml-auto"
+                    title="Save"
+                >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z" /></svg>
+                </button>
+            </div>
         </motion.div>
     );
 }
