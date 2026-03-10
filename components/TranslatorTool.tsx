@@ -64,6 +64,16 @@ export default function TranslatorTool() {
             let originalText = "";
             const fileExtension = fileToUpload.name.split(".").pop()?.toLowerCase();
 
+            // Load extra scripts dynamically if needed
+            const loadScript = (src: string) => new Promise((resolve, reject) => {
+                if (document.querySelector(`script[src="\${src}"]`)) return resolve(true);
+                const s = document.createElement("script");
+                s.src = src;
+                s.onload = resolve;
+                s.onerror = reject;
+                document.head.appendChild(s);
+            });
+
             // 1. Extract
             if (fileExtension === "docx") {
                 const arrayBuffer = await fileToUpload.arrayBuffer();
@@ -71,8 +81,39 @@ export default function TranslatorTool() {
                 originalText = result.value;
             } else if (fileExtension === "txt" || fileExtension === "md") {
                 originalText = await fileToUpload.text();
+            } else if (fileExtension === "pdf") {
+                setStatus("Loading PDF engine...");
+                await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
+                const pdfjsLib = (window as any)['pdfjs-dist/build/pdf'];
+                pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+                
+                const arrayBuffer = await fileToUpload.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map((item: any) => item.str).join(" ");
+                    originalText += pageText + "\n\n";
+                }
+            } else if (fileExtension === "pptx") {
+                setStatus("Extracting slides from presentation...");
+                await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
+                const JSZip = (window as any).JSZip;
+                
+                const arrayBuffer = await fileToUpload.arrayBuffer();
+                const zip = await JSZip.loadAsync(arrayBuffer);
+                
+                // Read slide URLs
+                const slideFiles = Object.keys(zip.files).filter(name => name.startsWith("ppt/slides/slide") && name.endsWith(".xml"));
+                for (const fileName of slideFiles) {
+                    const xml = await zip.files[fileName].async("string");
+                    // Regex strip to retrieve just presentation text strings inside <a:t>
+                    const matches = xml.match(/<a:t.*?>(.*?)<\/a:t>/g) || [];
+                    const slideText = matches.map(m => m.replace(/<\/?[^>]+(>|$)/g, "")).join(" ");
+                    if (slideText) originalText += slideText + "\n\n";
+                }
             } else {
-                setStatus("Error: Only .docx, .md, or .txt files are supported.");
+                setStatus("Error: Only .docx, .md, .txt, .pdf, or .pptx files are supported.");
                 setIsProcessing(false);
                 return;
             }
@@ -151,7 +192,7 @@ export default function TranslatorTool() {
                     <div className="relative border-2 border-dashed border-[#46627f] rounded-lg p-6 bg-[#34495e] flex flex-col items-center justify-center text-center transition-colors hover:border-[#1abc9c]">
                         <input 
                             type="file" 
-                            accept=".docx, .txt, .md"
+                            accept=".docx, .txt, .md, .pdf, .pptx"
                             onChange={(e) => setFileToUpload(e.target.files?.[0] || null)}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                         />
