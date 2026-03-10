@@ -13,18 +13,25 @@ interface ChipTab {
 
 const TABS: ChipTab[] = [
     { key: "all", label: "All" },
-    { key: "videos", label: "Videos", scrollTo: "videos" },
-    { key: "tools", label: "Tools", href: "/tools" },
+    { key: "foryou", label: "For You", scrollTo: "discovery-feed" },
     { key: "news", label: "News", scrollTo: "news" },
-    { key: "ai", label: "AI Lab", scrollTo: "ai-lab" },
-    { key: "prompts", label: "AI Prompts", href: "/prompts" },
-    { key: "courses", label: "Courses", href: "/courses" },
+    { key: "prompts", label: "Prompts", href: "/prompts" },
+    { key: "tools", label: "Tools", href: "/tools" },
+    { key: "assets", label: "Assets", href: "/assets" },
     { key: "apps", label: "Apps", href: "/apps" },
     { key: "software", label: "Software", scrollTo: "software" },
     { key: "shop", label: "Shop", href: "/shop" },
-    { key: "community", label: "Community", scrollTo: "social" },
-    { key: "updates", label: "Recently uploaded", scrollTo: "recent-updates" },
-    { key: "live", label: "Live", scrollTo: "videos" },
+    { key: "convert", label: "Convert", href: "/tools" },
+    { key: "books", label: "Books", scrollTo: "content-sections" },
+    { key: "videos", label: "Videos", scrollTo: "videos" },
+    { key: "images", label: "Images", scrollTo: "content-sections" },
+    { key: "wallpapers", label: "Wallpapers", scrollTo: "content-sections" },
+    { key: "courses", label: "Course", href: "/courses" },
+    { key: "website", label: "Website", scrollTo: "discovery-feed" },
+    { key: "downnow", label: "Down Now", scrollTo: "software" },
+    { key: "contacts", label: "Contacts", scrollTo: "social" },
+    { key: "about", label: "About", href: "/about" },
+    { key: "feedback", label: "Feedback", scrollTo: "social" },
 ];
 
 /* ─── Detect if running inside Android WebView app ─── */

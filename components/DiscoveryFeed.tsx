@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
 import FeedCard from "@/components/FeedCard";
-import type { FeedItem } from "@/components/FeedCard";
+import type { FeedItem, ContentType } from "@/components/FeedCard";
 import {
     videos,
     onlineTools,
@@ -15,11 +15,41 @@ import {
     downloads,
 } from "@/data/product";
 
+/* ─── Assign content types intelligently ─── */
+function assignContentType(category: string, hasVideoId: boolean): ContentType {
+    switch (category) {
+        case "Video":
+            return "long-video";
+        case "Short":
+            return "short-video";
+        case "Tool":
+            return "tool";
+        case "News":
+            return "news";
+        case "Prompt":
+            return "prompt";
+        case "Course":
+            return hasVideoId ? "long-video" : "course";
+        case "Software":
+            return "software";
+        case "PDF":
+            return "pdf";
+        case "App":
+            return "app";
+        case "Photo":
+            return "photo-post";
+        case "Album":
+            return "album";
+        default:
+            return "default";
+    }
+}
+
 /* ─── Build the unified pool of all content ─── */
 function buildFeedPool(): FeedItem[] {
     const pool: FeedItem[] = [];
 
-    videos.forEach((v) =>
+    videos.forEach((v, i) =>
         pool.push({
             id: `vid-${v.id}`,
             title: v.title,
@@ -28,6 +58,8 @@ function buildFeedPool(): FeedItem[] {
             icon: "🎬",
             color: "#FF0000",
             videoId: v.id,
+            contentType: i % 5 === 0 ? "short-video" : "long-video",
+            isNew: i < 3,
         })
     );
 
@@ -40,6 +72,8 @@ function buildFeedPool(): FeedItem[] {
             icon: typeof tool.icon === "string" && tool.icon.length <= 3 ? "🛠️" : tool.icon,
             color: "#2ba640",
             link: "/tools",
+            contentType: "tool",
+            isNew: i < 2,
         })
     );
 
@@ -51,6 +85,8 @@ function buildFeedPool(): FeedItem[] {
             category: "News",
             icon: "📰",
             color: "#F59E0B",
+            contentType: "news",
+            isNew: i === 0,
         })
     );
 
@@ -63,6 +99,8 @@ function buildFeedPool(): FeedItem[] {
             icon: "🤖",
             color: "#A855F7",
             link: "/prompts",
+            contentType: "prompt",
+            isNew: i < 2,
         })
     );
 
@@ -76,6 +114,8 @@ function buildFeedPool(): FeedItem[] {
             color: "#3ea6ff",
             videoId: c.videoId,
             link: `/course/${i}`,
+            contentType: c.videoId ? "long-video" : "course",
+            isNew: i === 0,
         })
     );
 
@@ -88,8 +128,61 @@ function buildFeedPool(): FeedItem[] {
             icon: sw.icon,
             color: "#00E5FF",
             link: sw.url,
+            contentType: i % 3 === 0 ? "app" : "software",
+            isNew: i < 2,
         })
     );
+
+    /* ─── Synthetic PDF items ─── */
+    pool.push({
+        id: "pdf-master-guide",
+        title: "Master Guide — Data Grab V5",
+        description: "Everything you need to know about our Data Grab V5 tool.",
+        category: "PDF",
+        icon: "📄",
+        color: "#e11d48",
+        contentType: "pdf",
+        isNew: true,
+        link: "#",
+        ctaLabel: "Download PDF (1.2 MB)",
+    });
+
+    pool.push({
+        id: "pdf-seo-handbook",
+        title: "SEO Strategy Handbook 2026",
+        description: "Complete YouTube SEO strategy guide. Boost your RPM.",
+        category: "PDF",
+        icon: "📄",
+        color: "#e11d48",
+        contentType: "pdf",
+        isNew: true,
+        link: "#",
+        ctaLabel: "Download PDF (2.4 MB)",
+    });
+
+    /* ─── Synthetic Photo/Album items ─── */
+    pool.push({
+        id: "photo-1",
+        title: "TECSUB Pro V5 Preview",
+        description: "Professional video editing made easy. Optimized for 2026 Android devices.",
+        category: "Photo",
+        icon: "📷",
+        color: "#FF6B35",
+        contentType: "photo-post",
+        isNew: true,
+    });
+
+    pool.push({
+        id: "album-1",
+        title: "App Screenshots Collection",
+        description: "Full album preview of our latest app interfaces and designs.",
+        category: "Album",
+        icon: "🖼️",
+        color: "#FF4081",
+        contentType: "album",
+        isNew: false,
+        albumCount: 5,
+    });
 
     return pool;
 }
@@ -102,6 +195,37 @@ function shuffle<T>(arr: T[]): T[] {
         [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
+}
+
+/* ─── Enhanced Discovery Feed Logic ─── */
+function generateDiscoveryFeed(pool: FeedItem[], userInterestCategory?: string): FeedItem[] {
+    const feed: FeedItem[] = [];
+    let remaining = [...pool];
+
+    // 1. "New to You" — Get latest items first
+    const newItems = remaining.filter((item) => item.isNew);
+    remaining = remaining.filter((item) => !item.isNew);
+
+    // 2. "For You" — Get items based on user interest
+    let interestItems: FeedItem[] = [];
+    if (userInterestCategory) {
+        interestItems = remaining.filter((item) => item.category === userInterestCategory);
+        remaining = remaining.filter((item) => item.category !== userInterestCategory);
+    }
+
+    // 3. Shuffle the remaining items randomly (Fisher-Yates)
+    const shuffledRemaining = shuffle(remaining);
+
+    // 4. Combine: New -> Interest -> Shuffled Random
+    feed.push(...shuffle(newItems), ...shuffle(interestItems), ...shuffledRemaining);
+
+    // 5. Deduplicate by id
+    const seen = new Set<string>();
+    return feed.filter((item) => {
+        if (seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+    });
 }
 
 const BATCH_SIZE = 12;
@@ -138,7 +262,7 @@ export default function DiscoveryFeed() {
 
     const initFeed = useCallback(() => {
         setIsLoading(true);
-        setShuffledPool(shuffle(rawPool));
+        setShuffledPool(generateDiscoveryFeed(rawPool));
         setDisplayCount(BATCH_SIZE);
         setTimeout(() => setIsLoading(false), 400);
     }, [rawPool]);

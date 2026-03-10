@@ -3,6 +3,8 @@ import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import ScrollToTop from "@/components/ScrollToTop";
 import FilterChipBar from "@/components/FilterChipBar";
+import BottomNav from "@/components/BottomNav";
+import ChatPanel from "@/components/ChatPanel";
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://tecsubsolutions.com"),
@@ -51,7 +53,8 @@ export default function RootLayout({
         <html lang="en" className="dark" suppressHydrationWarning>
             <head>
                 {/* Instantly detect app WebView before paint — prevents header flash */}
-                <script dangerouslySetInnerHTML={{ __html: `
+                <script dangerouslySetInnerHTML={{
+                    __html: `
                     (function(){
                         var ua = navigator.userAgent || '';
                         var sp = new URLSearchParams(window.location.search);
@@ -75,6 +78,8 @@ export default function RootLayout({
                 <ThemeProvider>
                     <FilterChipBar />
                     {children}
+                    <BottomNav />
+                    <ChatPanel />
                     <ScrollToTop />
                 </ThemeProvider>
             </body>

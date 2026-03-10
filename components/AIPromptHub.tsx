@@ -77,11 +77,16 @@ function PromptModal({
                     {prompt.description}
                 </p>
 
-                {/* Prompt Content */}
-                <div className="rounded-xl p-4 sm:p-6 mb-6 font-mono text-sm leading-relaxed whitespace-pre-wrap"
-                    style={{ background: "rgba(0,0,0,0.3)", color: "var(--text-primary)" }}
+                {/* Prompt Content — Glowing Box */}
+                <div
+                    className={`prompt-glow-box mb-6 ${copied ? "copied" : ""}`}
+                    onClick={handleCopy}
                 >
-                    {prompt.prompt}
+                    <div className="prompt-glow-content">
+                        <code>{prompt.prompt}</code>
+                        <span className="prompt-copy-badge">CLICK TO COPY</span>
+                    </div>
+                    <div className="prompt-copied-msg">✅ Copied!</div>
                 </div>
 
                 {/* Actions */}

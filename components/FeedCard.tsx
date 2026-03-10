@@ -6,23 +6,54 @@ import { motion } from "framer-motion";
 /* ─── Category Color Map ─── */
 const categoryColors: Record<string, string> = {
     Video: "#FF0000",
+    Short: "#FF00E5",
     Tool: "#2ba640",
     News: "#F59E0B",
     Prompt: "#A855F7",
     Course: "#3ea6ff",
     Software: "#00E5FF",
     Update: "#EC4899",
+    PDF: "#e11d48",
+    App: "#2563eb",
+    Photo: "#FF6B35",
+    Album: "#FF4081",
+    Image: "#E040FB",
+    Wallpaper: "#7C4DFF",
+    Book: "#FF8F00",
 };
 
 const categoryEmojis: Record<string, string> = {
     Video: "🎬",
+    Short: "📱",
     Tool: "🛠️",
     News: "📰",
     Prompt: "🤖",
     Course: "🎓",
     Software: "💾",
     Update: "🚀",
+    PDF: "📄",
+    App: "📲",
+    Photo: "📷",
+    Album: "🖼️",
+    Image: "🏞️",
+    Wallpaper: "🎨",
+    Book: "📚",
 };
+
+/* ─── Content Types ─── */
+export type ContentType =
+    | "long-video"
+    | "short-video"
+    | "photo-post"
+    | "album"
+    | "pdf"
+    | "app"
+    | "prompt"
+    | "software"
+    | "course"
+    | "news"
+    | "tool"
+    | "default";
 
 /* ─── Feed Item Type ─── */
 export interface FeedItem {
@@ -34,6 +65,12 @@ export interface FeedItem {
     color: string;
     videoId?: string;
     link?: string;
+    contentType?: ContentType;
+    isNew?: boolean;
+    aspectRatio?: string;
+    pdfUrl?: string;
+    ctaLabel?: string;
+    albumCount?: number;
 }
 
 /* ─── Random view / time helpers ─── */
@@ -56,6 +93,22 @@ function randomDuration(): string {
     return `${min}:${sec.toString().padStart(2, "0")}`;
 }
 
+/* ─── Aspect Ratio Helper ─── */
+function getAspectRatio(contentType?: ContentType): string {
+    switch (contentType) {
+        case "short-video":
+            return "9 / 16";
+        case "photo-post":
+            return "4 / 5";
+        case "album":
+            return "4 / 5";
+        case "pdf":
+            return "3 / 4";
+        default:
+            return "16 / 9";
+    }
+}
+
 /* ─── Card Component ─── */
 export default function FeedCard({
     item,
@@ -68,7 +121,13 @@ export default function FeedCard({
 }) {
     const color = categoryColors[item.category] || "#3ea6ff";
     const emoji = categoryEmojis[item.category] || "📌";
-    const isVideo = item.category === "Video" || (item.category === "Course" && !!item.videoId);
+    const contentType = item.contentType || "default";
+    const isVideo = contentType === "long-video" || contentType === "short-video" || item.category === "Video" || (item.category === "Course" && !!item.videoId);
+    const isShort = contentType === "short-video";
+    const isPDF = contentType === "pdf" || item.category === "PDF";
+    const isApp = contentType === "app" || item.category === "App";
+    const isAlbum = contentType === "album";
+    const isPhoto = contentType === "photo-post";
 
     /* ─── Hover-to-play state ─── */
     const [isHovering, setIsHovering] = useState(false);
@@ -91,18 +150,33 @@ export default function FeedCard({
         setIframeLoaded(false);
     }, []);
 
+    /* ─── Glow color for card borders ─── */
+    const glowStyle = {
+        "--glow-color": color,
+        "--glow-color-rgb": hexToRgb(color),
+    } as React.CSSProperties;
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: (index % 12) * 0.03 }}
-            className="feed-card group"
+            className={`feed-card group feed-card-glow ${isShort ? "feed-card-short" : ""}`}
+            style={glowStyle}
             onClick={() => onItemClick?.(item)}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
+            {/* ─── NEW Badge ─── */}
+            {item.isNew && (
+                <div className="feed-new-badge">NEW</div>
+            )}
+
             {/* ─── Thumbnail ─── */}
-            <div className="feed-card-thumbnail">
+            <div
+                className={`feed-card-thumbnail ${isShort ? "feed-card-thumbnail-short" : ""}`}
+                style={{ aspectRatio: getAspectRatio(contentType) }}
+            >
                 {isVideo && item.videoId ? (
                     <>
                         {/* Poster Image */}
@@ -133,15 +207,70 @@ export default function FeedCard({
                             </div>
                         )}
 
+                        {/* Short video indicator */}
+                        {isShort && (
+                            <div className="feed-short-indicator">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                    <path d="M10 9.27l4 2.73-4 2.73V9.27M8 5v14l11-7L8 5z" />
+                                </svg>
+                                Shorts
+                            </div>
+                        )}
+
                         {/* Duration badge (bottom right) */}
-                        {!isHovering && (
+                        {!isHovering && !isShort && (
                             <div className="feed-duration-badge">
                                 {randomDuration()}
                             </div>
                         )}
                     </>
+                ) : isPDF ? (
+                    /* ─── PDF Preview Card ─── */
+                    <div className="feed-pdf-preview">
+                        <div className="feed-pdf-icon-area">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="#e11d48">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zM6 20V4h6v6h6v10H6z" />
+                            </svg>
+                            <span className="feed-pdf-label">PDF</span>
+                        </div>
+                        <div className="feed-pdf-badge">PDF</div>
+                        <div className="feed-pdf-cta-bar">
+                            <span className="feed-pdf-cta-text">📄 Download PDF</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                            </svg>
+                        </div>
+                    </div>
+                ) : isApp ? (
+                    /* ─── App Install Card (Instagram Sponsored Style) ─── */
+                    <div className="feed-app-preview">
+                        <div className="w-full h-full flex items-center justify-center"
+                            style={{ background: `linear-gradient(135deg, ${color}30, ${color}10)` }}
+                        >
+                            <span className="text-6xl">{item.icon}</span>
+                        </div>
+                        <div className="feed-app-cta-bar">
+                            <span>Install Now</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                            </svg>
+                        </div>
+                    </div>
+                ) : isAlbum ? (
+                    /* ─── Album / Multi-photo Post ─── */
+                    <div className="w-full h-full flex items-center justify-center relative"
+                        style={{ background: `linear-gradient(135deg, ${color}25, ${color}08)` }}
+                    >
+                        <span className="text-5xl opacity-70">{item.icon}</span>
+                        <div className="feed-album-indicator">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                                <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
+                            </svg>
+                            {item.albumCount || 3}
+                        </div>
+                    </div>
                 ) : (
-                    /* ─── Static thumbnail for non-video items ─── */
+                    /* ─── Default thumbnail for non-video items ─── */
                     <div
                         className="w-full h-full flex items-center justify-center"
                         style={{
@@ -154,14 +283,26 @@ export default function FeedCard({
                     </div>
                 )}
 
-                {/* Category Badge (non-video) */}
-                {!isVideo && (
+                {/* Category Badge */}
+                {!isVideo && !isPDF && !isApp && (
                     <div className="feed-category-badge">
                         <span>{emoji}</span>
                         {item.category}
                     </div>
                 )}
             </div>
+
+            {/* ─── Instagram-Style CTA for App/PDF ─── */}
+            {(isApp || isPDF) && (
+                <div className={`feed-cta-bar ${isApp ? "feed-cta-blue" : "feed-cta-dark"}`}>
+                    <span className="feed-cta-label">
+                        {isApp ? "Install Now" : `Download PDF`}
+                    </span>
+                    <span className="feed-cta-info">
+                        {isApp ? "Free" : "Click to Read"}
+                    </span>
+                </div>
+            )}
 
             {/* ─── YouTube-Style Card Body: Avatar + Meta ─── */}
             <div className="feed-card-body">
@@ -199,4 +340,11 @@ export default function FeedCard({
             </div>
         </motion.div>
     );
+}
+
+/* ─── Hex to RGB helper ─── */
+function hexToRgb(hex: string): string {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!result) return "62, 166, 255";
+    return `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`;
 }
