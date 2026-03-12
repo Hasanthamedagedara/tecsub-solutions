@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -119,10 +119,96 @@ const DEFAULT_ASSETS: AIAsset[] = [
     },
 ];
 
+/* ─── Book Types & Data ─── */
+interface Book {
+    id: string;
+    title: string;
+    author: string;
+    category: string;
+    description: string;
+    cover: string;
+    color: string;
+    pages: number;
+    fileSize: string;
+    pdfPath: string;
+    language: string;
+}
+
+const BOOKS: Book[] = [
+    {
+        id: "b-balasha",
+        title: "බලශාක්තිය",
+        author: "Tecsub Solutions",
+        category: "කතා / Story",
+        description: "බලශාක්තිය කතාව. මෙය කියවීමට සියලුම සිටින්න වවා.",
+        cover: "📚",
+        color: "#E74C3C",
+        pages: 45,
+        fileSize: "22.5 MB",
+        pdfPath: "/assets/books/බලශ=.pdf",
+        language: "සිංහල",
+    },
+    {
+        id: "b-ai-guide",
+        title: "AI Beginner's Guide",
+        author: "Tecsub Solutions",
+        category: "Technology",
+        description: "A comprehensive guide to understanding Artificial Intelligence, Machine Learning, and Deep Learning fundamentals.",
+        cover: "🤖",
+        color: "#3498DB",
+        pages: 80,
+        fileSize: "5.2 MB",
+        pdfPath: "",
+        language: "English",
+    },
+    {
+        id: "b-web-dev",
+        title: "Web Development 2026",
+        author: "Tecsub Solutions",
+        category: "Programming",
+        description: "Modern web development techniques including React, Next.js, TypeScript, and serverless architecture patterns.",
+        cover: "💻",
+        color: "#2ECC71",
+        pages: 120,
+        fileSize: "8.1 MB",
+        pdfPath: "",
+        language: "English",
+    },
+    {
+        id: "b-cyber",
+        title: "Cybersecurity Essentials",
+        author: "Tecsub Solutions",
+        category: "Security",
+        description: "Essential cybersecurity knowledge including ethical hacking, network security, and data protection best practices.",
+        cover: "🔒",
+        color: "#9B59B6",
+        pages: 95,
+        fileSize: "6.7 MB",
+        pdfPath: "",
+        language: "English",
+    },
+    {
+        id: "b-mobile",
+        title: "Mobile App Design",
+        author: "Tecsub Solutions",
+        category: "Design",
+        description: "UI/UX principles for building beautiful, user-friendly mobile applications with modern design patterns.",
+        cover: "📱",
+        color: "#F39C12",
+        pages: 68,
+        fileSize: "4.5 MB",
+        pdfPath: "",
+        language: "English",
+    },
+];
+
 export default function OnlineAssetsPage() {
     const [selectedAsset, setSelectedAsset] = useState<AIAsset | null>(null);
     const [currency, setCurrency] = useState<"usd" | "lkr">("usd");
     const [assets, setAssets] = useState<AIAsset[]>(DEFAULT_ASSETS);
+    const [activeSection, setActiveSection] = useState<"assets" | "books">("assets");
+    const [viewingBook, setViewingBook] = useState<Book | null>(null);
+    const booksScrollRef = useRef<HTMLDivElement>(null);
 
     /* ─── Sync with admin localStorage ─── */
     useEffect(() => {
@@ -204,50 +290,183 @@ export default function OnlineAssetsPage() {
                         </div>
                     </motion.div>
 
-                    {/* Assets Grid */}
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        {assets.map((asset, i) => (
+                    {/* ═══ Section Tabs ═══ */}
+                    <div className="flex justify-center mb-8">
+                        <div
+                            className="flex rounded-2xl p-1.5 gap-1.5"
+                            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
+                        >
+                            {(["assets", "books"] as const).map((sec) => (
+                                <button
+                                    key={sec}
+                                    onClick={() => setActiveSection(sec)}
+                                    className="px-6 sm:px-10 py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all duration-300"
+                                    style={{
+                                        color: activeSection === sec ? "#fff" : "#8899aa",
+                                        background:
+                                            activeSection === sec
+                                                ? "linear-gradient(135deg, rgba(0,229,255,0.25), rgba(0,114,188,0.2))"
+                                                : "transparent",
+                                        boxShadow:
+                                            activeSection === sec
+                                                ? "0 0 20px rgba(0,229,255,0.1), inset 0 1px 0 rgba(255,255,255,0.08)"
+                                                : "none",
+                                    }}
+                                >
+                                    {sec === "assets" ? "🛠️ Online Assets" : "📚 Books & PDFs"}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* ═══ Assets Section ═══ */}
+                    <AnimatePresence mode="wait">
+                        {activeSection === "assets" && (
                             <motion.div
-                                key={asset.id}
-                                initial={{ opacity: 0, y: 20 }}
+                                key="assets-section"
+                                initial={{ opacity: 0, y: 15 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.06, duration: 0.4 }}
-                                onClick={() => setSelectedAsset(asset)}
-                                className="group rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] flex flex-col"
-                                style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)" }}
-                                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = `${asset.color}30`; }}
-                                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)"; }}
+                                exit={{ opacity: 0, y: -15 }}
+                                transition={{ duration: 0.25 }}
                             >
-                                <div className="h-1.5" style={{ background: asset.color }} />
-                                <div className="p-5 flex flex-col flex-1">
-                                    <div className="flex items-start justify-between mb-3">
-                                        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style={{ background: `${asset.color}15` }}>
-                                            {asset.icon}
-                                        </div>
-                                        <span className="text-[9px] px-2 py-1 rounded-full font-bold" style={{ background: `${asset.color}15`, color: asset.color }}>
-                                            {asset.period}
-                                        </span>
-                                    </div>
-                                    <h3 className="font-bold text-sm mb-1" style={{ color: "var(--text-primary)" }}>{asset.name}</h3>
-                                    <p className="text-[10px] mb-2" style={{ color: asset.color }}>{asset.category}</p>
-                                    <p className="text-[11px] line-clamp-2 mb-3" style={{ color: "var(--text-secondary)" }}>{asset.description}</p>
-                                    <div className="flex flex-wrap gap-1 mb-3">
-                                        {asset.features.slice(0, 3).map((f) => (
-                                            <span key={f} className="text-[9px] px-2 py-0.5 rounded-full" style={{ background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)" }}>
-                                                {f}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <div className="mt-auto flex items-center justify-between">
-                                        <span className="font-bold text-lg" style={{ color: asset.color }}>{getPrice(asset)}</span>
-                                        <span className="text-[10px] px-3 py-1 rounded-full font-semibold" style={{ background: `${asset.color}15`, color: asset.color }}>
-                                            Buy →
-                                        </span>
-                                    </div>
+                                {/* Assets Grid */}
+                                <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                                    {assets.map((asset, i) => (
+                                        <motion.div
+                                            key={asset.id}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: i * 0.06, duration: 0.4 }}
+                                            onClick={() => setSelectedAsset(asset)}
+                                            className="group rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] flex flex-col"
+                                            style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)" }}
+                                            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = `${asset.color}30`; }}
+                                            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)"; }}
+                                        >
+                                            <div className="h-1.5" style={{ background: asset.color }} />
+                                            <div className="p-5 flex flex-col flex-1">
+                                                <div className="flex items-start justify-between mb-3">
+                                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style={{ background: `${asset.color}15` }}>
+                                                        {asset.icon}
+                                                    </div>
+                                                    <span className="text-[9px] px-2 py-1 rounded-full font-bold" style={{ background: `${asset.color}15`, color: asset.color }}>
+                                                        {asset.period}
+                                                    </span>
+                                                </div>
+                                                <h3 className="font-bold text-sm mb-1" style={{ color: "var(--text-primary)" }}>{asset.name}</h3>
+                                                <p className="text-[10px] mb-2" style={{ color: asset.color }}>{asset.category}</p>
+                                                <p className="text-[11px] line-clamp-2 mb-3" style={{ color: "var(--text-secondary)" }}>{asset.description}</p>
+                                                <div className="flex flex-wrap gap-1 mb-3">
+                                                    {asset.features.slice(0, 3).map((f) => (
+                                                        <span key={f} className="text-[9px] px-2 py-0.5 rounded-full" style={{ background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)" }}>
+                                                            {f}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                                <div className="mt-auto flex items-center justify-between">
+                                                    <span className="font-bold text-lg" style={{ color: asset.color }}>{getPrice(asset)}</span>
+                                                    <span className="text-[10px] px-3 py-1 rounded-full font-semibold" style={{ background: `${asset.color}15`, color: asset.color }}>
+                                                        Buy →
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
                                 </div>
                             </motion.div>
-                        ))}
-                    </div>
+                        )}
+
+                        {/* ═══ Books Section ═══ */}
+                        {activeSection === "books" && (
+                            <motion.div
+                                key="books-section"
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -15 }}
+                                transition={{ duration: 0.25 }}
+                            >
+                                {/* Category Chips — Horizontal Scroll */}
+                                <div className="mb-6 -mx-4 px-4">
+                                    <div
+                                        ref={booksScrollRef}
+                                        className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide"
+                                        style={{ WebkitOverflowScrolling: "touch" }}
+                                    >
+                                        {["All", ...[...new Set(BOOKS.map((b) => b.category))]].map((cat) => (
+                                            <button
+                                                key={cat}
+                                                className="flex-shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all whitespace-nowrap"
+                                                style={{
+                                                    background: cat === "All" ? "rgba(0,229,255,0.15)" : "rgba(255,255,255,0.05)",
+                                                    color: cat === "All" ? "#00E5FF" : "var(--text-secondary)",
+                                                    border: `1px solid ${cat === "All" ? "rgba(0,229,255,0.2)" : "rgba(255,255,255,0.08)"}`,
+                                                }}
+                                            >
+                                                {cat}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Books Grid */}
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                                    {BOOKS.map((book, i) => (
+                                        <motion.div
+                                            key={book.id}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: i * 0.06, duration: 0.4 }}
+                                            className="group rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] flex flex-col"
+                                            style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)" }}
+                                            onClick={() => setViewingBook(book)}
+                                        >
+                                            {/* Book Cover */}
+                                            <div
+                                                className="relative w-full flex items-center justify-center"
+                                                style={{
+                                                    background: `linear-gradient(145deg, ${book.color}20, ${book.color}08)`,
+                                                    aspectRatio: "3/4",
+                                                }}
+                                            >
+                                                <span className="text-5xl sm:text-6xl">{book.cover}</span>
+                                                {/* Language Badge */}
+                                                <span
+                                                    className="absolute top-2 right-2 text-[8px] px-2 py-0.5 rounded-full font-bold"
+                                                    style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}
+                                                >
+                                                    {book.language}
+                                                </span>
+                                                {/* Overlay on hover */}
+                                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                                    <span className="text-xs bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-lg text-white font-semibold">
+                                                        View →
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            {/* Book Info */}
+                                            <div className="p-3 sm:p-4 flex flex-col flex-1">
+                                                <h3 className="font-bold text-xs sm:text-sm mb-0.5 line-clamp-2" style={{ color: "var(--text-primary)" }}>
+                                                    {book.title}
+                                                </h3>
+                                                <p className="text-[10px] mb-1" style={{ color: book.color }}>{book.category}</p>
+                                                <p className="text-[10px] line-clamp-2 mb-2" style={{ color: "var(--text-secondary)" }}>
+                                                    {book.description}
+                                                </p>
+                                                <div className="mt-auto flex items-center justify-between">
+                                                    <span className="text-[9px]" style={{ color: "var(--text-secondary)" }}>
+                                                        {book.pages} pages · {book.fileSize}
+                                                    </span>
+                                                    <span className="text-[9px] px-2 py-0.5 rounded-full font-bold" style={{ background: "rgba(0,229,255,0.1)", color: "#00E5FF" }}>
+                                                        FREE
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {/* ═══ Asset Detail Modal ═══ */}
@@ -313,6 +532,84 @@ export default function OnlineAssetsPage() {
                                             Close
                                         </button>
                                     </div>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* ═══ Book Viewer Modal ═══ */}
+                <AnimatePresence>
+                    {viewingBook && (
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[70] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm"
+                            onClick={() => setViewingBook(null)}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+                                className="w-full max-w-4xl rounded-3xl overflow-hidden flex flex-col"
+                                style={{ background: "rgba(12,12,14,0.98)", border: `1px solid ${viewingBook.color}20`, maxHeight: "95vh" }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {/* Header */}
+                                <div className="h-1.5 flex-shrink-0" style={{ background: `linear-gradient(90deg, transparent, ${viewingBook.color}, transparent)` }} />
+                                <div className="flex items-center justify-between px-4 sm:px-6 py-3 flex-shrink-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <span className="text-xl flex-shrink-0">{viewingBook.cover}</span>
+                                        <div className="min-w-0">
+                                            <h2 className="font-bold text-sm truncate" style={{ color: "var(--text-primary)" }}>{viewingBook.title}</h2>
+                                            <p className="text-[10px]" style={{ color: viewingBook.color }}>{viewingBook.author} · {viewingBook.category}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                        {viewingBook.pdfPath && (
+                                            <a
+                                                href={viewingBook.pdfPath}
+                                                download
+                                                className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all hover:brightness-110"
+                                                style={{ background: viewingBook.color, color: "#fff" }}
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                ⬇️ Download
+                                            </a>
+                                        )}
+                                        <button
+                                            onClick={() => setViewingBook(null)}
+                                            className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all"
+                                            style={{ color: "var(--text-secondary)" }}
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* PDF Viewer */}
+                                <div className="flex-1 min-h-0">
+                                    {viewingBook.pdfPath ? (
+                                        <iframe
+                                            src={viewingBook.pdfPath}
+                                            className="w-full h-full border-none"
+                                            style={{ minHeight: "60vh" }}
+                                            title={viewingBook.title}
+                                        />
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+                                            <span className="text-6xl mb-4">{viewingBook.cover}</span>
+                                            <h3 className="font-bold text-lg mb-2" style={{ color: "var(--text-primary)" }}>{viewingBook.title}</h3>
+                                            <p className="text-xs max-w-md mb-4" style={{ color: "var(--text-secondary)" }}>{viewingBook.description}</p>
+                                            <div className="flex items-center gap-4 text-xs mb-6" style={{ color: "var(--text-secondary)" }}>
+                                                <span>📄 {viewingBook.pages} pages</span>
+                                                <span>📁 {viewingBook.fileSize}</span>
+                                                <span>🌐 {viewingBook.language}</span>
+                                            </div>
+                                            <div className="px-6 py-4 rounded-xl" style={{ background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.15)" }}>
+                                                <p className="text-xs font-medium" style={{ color: "#00E5FF" }}>
+                                                    📢 This book is coming soon! Stay tuned for the release.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </motion.div>
                         </motion.div>
