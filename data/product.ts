@@ -129,8 +129,8 @@ export const onlineTools = [
         icon: "📏",
     },
     {
-        title: "PDF Merger & Splitter",
-        description: "Merge multiple PDFs into one or split pages — fast and secure.",
+        title: "PDF Editor",
+        description: "Merge, split, compress, and edit text in PDF files — all in your browser.",
         category: "Document",
         icon: "📄",
     },

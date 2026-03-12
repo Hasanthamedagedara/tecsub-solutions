@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AdPlacement from "@/components/AdPlacement";
 import { onlineTools } from "@/data/product";
+import PdfEditorTool from "@/components/PdfEditorTool";
 
 /* ─── Inline Tool Components ─── */
 
@@ -145,6 +146,7 @@ const toolComponents: Record<string, () => JSX.Element> = {
     "Password Generator": PasswordGenerator,
     "QR Code Generator": QRCodeGenerator,
     "Base64 Encoder/Decoder": Base64Tool,
+    "PDF Editor": PdfEditorTool,
 };
 
 /* ─── Category Colors ─── */

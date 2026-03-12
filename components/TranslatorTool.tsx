@@ -11,6 +11,9 @@ const html2pdf = async () => {
     return html2pdfModule;
 };
 
+/* ─── Hardcoded Backend URL ─── */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvf-5sw95b_s-RALjfLqsT2yAdkMnVctnzQMO1oSk98Jt7vTkOy5NHOA6duW5ELTgl4A/exec";
+
 /* ─── UI Translation Data ─── */
 type UILang = "en" | "si" | "ta";
 
@@ -23,9 +26,7 @@ const uiText: Record<UILang, Record<string, string>> = {
         uploadLabel: "Upload Document (DOCX, TXT, PDF, PPTX)",
         uploadHint: "Click or drag a file here to upload",
         targetLabel: "Translate To",
-        gasLabel: "Google Script Web App URL",
-        gasHint: "https://script.google.com/macros/s/...",
-        gasRequired: "(Required)",
+
         translateBtn: "Translate & Download PDF",
         processing: "Processing...",
         remindTitle: "Payment Reminder",
@@ -44,9 +45,7 @@ const uiText: Record<UILang, Record<string, string>> = {
         uploadLabel: "ලේඛනය උඩුගත කරන්න (DOCX, TXT, PDF, PPTX)",
         uploadHint: "උඩුගත කිරීමට ගොනුවක් මෙහි ඇදගෙන එන්න",
         targetLabel: "පරිවර්තනය කළ යුතු භාෂාව",
-        gasLabel: "Google Script Web App URL",
-        gasHint: "https://script.google.com/macros/s/...",
-        gasRequired: "(අවශ්‍යයි)",
+
         translateBtn: "පරිවර්තනය කර PDF බාගන්න",
         processing: "සකසමින්...",
         remindTitle: "ගෙවීම් මතක් කිරීම්",
@@ -65,9 +64,7 @@ const uiText: Record<UILang, Record<string, string>> = {
         uploadLabel: "ஆவணத்தை பதிவேற்றவும் (DOCX, TXT, PDF, PPTX)",
         uploadHint: "பதிவேற்ற ஒரு கோப்பை இங்கே இழுக்கவும்",
         targetLabel: "மொழிபெயர்க்க வேண்டிய மொழி",
-        gasLabel: "Google Script Web App URL",
-        gasHint: "https://script.google.com/macros/s/...",
-        gasRequired: "(தேவை)",
+
         translateBtn: "மொழிபெயர்த்து PDF பதிவிறக்கவும்",
         processing: "செயலாக்கம்...",
         remindTitle: "கட்டண நினைவூட்டல்",
@@ -107,7 +104,7 @@ export default function TranslatorTool() {
     /* ── state ── */
     const [uiLang, setUiLang] = useState<UILang>("en");
     const [activeTab, setActiveTab] = useState<"translate" | "reminder">("translate");
-    const [gasUrl, setGasUrl] = useState("");
+
     const [targetLang, setTargetLang] = useState("si");
     const [status, setStatus] = useState("");
     const [isProcessing, setIsProcessing] = useState(false);
@@ -154,123 +151,64 @@ export default function TranslatorTool() {
 
     /* ─── Translation Logic ─── */
     const translateAndDownload = async () => {
-        if (!fileToUpload) return alert("Please select a file first!");
-        if (!gasUrl.trim() || !gasUrl.includes("script.google.com")) {
-            return alert("Please enter a valid Google Apps Script Web App URL.");
+        if (!fileToUpload) {
+            alert("කරුණාකර පලමුව PDF/Doc එකක් තෝරන්න.");
+            return;
         }
 
         setIsProcessing(true);
         setProgress(0);
-        setStatus("Extracting raw text from file...");
+        setStatus("පරිවර්තනය වෙමින් පවතී... කරුණාකර රැඳී සිටින්න.");
 
-        try {
-            let originalText = "";
-            const ext = fileToUpload.name.split(".").pop()?.toLowerCase();
+        const reader = new FileReader();
 
-            const loadScript = (src: string) =>
-                new Promise((resolve, reject) => {
-                    if (document.querySelector(`script[src="${src}"]`)) return resolve(true);
-                    const s = document.createElement("script");
-                    s.src = src;
-                    s.onload = resolve;
-                    s.onerror = reject;
-                    document.head.appendChild(s);
+        reader.onload = async (e) => {
+            const base64Data = (e.target?.result as string).split(",")[1];
+
+            try {
+                setProgress(30);
+                setStatus("Google Script එකට දත්ත යැවීම...");
+
+                const response = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        fileData: base64Data,
+                        fileName: fileToUpload.name,
+                        targetLang: targetLang,
+                    }),
                 });
 
-            if (ext === "docx") {
-                const arrayBuffer = await fileToUpload.arrayBuffer();
-                const result = await mammoth.extractRawText({ arrayBuffer });
-                originalText = result.value;
-            } else if (ext === "txt" || ext === "md") {
-                originalText = await fileToUpload.text();
-            } else if (ext === "pdf") {
-                setStatus("Loading PDF engine...");
-                await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
-                const pdfjsLib = (window as any)["pdfjs-dist/build/pdf"];
-                pdfjsLib.GlobalWorkerOptions.workerSrc =
-                    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-                const arrayBuffer = await fileToUpload.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const tc = await page.getTextContent();
-                    originalText += tc.items.map((item: any) => item.str).join(" ") + "\n\n";
+                setProgress(70);
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    setProgress(90);
+                    setStatus("පරිවර්තනය වූ PDF එක Download කරවීම...");
+
+                    const link = document.createElement("a");
+                    link.href = "data:application/pdf;base64," + result.pdfData;
+                    link.download = "Translated_" + fileToUpload.name;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    setProgress(100);
+                    setStatus("පරිවර්තනය සාර්ථකයි! දැන් Download වේවි.");
+                    alert("පරිවර්තනය සාර්ථකයි! දැන් Download වේවි.");
+                } else {
+                    setStatus("Error: " + result.message);
+                    alert("Error: " + result.message);
                 }
-            } else if (ext === "pptx") {
-                setStatus("Extracting slides...");
-                await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
-                const JSZip = (window as any).JSZip;
-                const arrayBuffer = await fileToUpload.arrayBuffer();
-                const zip = await JSZip.loadAsync(arrayBuffer);
-                const slideFiles = Object.keys(zip.files).filter(
-                    (name: string) => name.startsWith("ppt/slides/slide") && name.endsWith(".xml")
-                );
-                for (const fileName of slideFiles) {
-                    const xml = await zip.files[fileName].async("string");
-                    const matches = xml.match(/<a:t.*?>(.*?)<\/a:t>/g) || [];
-                    const slideText = matches.map((m: string) => m.replace(/<\/?[^>]+(>|$)/g, "")).join(" ");
-                    if (slideText) originalText += slideText + "\n\n";
-                }
-            } else {
-                setStatus("Error: Unsupported file type.");
+            } catch (error) {
+                console.error("Fetch error:", error);
+                setStatus("සර්වර් එක සමඟ සම්බන්ධ වීමට නොහැක. නැවත උත්සාහ කරන්න.");
+                alert("සර්වර් එක සමඟ සම්බන්ධ වීමට නොහැක. නැවත උත්සාහ කරන්න.");
+            } finally {
                 setIsProcessing(false);
-                return;
             }
+        };
 
-            if (!originalText.trim()) {
-                setStatus("File appears to be empty.");
-                setIsProcessing(false);
-                return;
-            }
-
-            /* Chunk & Translate with progress */
-            const chunks = chunkText(originalText);
-            let fullTranslatedText = "";
-
-            for (let i = 0; i < chunks.length; i++) {
-                const pct = Math.round(((i + 1) / chunks.length) * 100);
-                setProgress(pct);
-                setStatus(`Translating chunk ${i + 1} of ${chunks.length}...`);
-
-                try {
-                    const response = await fetch(
-                        `${gasUrl}?target=${targetLang}&text=${encodeURIComponent(chunks[i])}`
-                    );
-                    if (!response.ok) throw new Error("API Error");
-                    fullTranslatedText += (await response.text()) + "\n\n";
-                    await new Promise((res) => setTimeout(res, 500));
-                } catch {
-                    setStatus(`Error translating chunk ${i + 1}.`);
-                    setIsProcessing(false);
-                    return;
-                }
-            }
-
-            /* Render & Export PDF */
-            setStatus("Generating translated PDF...");
-            const element = document.createElement("div");
-            element.style.padding = "40px";
-            element.style.fontFamily = "Arial, sans-serif";
-            element.style.color = "#000";
-            element.style.fontSize = "16px";
-            element.style.whiteSpace = "pre-wrap";
-            element.innerText = fullTranslatedText;
-
-            const engine = await html2pdf();
-            const opt = {
-                margin: 10,
-                filename: `Translated_${targetLang.toUpperCase()}_${fileToUpload.name}.pdf`,
-                image: { type: "jpeg", quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-            };
-            await engine().set(opt).from(element).save();
-            setStatus("Success! File Downloaded.");
-        } catch (err) {
-            console.error(err);
-            setStatus("An unknown error occurred.");
-        }
-        setIsProcessing(false);
+        reader.readAsDataURL(fileToUpload);
     };
 
     /* ─── Reminder Logic ─── */
@@ -429,54 +367,31 @@ export default function TranslatorTool() {
                                     </div>
                                 </div>
 
-                                {/* 2 — Language & GAS Config */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-sm font-semibold text-gray-300">
-                                            2. {T.targetLabel}
-                                        </label>
-                                        <select
-                                            value={targetLang}
-                                            onChange={(e) => setTargetLang(e.target.value)}
-                                            className="px-4 py-3 rounded-lg outline-none transition-colors"
-                                            style={{
-                                                background: "rgba(255,255,255,0.05)",
-                                                border: "1px solid rgba(255,255,255,0.1)",
-                                                color: "#e0e0e0",
-                                            }}
-                                        >
-                                            {languages.map((lang) => (
-                                                <option
-                                                    key={lang.code}
-                                                    value={lang.code}
-                                                    style={{ background: "#1a1e2e", color: "#e0e0e0" }}
-                                                >
-                                                    {lang.label} ({lang.code})
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-sm font-semibold text-gray-300">
-                                            3. {T.gasLabel}{" "}
-                                            <span className="text-xs text-gray-500 font-normal ml-1">
-                                                {T.gasRequired}
-                                            </span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={gasUrl}
-                                            onChange={(e) => setGasUrl(e.target.value)}
-                                            placeholder={T.gasHint}
-                                            className="px-4 py-3 rounded-lg outline-none text-sm transition-colors placeholder-gray-600"
-                                            style={{
-                                                background: "rgba(255,255,255,0.05)",
-                                                border: "1px solid rgba(255,255,255,0.1)",
-                                                color: "#e0e0e0",
-                                            }}
-                                        />
-                                    </div>
+                                {/* 2 — Language Selection */}
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-sm font-semibold text-gray-300">
+                                        2. {T.targetLabel}
+                                    </label>
+                                    <select
+                                        value={targetLang}
+                                        onChange={(e) => setTargetLang(e.target.value)}
+                                        className="px-4 py-3 rounded-lg outline-none transition-colors"
+                                        style={{
+                                            background: "rgba(255,255,255,0.05)",
+                                            border: "1px solid rgba(255,255,255,0.1)",
+                                            color: "#e0e0e0",
+                                        }}
+                                    >
+                                        {languages.map((lang) => (
+                                            <option
+                                                key={lang.code}
+                                                value={lang.code}
+                                                style={{ background: "#1a1e2e", color: "#e0e0e0" }}
+                                            >
+                                                {lang.label} ({lang.code})
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 {/* Progress Bar */}

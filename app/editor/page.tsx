@@ -4,6 +4,7 @@ export const metadata = {
 };
 
 import DocumentEditor from "@/components/DocumentEditor";
+import Link from "next/link";
 
 export default function EditorPage() {
     return (
@@ -17,6 +18,34 @@ export default function EditorPage() {
                 </div>
 
                 <DocumentEditor />
+
+                {/* PDF Editor Link */}
+                <div className="w-full max-w-5xl mt-8 mb-6">
+                    <Link
+                        href="/tools"
+                        className="block w-full p-5 rounded-2xl transition-all duration-300 hover:scale-[1.01] group"
+                        style={{
+                            background: "rgba(0,229,255,0.05)",
+                            border: "1px solid rgba(0,229,255,0.15)",
+                        }}
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl"
+                                style={{ background: "rgba(0,229,255,0.1)" }}
+                            >
+                                📄
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>
+                                    PDF Editor — Merge, Split, Compress & Edit
+                                </h3>
+                                <p className="text-xs mt-0.5" style={{ color: "var(--text-secondary)" }}>
+                                    Need to edit PDF files? Open the full PDF Editor tool →
+                                </p>
+                            </div>
+                        </div>
+                    </Link>
+                </div>
             </div>
         </main>
     );

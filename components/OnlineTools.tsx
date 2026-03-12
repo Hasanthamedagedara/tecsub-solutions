@@ -6,6 +6,7 @@ import { onlineTools } from "@/data/product";
 import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
 import AdPlacement from "@/components/AdPlacement";
+import PdfEditorTool from "@/components/PdfEditorTool";
 
 /* ─── Tool Logic Functions ─── */
 
@@ -352,13 +353,7 @@ function ImageCompressor() {
 }
 
 function PdfTool() {
-    return (
-        <div className="text-center py-8">
-            <p className="text-3xl mb-3">📄</p>
-            <p className="text-sm font-semibold mb-1" style={{ color: "var(--text-primary)" }}>PDF Merger & Splitter</p>
-            <p className="text-xs" style={{ color: "var(--text-secondary)" }}>Coming soon — requires server-side processing.</p>
-        </div>
-    );
+    return <PdfEditorTool />;
 }
 
 function PdfConverter() {
@@ -524,7 +519,7 @@ const toolComponents: Record<string, () => JSX.Element> = {
     "Color Palette Generator": ColorPaletteGenerator,
     "Base64 Encoder/Decoder": Base64Tool,
     "Unit Converter": UnitConverter,
-    "PDF Merger & Splitter": PdfTool,
+    "PDF Editor": PdfTool,
     "Password Generator": PasswordGenerator,
     "QR Code Generator": QRCodeGenerator,
     "Markdown Editor": MarkdownEditor,
