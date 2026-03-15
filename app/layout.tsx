@@ -3,6 +3,7 @@ import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import ScrollToTop from "@/components/ScrollToTop";
 import FilterChipBar from "@/components/FilterChipBar";
+import NewsTicker from "@/components/NewsTicker";
 import ChatPanel from "@/components/ChatPanel";
 import PdfModal from "@/components/PdfModal";
 import AuthModal from "@/components/AuthModal";
@@ -72,13 +73,14 @@ export default function RootLayout({
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link
-                    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
+                    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Noto+Sans+Sinhala:wght@400;600&family=Noto+Sans+Tamil:wght@400;600&display=swap"
                     rel="stylesheet"
                 />
             </head>
             <body className="font-roboto antialiased">
                 <ThemeProvider>
                     <FilterChipBar />
+                    <NewsTicker />
                     {children}
                     <ChatPanel />
                     <PdfModal />
