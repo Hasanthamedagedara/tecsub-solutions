@@ -167,7 +167,7 @@ export default function TranslatorTool() {
 
             try {
                 setProgress(30);
-                setStatus("Google Script එකට දත්ත යැවීම...");
+                setStatus("Sending to Google Script...");
 
                 const response = await fetch(SCRIPT_URL, {
                     method: "POST",
@@ -179,30 +179,47 @@ export default function TranslatorTool() {
                 });
 
                 setProgress(70);
-                const result = await response.json();
 
-                if (result.status === "success") {
+                // Handle non-JSON responses gracefully
+                const text = await response.text();
+                let result: { status: string; pdfData?: string; message?: string };
+                try {
+                    result = JSON.parse(text);
+                } catch {
+                    throw new Error("Invalid response from server: " + text.slice(0, 200));
+                }
+
+                if (result.status === "success" && result.pdfData) {
                     setProgress(90);
-                    setStatus("පරිවර්තනය වූ PDF එක Download කරවීම...");
+                    setStatus("Downloading translated PDF...");
 
                     const link = document.createElement("a");
                     link.href = "data:application/pdf;base64," + result.pdfData;
-                    link.download = "Translated_" + fileToUpload.name;
+                    link.download = "Translated_" + fileToUpload.name.replace(/\.[^.]+$/, ".pdf");
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
 
                     setProgress(100);
-                    setStatus("පරිවර්තනය සාර්ථකයි! දැන් Download වේවි.");
-                    alert("පරිවර්තනය සාර්ථකයි! දැන් Download වේවි.");
+                    setStatus("✅ Translation complete! Your PDF is downloading.");
                 } else {
-                    setStatus("Error: " + result.message);
-                    alert("Error: " + result.message);
+                    const msg = result.message ?? "Unknown error";
+                    // Detect the specific Drive API error
+                    if (msg.includes("Drive.Files.insert") || msg.includes("is not a function")) {
+                        setStatus("❌ Script Error: The Google Apps Script needs to be updated. Please redeploy using the fixed script below (Drive.Files.create instead of Drive.Files.insert).");
+                    } else {
+                        setStatus("❌ Error: " + msg);
+                    }
                 }
             } catch (error) {
-                console.error("Fetch error:", error);
-                setStatus("සර්වර් එක සමඟ සම්බන්ධ වීමට නොහැක. නැවත උත්සාහ කරන්න.");
-                alert("සර්වර් එක සමඟ සම්බන්ධ වීමට නොහැක. නැවත උත්සාහ කරන්න.");
+                const msg = error instanceof Error ? error.message : String(error);
+                if (msg.includes("Drive.Files.insert") || msg.includes("is not a function")) {
+                    setStatus("❌ Script Error: Google Apps Script is outdated. Please redeploy with the updated script (see instructions).");
+                } else if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) {
+                    setStatus("❌ Network error: Could not reach the server. Check your internet connection.");
+                } else {
+                    setStatus("❌ Error: " + msg);
+                }
             } finally {
                 setIsProcessing(false);
             }
