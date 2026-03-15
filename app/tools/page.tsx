@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -158,6 +158,100 @@ const categoryColors: Record<string, string> = {
 export default function OnlineToolsPage() {
     const [activeTool, setActiveTool] = useState<string | null>(null);
 
+    // File Handling State
+    const [fileUri, setFileUri] = useState<string | null>(null);
+    const [fileData, setFileData] = useState<string | null>(null);
+    const [fileError, setFileError] = useState<string | null>(null);
+    const [showHub, setShowHub] = useState<boolean>(true);
+    const [isPdf, setIsPdf] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fileParam = urlParams.get('file');
+            if (fileParam) {
+                setFileUri(fileParam);
+                // Attempt to read file data via bridge
+                // @ts-expect-error global TecsubApp
+                if (window.TecsubApp && window.TecsubApp.getFileContent) {
+                    try {
+                        // @ts-expect-error global TecsubApp
+                        const base64Data = window.TecsubApp.getFileContent(fileParam);
+                        if (base64Data) {
+                            setFileData(base64Data);
+                            // Simple heuristic: if URI ends in .pdf or if base64 starts with JVBERi0 (which is "%PDF-")
+                            setIsPdf(fileParam.toLowerCase().endsWith(".pdf") || base64Data.startsWith("JVBERi0"));
+                        } else {
+                            setFileError("Failed to read file data. Please try again.");
+                        }
+                    } catch (e) {
+                        setFileError("Error reading file via bridge.");
+                    }
+                } else {
+                    setFileError("App bridge not found. Make sure you are using the Tecsub Android App to open this file.");
+                }
+            }
+        }
+    }, []);
+
+    // ─── Render Productivity Hub if file opened ───
+    if (fileUri && showHub) {
+        return (
+            <div className="min-h-screen flex flex-col" style={{ background: "var(--bg-primary)" }}>
+                <Navbar />
+                <div className="flex-1 flex items-center justify-center p-4 pt-24">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="max-w-md w-full p-8 rounded-3xl text-center space-y-6 relative"
+                        style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(0,229,255,0.2)" }}
+                    >
+                        {/* Glow Effect */}
+                        <div className="absolute inset-0 bg-cyan-500/10 blur-[60px] rounded-full pointer-events-none -z-10" />
+
+                        <div className="text-6xl mb-4">✨</div>
+                        <h1 className="font-bebas text-4xl sm:text-5xl gradient-text mb-2">TECSUB PRODUCTIVITY HUB</h1>
+                        <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                            You opened a file from your device. What would you like to do?
+                        </p>
+
+                        <div className="text-left bg-black/40 p-3 rounded-lg border border-white/10 text-xs overflow-hidden text-ellipsis mb-6 text-white/70 font-mono break-all">
+                            {fileUri}
+                        </div>
+
+                        {fileError ? (
+                            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+                                {fileError}
+                            </div>
+                        ) : !fileData ? (
+                            <div className="p-4 text-sm text-cyan-400 animate-pulse font-medium">
+                                Reading file data securely from Android...
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {isPdf && (
+                                    <button onClick={() => { setShowHub(false); setActiveTool("PDF Editor"); }} className="tool-btn-primary w-full py-4 flex items-center justify-center gap-3 text-sm">
+                                        <span className="text-xl">✏️</span> Edit PDF Content
+                                    </button>
+                                )}
+                                <button className="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all text-sm hover:bg-white/10" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "white" }}>
+                                    <span className="text-xl">🌐</span> Translate
+                                </button>
+                                <button className="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all text-sm hover:bg-white/10" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "white" }}>
+                                    <span className="text-xl">📤</span> Share to Feed
+                                </button>
+                            </div>
+                        )}
+
+                        <button onClick={() => window.location.href = '/tools'} className="text-xs hover:underline mt-6 block mx-auto transition-colors" style={{ color: "var(--text-secondary)" }}>
+                            Close & Return to Tools
+                        </button>
+                    </motion.div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen" style={{ background: "var(--bg-primary)" }}>
             <Navbar />
@@ -233,10 +327,13 @@ export default function OnlineToolsPage() {
                                     </button>
                                 </div>
                                 <div className="p-6">
-                                    {toolComponents[activeTool]
-                                        ? toolComponents[activeTool]()
-                                        : <PlaceholderTool name={activeTool} />
-                                    }
+                                    {activeTool === "PDF Editor" && fileData ? (
+                                        <PdfEditorTool initialBase64Pdf={fileData} initialFileName={fileUri?.split('/').pop() || "Document.pdf"} />
+                                    ) : toolComponents[activeTool] ? (
+                                        toolComponents[activeTool]()
+                                    ) : (
+                                        <PlaceholderTool name={activeTool} />
+                                    )}
                                 </div>
                             </motion.div>
                         )}

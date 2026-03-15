@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 
@@ -214,7 +214,7 @@ function MergeTab() {
 /* ═══════════════════════════════════════════════════
    SPLIT TAB
    ═══════════════════════════════════════════════════ */
-function SplitTab() {
+function SplitTab({ initialFile }: { initialFile?: File | null }) {
     const [files, setFiles] = useState<File[]>([]);
     const [totalPages, setTotalPages] = useState(0);
     const [rangeInput, setRangeInput] = useState("");
@@ -222,7 +222,7 @@ function SplitTab() {
     const [status, setStatus] = useState("");
     const [progress, setProgress] = useState(0);
 
-    const loadFile = async (newFiles: File[]) => {
+    const loadFile = useCallback(async (newFiles: File[]) => {
         setFiles(newFiles);
         setStatus("");
         setRangeInput("");
@@ -239,7 +239,13 @@ function SplitTab() {
                 setTotalPages(0);
             }
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        if (initialFile && files.length === 0) {
+            loadFile([initialFile]);
+        }
+    }, [initialFile, files.length, loadFile]);
 
     const parseRanges = (input: string, max: number): number[][] => {
         return input
@@ -327,8 +333,8 @@ function SplitTab() {
 /* ═══════════════════════════════════════════════════
    COMPRESS TAB
    ═══════════════════════════════════════════════════ */
-function CompressTab() {
-    const [files, setFiles] = useState<File[]>([]);
+function CompressTab({ initialFile }: { initialFile?: File | null }) {
+    const [files, setFiles] = useState<File[]>(initialFile ? [initialFile] : []);
     const [processing, setProcessing] = useState(false);
     const [status, setStatus] = useState("");
     const [progress, setProgress] = useState(0);
@@ -410,7 +416,7 @@ function CompressTab() {
 /* ═══════════════════════════════════════════════════
    EDIT TEXT TAB
    ═══════════════════════════════════════════════════ */
-function EditTextTab() {
+function EditTextTab({ initialFile }: { initialFile?: File | null }) {
     const [files, setFiles] = useState<File[]>([]);
     const [processing, setProcessing] = useState(false);
     const [status, setStatus] = useState("");
@@ -423,7 +429,7 @@ function EditTextTab() {
     const [fontSize, setFontSize] = useState(14);
     const [totalPages, setTotalPages] = useState(0);
 
-    const loadFile = async (newFiles: File[]) => {
+    const loadFile = useCallback(async (newFiles: File[]) => {
         setFiles(newFiles);
         setAnnotations([]);
         setStatus("");
@@ -439,7 +445,13 @@ function EditTextTab() {
                 setTotalPages(0);
             }
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        if (initialFile && files.length === 0) {
+            loadFile([initialFile]);
+        }
+    }, [initialFile, files.length, loadFile]);
 
     const addAnnotation = () => {
         if (!newText.trim()) return;
@@ -583,8 +595,34 @@ function EditTextTab() {
 /* ═══════════════════════════════════════════════════
    MAIN COMPONENT
    ═══════════════════════════════════════════════════ */
-export default function PdfEditorTool() {
-    const [activeTab, setActiveTab] = useState<Tab>("merge");
+export default function PdfEditorTool({ initialBase64Pdf, initialFileName }: { initialBase64Pdf?: string, initialFileName?: string }) {
+    const [activeTab, setActiveTab] = useState<Tab>(initialBase64Pdf ? "edit" : "merge");
+
+    // Convert base64 to File object if provided initially
+    const [initialFile, setInitialFile] = useState<File | null>(null);
+
+    useEffect(() => {
+        if (initialBase64Pdf) {
+            try {
+                const byteCharacters = atob(initialBase64Pdf);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: "application/pdf" });
+                const file = new File([blob], initialFileName || "Imported_Document.pdf", { type: "application/pdf" });
+                setInitialFile(file);
+            } catch (e) {
+                console.error("Failed to parse base64 PDF", e);
+            }
+        }
+    }, [initialBase64Pdf, initialFileName]);
+
+    // Modifying the Tabs to inject initialFile into them if it exists.
+    // To keep it simple, we wrap the original tab contents in higher-order logic or just pass the file.
+    // For now, if initialFile exists, we forcefully load it into the EditTextTab state using an inner wrapper or key recreation.
+    // Since we don't want to rewrite the entire tab state, we will just pass initialFile as a prop to them.
 
     return (
         <div className="w-full flex flex-col gap-5">
@@ -625,9 +663,9 @@ export default function PdfEditorTool() {
                     transition={{ duration: 0.2 }}
                 >
                     {activeTab === "merge" && <MergeTab />}
-                    {activeTab === "split" && <SplitTab />}
-                    {activeTab === "compress" && <CompressTab />}
-                    {activeTab === "edit" && <EditTextTab />}
+                    {activeTab === "split" && <SplitTab initialFile={initialFile} />}
+                    {activeTab === "compress" && <CompressTab initialFile={initialFile} />}
+                    {activeTab === "edit" && <EditTextTab initialFile={initialFile} />}
                 </motion.div>
             </AnimatePresence>
         </div>
