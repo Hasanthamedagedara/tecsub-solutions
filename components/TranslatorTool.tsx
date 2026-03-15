@@ -80,41 +80,28 @@ async function extractText(file: File): Promise<string> {
     }
 
     if (ext === "pdf") {
-        // For PDFs: read as array buffer, extract text via PDF.js if available,
-        // otherwise return a helpful message
-        try {
-            // Dynamic PDF.js import
-            const pdfjsLib = await import("pdfjs-dist").catch(() => null);
-            if (pdfjsLib) {
-                const pdfjsModule = pdfjsLib as typeof import("pdfjs-dist");
-                if (!pdfjsModule.GlobalWorkerOptions.workerSrc) {
-                    pdfjsModule.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.js`;
-                }
-                const buf = await file.arrayBuffer();
-                const pdf = await pdfjsModule.getDocument({ data: buf }).promise;
-                const pages: string[] = [];
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    pages.push(content.items.map((item: { str?: string }) => item.str ?? "").join(" "));
-                }
-                return pages.join("\n\n");
-            }
-        } catch { /* fallback below */ }
-
-        // Fallback: read PDF as raw text (works for some PDFs)
+        // Extract readable text from PDF using FileReader (works for text-based PDFs)
+        // For scanned/image PDFs, users should convert to DOCX first
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const raw = e.target?.result as string ?? "";
-                // Extract readable text between PDF markers
-                const matches = raw.match(/\(([^\)]{4,})\)/g) ?? [];
+                // Extract text strings from PDF content streams
+                const matches = raw.match(/\(([^\)]{2,})\)/g) ?? [];
                 const text = matches
                     .map(m => m.slice(1, -1))
-                    .filter(t => /[a-zA-Z]{3,}/.test(t))
-                    .join(" ");
-                resolve(text || "[Could not extract text from this PDF. Try converting to DOCX first.]");
+                    .filter(t => /[a-zA-Z]{2,}/.test(t) && !/^\s*$/.test(t))
+                    .join(" ")
+                    .replace(/\\n/g, "\n")
+                    .replace(/\\r/g, "")
+                    .trim();
+                if (text.length > 20) {
+                    resolve(text);
+                } else {
+                    resolve("[This PDF appears to be image-based and has no extractable text. Please convert it to DOCX format first, then upload the DOCX file.]");
+                }
             };
+            reader.onerror = () => resolve("[Failed to read PDF file.]");
             reader.readAsBinaryString(file);
         });
     }
