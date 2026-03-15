@@ -120,7 +120,11 @@ export default function ChatPanel() {
     const [inputText, setInputText] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const [showCreateGroup, setShowCreateGroup] = useState(false);
+    const [showCreateChannel, setShowCreateChannel] = useState(false);
+    const [showCreateMenu, setShowCreateMenu] = useState(false);
     const [groupName, setGroupName] = useState("");
+    const [channelName, setChannelName] = useState("");
+    const [channelDesc, setChannelDesc] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -204,15 +208,33 @@ export default function ChatPanel() {
             <div className="chat-conv-header p-4 border-b border-[#222] flex justify-between items-center bg-[#0a0a0a]">
                 <h3 className="text-xl font-bold tracking-tight">Messages</h3>
                 <div className="flex gap-3">
-                    <button
-                        onClick={() => setShowCreateGroup(true)}
-                        className="p-2 bg-[#222] hover:bg-[#333] rounded-full transition-colors"
-                        title="Create New"
-                    >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                        </svg>
-                    </button>
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowCreateMenu((p) => !p)}
+                            className="p-2 bg-[#222] hover:bg-[#333] rounded-full transition-colors"
+                            title="Create New"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        {showCreateMenu && (
+                            <div className="absolute right-0 top-full mt-2 bg-[#1a1a1a] border border-[#333] rounded-xl shadow-2xl z-50 min-w-[180px] overflow-hidden">
+                                <button
+                                    onClick={() => { setShowCreateGroup(true); setShowCreateMenu(false); }}
+                                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#222] text-sm text-left transition-colors"
+                                >
+                                    <span className="text-lg">👥</span> New Group
+                                </button>
+                                <button
+                                    onClick={() => { setShowCreateChannel(true); setShowCreateMenu(false); }}
+                                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#222] text-sm text-left transition-colors border-t border-[#222]"
+                                >
+                                    <span className="text-lg">📢</span> New Channel
+                                </button>
+                            </div>
+                        )}
+                    </div>
                     <button onClick={() => setIsOpen(false)} className="p-2 bg-[#222] hover:bg-[#333] rounded-full transition-colors">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
@@ -440,6 +462,60 @@ export default function ChatPanel() {
         </div>
     );
 
+    /* ─── Create Channel Modal ─── */
+    const renderCreateChannel = () => (
+        <div className="chat-create-group">
+            <div className="chat-conv-header">
+                <button onClick={() => setShowCreateChannel(false)} className="chat-action-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                    </svg>
+                </button>
+                <h3 className="chat-conv-title">Create Channel</h3>
+            </div>
+            <div className="chat-group-form">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-14 h-14 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-2xl">📢</div>
+                    <div className="flex-1">
+                        <p className="text-xs text-gray-400 mb-1">Channels are for broadcasting to unlimited subscribers</p>
+                    </div>
+                </div>
+                <input
+                    type="text"
+                    placeholder="Channel name"
+                    value={channelName}
+                    onChange={(e) => setChannelName(e.target.value)}
+                    className="chat-text-input"
+                />
+                <textarea
+                    placeholder="Channel description (optional)"
+                    value={channelDesc}
+                    onChange={(e) => setChannelDesc(e.target.value)}
+                    className="chat-text-input mt-2"
+                    rows={3}
+                    style={{ resize: "none", minHeight: "70px" }}
+                />
+                <div className="flex gap-2 mt-3">
+                    <label className="flex items-center gap-2 text-xs text-gray-400 bg-[#1a1a1a] px-3 py-2 rounded-lg border border-[#333] cursor-pointer">
+                        <input type="radio" name="channel-type" defaultChecked className="accent-blue-500" />
+                        Public
+                    </label>
+                    <label className="flex items-center gap-2 text-xs text-gray-400 bg-[#1a1a1a] px-3 py-2 rounded-lg border border-[#333] cursor-pointer">
+                        <input type="radio" name="channel-type" className="accent-blue-500" />
+                        Private
+                    </label>
+                </div>
+                <button
+                    className="chat-create-btn mt-4"
+                    style={{ background: "linear-gradient(135deg, #2563eb, #3b82f6)" }}
+                    onClick={() => setShowCreateChannel(false)}
+                >
+                    Create Channel
+                </button>
+            </div>
+        </div>
+    );
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -461,11 +537,13 @@ export default function ChatPanel() {
                         transition={{ type: "spring", damping: 25, stiffness: 300 }}
                         className="chat-panel"
                     >
-                        {showCreateGroup
-                            ? renderCreateGroup()
-                            : activeConv
-                                ? renderChatView()
-                                : renderConversationList()
+                        {showCreateChannel
+                            ? renderCreateChannel()
+                            : showCreateGroup
+                                ? renderCreateGroup()
+                                : activeConv
+                                    ? renderChatView()
+                                    : renderConversationList()
                         }
                     </motion.div>
                 </>

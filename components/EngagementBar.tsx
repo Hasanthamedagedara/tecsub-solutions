@@ -47,6 +47,23 @@ const EyeIcon = () => (
     </svg>
 );
 
+/* ─── Glow color map by content type ─── */
+const GLOW_COLORS: Record<string, string> = {
+    Video: "#FF0000",
+    Short: "#FF00E5",
+    Course: "#3ea6ff",
+    PDF: "#e11d48",
+    Tool: "#2ba640",
+    App: "#2563eb",
+    News: "#F59E0B",
+    Prompt: "#A855F7",
+    Software: "#00E5FF",
+    Update: "#EC4899",
+    Photo: "#FF6B35",
+    Album: "#FF4081",
+    Book: "#FF8F00",
+};
+
 /* ─── Helper to format numbers ─── */
 function formatCount(n: number): string {
     if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
@@ -58,10 +75,12 @@ function formatCount(n: number): string {
 export default function EngagementBar({
     contentId,
     contentType = "general",
+    contentTitle,
     compact = false,
 }: {
     contentId: string;
     contentType?: string;
+    contentTitle?: string;
     compact?: boolean;
 }) {
     const { language } = useAppContext();
@@ -69,6 +88,7 @@ export default function EngagementBar({
     const viewedRef = useRef(false);
 
     const storageKey = `tecsub-engage-${contentType}-${contentId}`;
+    const glowColor = GLOW_COLORS[contentType] || "#3ea6ff";
 
     /* ─── State ─── */
     const [liked, setLiked] = useState(false);
@@ -81,6 +101,7 @@ export default function EngagementBar({
     const [commentCount, setCommentCount] = useState(0);
     const [showToast, setShowToast] = useState<string | null>(null);
     const [likeAnim, setLikeAnim] = useState(false);
+    const [showShareMenu, setShowShareMenu] = useState(false);
 
     /* ─── Load persisted state ─── */
     useEffect(() => {
@@ -95,7 +116,6 @@ export default function EngagementBar({
                 setSaved(data.saved || false);
                 setViews(data.views || 0);
             }
-            // Load comment count
             const commentsRaw = localStorage.getItem(`tecsub-comments-${contentId}`);
             if (commentsRaw) {
                 const comments = JSON.parse(commentsRaw);
@@ -138,6 +158,14 @@ export default function EngagementBar({
         return () => observer.disconnect();
     }, [persist]);
 
+    /* ─── Close share menu on outside click ─── */
+    useEffect(() => {
+        if (!showShareMenu) return;
+        const handler = () => setShowShareMenu(false);
+        setTimeout(() => document.addEventListener("click", handler), 0);
+        return () => document.removeEventListener("click", handler);
+    }, [showShareMenu]);
+
     /* ─── Toast helper ─── */
     const flash = (msg: string) => {
         setShowToast(msg);
@@ -145,7 +173,8 @@ export default function EngagementBar({
     };
 
     /* ─── Handlers ─── */
-    const toggleLike = () => {
+    const toggleLike = (e: React.MouseEvent) => {
+        e.stopPropagation();
         const next = !liked;
         const nextCount = next ? likes + 1 : likes - 1;
         setLiked(next);
@@ -154,7 +183,8 @@ export default function EngagementBar({
         persist({ liked: next, likes: nextCount });
     };
 
-    const toggleRepost = () => {
+    const toggleRepost = (e: React.MouseEvent) => {
+        e.stopPropagation();
         const next = !reposted;
         const nextCount = next ? reposts + 1 : reposts - 1;
         setReposted(next);
@@ -163,7 +193,36 @@ export default function EngagementBar({
         persist({ reposted: next, reposts: nextCount });
     };
 
-    const handleShare = async () => {
+    const handleShareClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setShowShareMenu((prev) => !prev);
+    };
+
+    const handleCopyLink = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        const url = typeof window !== "undefined" ? window.location.href : "";
+        try {
+            await navigator.clipboard.writeText(url);
+            flash(t(language, "copied") || "Link copied!");
+        } catch { /* ignore */ }
+        setShowShareMenu(false);
+    };
+
+    const handleShareToChat = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        window.dispatchEvent(new CustomEvent("tecsub-share-content", {
+            detail: {
+                id: contentId,
+                category: contentType,
+                title: contentTitle || contentType,
+            },
+        }));
+        setShowShareMenu(false);
+        flash("Opening chat...");
+    };
+
+    const handleExternalShare = async (e: React.MouseEvent) => {
+        e.stopPropagation();
         const url = typeof window !== "undefined" ? window.location.href : "";
         try {
             if (navigator.share) {
@@ -178,30 +237,36 @@ export default function EngagementBar({
                 flash(t(language, "copied") || "Link copied!");
             } catch { /* ignore */ }
         }
+        setShowShareMenu(false);
     };
 
-    const toggleSave = () => {
+    const toggleSave = (e: React.MouseEvent) => {
+        e.stopPropagation();
         const next = !saved;
         setSaved(next);
         if (next) flash(t(language, "saved") + "!");
         persist({ saved: next });
     };
 
-    const toggleComments = () => {
+    const toggleComments = (e: React.MouseEvent) => {
+        e.stopPropagation();
         setCommentsOpen((prev) => !prev);
-        // Refresh comment count
         try {
             const raw = localStorage.getItem(`tecsub-comments-${contentId}`);
             if (raw) setCommentCount(JSON.parse(raw).length);
         } catch { /* ignore */ }
     };
 
+    const glowStyle = {
+        "--engage-glow": glowColor,
+    } as React.CSSProperties;
+
     return (
-        <div ref={ref} className="engagement-wrapper">
+        <div ref={ref} className="engagement-wrapper" style={glowStyle} onClick={(e) => e.stopPropagation()}>
             {/* ─── Engagement Bar ─── */}
-            <div className={`engagement-bar ${compact ? "engagement-bar-compact" : ""}`}>
+            <div className={`engagement-bar engagement-bar-glow ${compact ? "engagement-bar-compact" : ""}`}>
                 {/* Like */}
-                <button onClick={toggleLike} className={`engagement-btn ${liked ? "active" : ""}`} title={t(language, liked ? "liked" : "like")}>
+                <button onClick={toggleLike} className={`engagement-btn engagement-btn-glow ${liked ? "active" : ""}`} title={t(language, liked ? "liked" : "like")}>
                     <motion.span
                         animate={likeAnim ? { scale: [1, 1.4, 1] } : {}}
                         transition={{ duration: 0.4 }}
@@ -213,32 +278,62 @@ export default function EngagementBar({
                 </button>
 
                 {/* Repost */}
-                <button onClick={toggleRepost} className={`engagement-btn ${reposted ? "active reposted" : ""}`} title={t(language, "repost")}>
+                <button onClick={toggleRepost} className={`engagement-btn engagement-btn-glow ${reposted ? "active reposted" : ""}`} title={t(language, "repost")}>
                     <RepostIcon />
                     {reposts > 0 && <span className="engagement-count">{formatCount(reposts)}</span>}
                 </button>
 
                 {/* Comment */}
-                <button onClick={toggleComments} className={`engagement-btn ${commentsOpen ? "active" : ""}`} title={t(language, "comment")}>
+                <button onClick={toggleComments} className={`engagement-btn engagement-btn-glow ${commentsOpen ? "active" : ""}`} title={t(language, "comment")}>
                     <CommentIcon />
                     {commentCount > 0 && <span className="engagement-count">{formatCount(commentCount)}</span>}
                 </button>
 
                 {/* Share */}
-                <button onClick={handleShare} className="engagement-btn" title={t(language, "share")}>
-                    <ShareIcon />
-                </button>
+                <div className="relative">
+                    <button onClick={handleShareClick} className="engagement-btn engagement-btn-glow" title={t(language, "share")}>
+                        <ShareIcon />
+                    </button>
+
+                    {/* Share Menu */}
+                    <AnimatePresence>
+                        {showShareMenu && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9, y: 4 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, y: 4 }}
+                                transition={{ duration: 0.15 }}
+                                className="share-menu"
+                            >
+                                <button onClick={handleCopyLink} className="share-menu-item">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
+                                    Copy link
+                                </button>
+                                <button onClick={handleShareToChat} className="share-menu-item">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                                    Share to Chat
+                                </button>
+                                <button onClick={handleExternalShare} className="share-menu-item">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
+                                    Share externally
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
 
                 {/* Save */}
-                <button onClick={toggleSave} className={`engagement-btn ${saved ? "active saved" : ""}`} title={t(language, saved ? "saved" : "save")}>
+                <button onClick={toggleSave} className={`engagement-btn engagement-btn-glow ${saved ? "active saved" : ""}`} title={t(language, saved ? "saved" : "save")}>
                     <BookmarkIcon filled={saved} />
                 </button>
 
                 {/* Views */}
-                <div className="views-badge ml-auto">
-                    <EyeIcon />
-                    <span>{formatCount(views)} {t(language, "views")}</span>
-                </div>
+                {!compact && (
+                    <div className="views-badge ml-auto">
+                        <EyeIcon />
+                        <span>{formatCount(views)} {t(language, "views")}</span>
+                    </div>
+                )}
             </div>
 
             {/* ─── Toast ─── */}

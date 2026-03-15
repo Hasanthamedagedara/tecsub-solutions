@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.tecsub.solutions",
+      "sha256_cert_fingerprints": [
+        "25:8D:4A:B9:F8:3A:7A:99:F3:04:63:BE:DB:1A:23:B0:26:E3:6D:D7:45:38:DA:C2:F8:3B:AA:C1:37:A5:72:75"
+      ]
+    }
+  }
+]

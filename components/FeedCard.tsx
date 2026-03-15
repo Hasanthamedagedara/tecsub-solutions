@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
+import EngagementBar from "@/components/EngagementBar";
 
 /* ─── Category Color Map ─── */
 const categoryColors: Record<string, string> = {
@@ -172,11 +173,11 @@ export default function FeedCard({
             <div className={`feed-card-thumbnail ${isShort ? "feed-card-thumbnail-short" : ""}`} style={{ aspectRatio: getAspectRatio(contentType) }}>
                 {isVideo && item.videoId ? (
                     <>
-                        <img 
-                            src={`https://img.youtube.com/vi/${item.videoId}/mqdefault.jpg`} 
-                            alt={item.title} 
-                            className={`w-full h-full object-cover transition-opacity duration-300 ${isHovering && iframeLoaded ? "opacity-0" : "opacity-100"}`} 
-                            loading="lazy" 
+                        <img
+                            src={`https://img.youtube.com/vi/${item.videoId}/mqdefault.jpg`}
+                            alt={item.title}
+                            className={`w-full h-full object-cover transition-opacity duration-300 ${isHovering && iframeLoaded ? "opacity-0" : "opacity-100"}`}
+                            loading="lazy"
                         />
                         {isHovering && (
                             <iframe
@@ -231,13 +232,7 @@ export default function FeedCard({
                 </button>
             </div>
 
-            <div className="flex items-center justify-between w-full px-2 pt-2 pb-1 border-t border-[rgba(255,255,255,0.05)] mt-2">
-                <div className="flex gap-4">
-                    <button className="flex items-center gap-2 text-gray-400 hover:text-red-500 transition-all"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg><span className="text-xs">1.2k</span></button>
-                    <button className="flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-all"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg><span className="text-xs">48</span></button>
-                </div>
-                <button className="text-gray-400 hover:text-yellow-400 transition-all" onClick={(e) => e.stopPropagation()}><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z" /></svg></button>
-            </div>
+            <EngagementBar contentId={item.id} contentType={item.category} contentTitle={item.title} compact />
         </motion.div>
     );
 }
