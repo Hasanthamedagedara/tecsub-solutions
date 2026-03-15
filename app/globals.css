@@ -37,6 +37,194 @@
   --blue: #065fd4;
 }
 
+/* ═══════════════════════════════════════════════
+   Light Mode Override
+   ═══════════════════════════════════════════════ */
+html.light {
+  --yt-bg: #ffffff;
+  --yt-bg-secondary: #f2f2f2;
+  --yt-bg-elevated: #e5e5e5;
+  --yt-bg-hover: rgba(0, 0, 0, 0.05);
+  --yt-text-primary: #0f0f0f;
+  --yt-text-secondary: #606060;
+  --yt-accent: #065fd4;
+  --yt-red: #cc0000;
+  --yt-border: #d9d9d9;
+  --yt-chip-bg: rgba(0, 0, 0, 0.05);
+  --yt-chip-active-bg: #0f0f0f;
+  --yt-chip-active-text: #ffffff;
+  --yt-card-bg: transparent;
+
+  --text-primary: #0f0f0f;
+  --text-secondary: #606060;
+  --glass-bg: #f2f2f2;
+  --glass-border: #d9d9d9;
+  --card-bg: #f2f2f2;
+  --navy: #ffffff;
+  --cyan: #065fd4;
+  --blue: #065fd4;
+
+  color-scheme: light;
+}
+
+html.light body {
+  background: #ffffff;
+  color: #0f0f0f;
+}
+
+html.light .yt-header {
+  background: #ffffff;
+  border-bottom-color: #d9d9d9;
+}
+
+html.light .chip-bar {
+  background: #ffffff;
+  border-bottom-color: #d9d9d9;
+}
+
+html.light .yt-sidebar {
+  background: #ffffff;
+}
+
+html.light .yt-search-input {
+  background: #ffffff;
+  color: #0f0f0f;
+  border: 1px solid #d9d9d9;
+}
+
+html.light .yt-search-btn {
+  background: #f2f2f2;
+  border-left-color: #d9d9d9;
+  color: #606060;
+}
+
+html.light .yt-icon-btn {
+  color: #606060;
+}
+
+html.light .yt-icon-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+html.light .feed-card-thumbnail {
+  background: #f2f2f2;
+}
+
+html.light .feed-card-title {
+  color: #0f0f0f;
+}
+
+html.light .feed-card-channel,
+html.light .feed-card-stats {
+  color: #606060;
+}
+
+html.light .feed-duration-badge {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+html.light .glass-panel {
+  background: #f2f2f2;
+  border-color: #d9d9d9;
+}
+
+html.light .engagement-btn {
+  color: #606060;
+}
+
+html.light .engagement-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #0f0f0f;
+}
+
+html.light .engagement-bar {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+html.light .engagement-toast {
+  background: #ffffff;
+  color: #0f0f0f;
+  border-color: #d9d9d9;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+html.light .share-menu {
+  background: #ffffff;
+  border-color: #d9d9d9;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+html.light .share-menu-item {
+  color: #333;
+}
+
+html.light .share-menu-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #0f0f0f;
+}
+
+html.light .share-menu-item+.share-menu-item {
+  border-top-color: #eee;
+}
+
+html.light .auth-modal,
+html.light .composer-modal {
+  background: #ffffff;
+  border-color: #d9d9d9;
+}
+
+html.light .auth-modal-title,
+html.light .composer-title {
+  color: #0f0f0f;
+}
+
+html.light .auth-modal-input,
+html.light .composer-input {
+  background: #f8f8f8;
+  border-color: #d9d9d9;
+  color: #0f0f0f;
+}
+
+html.light .auth-modal-input:focus,
+html.light .composer-input:focus {
+  border-color: #065fd4;
+  background: #f0f7ff;
+}
+
+html.light .auth-modal-close,
+html.light .composer-close-btn {
+  background: rgba(0, 0, 0, 0.06);
+  color: #606060;
+}
+
+html.light .views-badge {
+  color: #909090;
+}
+
+html.light .chat-panel,
+html.light .chat-conv-list {
+  background: #ffffff !important;
+  color: #0f0f0f !important;
+}
+
+html.light .skeleton-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e5e5e5 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+}
+
+html.light ::selection {
+  background: rgba(6, 95, 212, 0.2);
+  color: #0f0f0f;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -1219,8 +1407,13 @@ html.is-app .yt-sidebar {
    GLOWING CARD OUTLINES — Animated Borders
    ═══════════════════════════════════════════════ */
 @keyframes cardGlowRotate {
-  0% { --glow-angle: 0deg; }
-  100% { --glow-angle: 360deg; }
+  0% {
+    --glow-angle: 0deg;
+  }
+
+  100% {
+    --glow-angle: 360deg;
+  }
 }
 
 @property --glow-angle {
@@ -1241,12 +1434,10 @@ html.is-app .yt-sidebar {
   inset: -2px;
   border-radius: 14px;
   padding: 2px;
-  background: conic-gradient(
-    from var(--glow-angle, 0deg),
-    transparent 40%,
-    rgba(var(--glow-color-rgb, 62, 166, 255), 0.6) 50%,
-    transparent 60%
-  );
+  background: conic-gradient(from var(--glow-angle, 0deg),
+      transparent 40%,
+      rgba(var(--glow-color-rgb, 62, 166, 255), 0.6) 50%,
+      transparent 60%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -1276,10 +1467,8 @@ html.is-app .yt-sidebar {
   inset: -2px;
   border-radius: 14px;
   padding: 2px;
-  background: conic-gradient(
-    from var(--glow-angle, 0deg),
-    #ff0055, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0055
-  );
+  background: conic-gradient(from var(--glow-angle, 0deg),
+      #ff0055, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0055);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -1314,9 +1503,20 @@ html.is-app .yt-sidebar {
 }
 
 @keyframes badgePulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.85; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* ═══════════════════════════════════════════════
@@ -1509,7 +1709,9 @@ html.is-app .yt-sidebar {
 }
 
 @keyframes rotateGlow {
-  100% { transform: rotate(360deg); }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .prompt-glow-content {
@@ -1940,12 +2142,27 @@ html.is-app .yt-sidebar {
   animation: typingDot 1.4s infinite;
 }
 
-.chat-typing span:nth-child(2) { animation-delay: 0.2s; }
-.chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+.chat-typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.chat-typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
 
 @keyframes typingDot {
-  0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
-  30% { opacity: 1; transform: scale(1); }
+
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Input bar */
@@ -2081,12 +2298,10 @@ html.is-app .yt-sidebar {
   position: absolute;
   inset: -1px;
   border-radius: 13px;
-  background: conic-gradient(
-    from var(--glow-angle, 0deg),
-    transparent 30%,
-    rgba(62, 166, 255, 0.3) 50%,
-    transparent 70%
-  );
+  background: conic-gradient(from var(--glow-angle, 0deg),
+      transparent 30%,
+      rgba(62, 166, 255, 0.3) 50%,
+      transparent 70%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -2132,26 +2347,31 @@ html.is-app .yt-sidebar {
   position: absolute;
   inset: -2px;
   border-radius: 18px;
-  background: conic-gradient(
-    from var(--glow-angle, 0deg),
-    transparent 0%,
-    rgba(var(--glow-color-rgb), 0.5) 15%,
-    rgba(var(--glow-color-rgb), 0.9) 30%,
-    transparent 45%
-  );
+  background: conic-gradient(from var(--glow-angle, 0deg),
+      transparent 0%,
+      rgba(var(--glow-color-rgb), 0.5) 15%,
+      rgba(var(--glow-color-rgb), 0.9) 30%,
+      transparent 45%);
   z-index: -1;
-  opacity: 1; /* Always glowing */
+  opacity: 1;
+  /* Always glowing */
   animation: rotateGlowBorder 4s linear infinite;
   pointer-events: none;
 }
 
 @keyframes rotateGlowBorder {
-  0% { --glow-angle: 0deg; }
-  100% { --glow-angle: 360deg; }
+  0% {
+    --glow-angle: 0deg;
+  }
+
+  100% {
+    --glow-angle: 360deg;
+  }
 }
 
 .feed-card-glow:hover {
-  box-shadow: 0 0 30px rgba(var(--glow-color-rgb), 0.5); /* extra glow on hover */
+  box-shadow: 0 0 30px rgba(var(--glow-color-rgb), 0.5);
+  /* extra glow on hover */
 }
 
 /* ═══════════════════════════════════════════════
@@ -2174,7 +2394,7 @@ html.is-app .yt-sidebar {
   max-width: 900px;
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   font-family: 'Segoe UI', sans-serif;
   position: relative;
@@ -2201,7 +2421,8 @@ html.is-app .yt-sidebar {
   align-items: center;
 }
 
-#file-iframe, .markdown-content {
+#file-iframe,
+.markdown-content {
   width: 100%;
   height: 100%;
   border: none;
@@ -2225,8 +2446,13 @@ html.is-app .yt-sidebar {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .btn-dl {
@@ -2239,7 +2465,9 @@ html.is-app .yt-sidebar {
   transition: 0.3s;
 }
 
-.btn-dl:hover { background: #219150; }
+.btn-dl:hover {
+  background: #219150;
+}
 
 /* ═══════════════════════════════════════════════
    Auth Modal
@@ -2556,7 +2784,7 @@ html.is-app .yt-sidebar {
   color: #fff;
 }
 
-.share-menu-item + .share-menu-item {
+.share-menu-item+.share-menu-item {
   border-top: 1px solid #222;
 }
 
@@ -2842,4 +3070,3 @@ html.is-app .yt-sidebar {
 .feed-card-glow:hover::after {
   opacity: 0.5;
 }
-
