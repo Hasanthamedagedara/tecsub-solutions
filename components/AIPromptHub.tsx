@@ -161,38 +161,40 @@ export default function AIPromptHub() {
                             initial={{ opacity: 0, y: 30 }}
                             animate={isInView ? { opacity: 1, y: 0 } : {}}
                             transition={{ duration: 0.5, delay: i * 0.1 }}
-                            className="glass-panel p-6 card-hover cursor-pointer group"
+                            className="prompt-glow-box cursor-pointer group"
                             onClick={() => setSelectedPrompt(prompt)}
                         >
-                            <span
-                                className="text-[10px] uppercase tracking-widest font-semibold px-2 py-0.5 rounded-full"
-                                style={{
-                                    background: `${categoryColors[prompt.category]}15`,
-                                    color: categoryColors[prompt.category],
-                                }}
-                            >
-                                {prompt.category}
-                            </span>
+                            <div className="prompt-glow-content">
+                                <span
+                                    className="text-[10px] uppercase tracking-widest font-semibold px-2 py-0.5 rounded-full"
+                                    style={{
+                                        background: `${categoryColors[prompt.category]}15`,
+                                        color: categoryColors[prompt.category],
+                                    }}
+                                >
+                                    {prompt.category}
+                                </span>
 
-                            <h3 className="font-bebas text-xl tracking-wide mt-3 mb-2" style={{ color: "var(--text-primary)" }}>
-                                {prompt.title}
-                            </h3>
-                            <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--text-secondary)" }}>
-                                {prompt.description}
-                            </p>
+                                <h3 className="font-bebas text-xl tracking-wide mt-3 mb-2" style={{ color: "var(--text-primary)" }}>
+                                    {prompt.title}
+                                </h3>
+                                <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--text-secondary)" }}>
+                                    {prompt.description}
+                                </p>
 
-                            <div className="flex items-center gap-2 text-xs font-medium text-tecsubCyan">
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                                {t(language, "preview")}
+                                <div className="flex items-center gap-2 text-xs font-medium text-tecsubCyan">
+                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    {t(language, "preview")}
+                                </div>
+
+                                <div onClick={(e) => e.stopPropagation()}>
+                                    <EngagementBar contentId={`prompt-${prompt.title.replace(/\s+/g, '-').slice(0, 30)}`} contentType="prompt" compact />
+                                </div>
+                                <div className="absolute bottom-0 left-0 right-0 h-px rounded-b-xl bg-gradient-to-r from-transparent via-tecsubCyan/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                             </div>
-
-                            <div onClick={(e) => e.stopPropagation()}>
-                                <EngagementBar contentId={`prompt-${prompt.title.replace(/\s+/g, '-').slice(0, 30)}`} contentType="prompt" compact />
-                            </div>
-                            <div className="absolute bottom-0 left-0 right-0 h-px rounded-b-xl bg-gradient-to-r from-transparent via-tecsubCyan/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         </motion.div>
                     ))}
                 </div>

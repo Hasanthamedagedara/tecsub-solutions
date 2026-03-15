@@ -168,7 +168,7 @@ export default function FeedCard({
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            {item.isNew && <div className="feed-new-badge">NEW</div>}
+            {item.isNew && <div className="content-new-badge">NEW</div>}
 
             <div className={`feed-card-thumbnail ${isShort ? "feed-card-thumbnail-short" : ""}`} style={{ aspectRatio: getAspectRatio(contentType) }}>
                 {isVideo && item.videoId ? (
@@ -189,14 +189,18 @@ export default function FeedCard({
                             />
                         )}
                         {isHovering && iframeLoaded && <div className="feed-live-badge"><span className="feed-live-dot" /> LIVE</div>}
-                        {isShort && <div className="feed-short-indicator">Shorts</div>}
+                        {isShort && <div className="short-video-badge">Shorts</div>}
                         {!isHovering && !isShort && <div className="feed-duration-badge">{randomDuration()}</div>}
                     </>
                 ) : isPDF ? (
-                    <div className="feed-pdf-preview">
-                        <div className="feed-pdf-icon-area">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="#e11d48"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zM6 20V4h6v6h6v10H6z" /></svg>
-                            <span className="feed-pdf-label">PDF</span>
+                    <div className="pdf-glass-card w-full h-full flex flex-col items-center justify-center p-4" style={{ background: `linear-gradient(145deg, ${color}15, ${color}05)` }}>
+                        <svg width="52" height="52" viewBox="0 0 24 24" fill="#e11d48" className="mb-2 opacity-80">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zM6 20V4h6v6h6v10H6z" />
+                        </svg>
+                        <span className="pdf-file-badge">📄 PDF</span>
+                        <div className="pdf-action-bar mt-3 w-full">
+                            <button className="pdf-btn-view" onClick={(e) => { e.stopPropagation(); }}>View</button>
+                            <button className="pdf-btn-download" onClick={(e) => { e.stopPropagation(); }}>Download</button>
                         </div>
                     </div>
                 ) : isApp ? (
@@ -208,7 +212,7 @@ export default function FeedCard({
                 ) : isAlbum ? (
                     <div className="w-full h-full flex items-center justify-center relative" style={{ background: `linear-gradient(135deg, ${color}25, ${color}08)` }}>
                         <span className="text-5xl opacity-70">{item.icon}</span>
-                        <div className="feed-album-indicator">{item.albumCount || 3}</div>
+                        <div className="album-indicator">📷 {item.albumCount || 3}</div>
                     </div>
                 ) : (
                     <div className="w-full h-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${color}20, ${color}10)` }}>
