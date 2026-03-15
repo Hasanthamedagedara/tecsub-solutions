@@ -180,6 +180,38 @@ export const onlineTools = [
 
 export const techNews = [
     {
+        title: "OpenAI වෙතින් මානව හැඟීම් හඳුනාගත හැකි GPT-6 නිකුත් වෙයි",
+        summary: "OpenAI සමාගම මානව හැඟීම් හඳුනාගත හැකි GPT-6 මොඩලය නිකුත් කර ඇත. මෙය AI තාක්ෂණයේ නව පරිච්ඡේදයක් විවෘත කරයි.",
+        fullContent: "OpenAI සමාගම GPT-6 මොඩලය නිකුත් කර ඇති අතර, එයට මානව හැඟීම් සහ චිත්තවේගයන් හඳුනාගැනීමේ හැකියාව ඇත.\n\nමෙම නව AI මොඩලයට:\n• පෙළ, හඬ සහ මුහුණේ ප්‍රකාශන වලින් හැඟීම් හඳුනාගත හැක\n• සන්දර්භය අනුව ප්‍රතිචාර සකස් කිරීමේ හැකියාව\n• මනෝ සෞඛ්‍ය සහაය සඳහා විශේෂ modes\n• ව්‍යාපාරික පාරිභෝගික සේවා සඳහා empathy detection\n\nමෙය සෞඛ්‍ය සේවා, අධ්‍යාපනය සහ පාරිභෝගික සේවා ක්ෂේත්‍රයන් සඳහා විප්ලවකාරී වෙනසක් වනු ඇතැයි විශේෂඥයින් පවසයි.",
+        category: "AI",
+        date: "2026-03-15",
+        color: "#FF4444",
+    },
+    {
+        title: "Apple සමාගමේ ප්‍රථම Foldable iPhone එක ලබන වසරේදී",
+        summary: "Apple සමාගම ඔවුන්ගේ පළමු නැවිය හැකි iPhone එක 2027 වසරේදී නිකුත් කිරීමට සැලසුම් කර ඇත.",
+        fullContent: "Apple සමාගම දිගු කලක සිට බලාපොරොත්තු වූ foldable iPhone එක 2027 වසරේ මුල් භාගයේ නිකුත් කිරීමට සැලසුම් කර ඇත.\n\nප්‍රධාන විශේෂාංග:\n• 8-inch නැවිය හැකි OLED display\n• Samsung සමග එක්ව සංවර්ධනය කළ ultra-thin glass\n• M-series chip architecture\n• ProMotion 120Hz refresh rate\n• Apple Pencil සහාය\n\nමෙම උපකරණය Samsung Galaxy Z Fold සමග ගැටෙන අතර, Apple පරිශීලකයින් දිගු කලක සිට ඉල්ලා සිටි foldable form factor එක ලබා දෙනු ඇත.",
+        category: "Mobile",
+        date: "2026-03-15",
+        color: "#A855F7",
+    },
+    {
+        title: "ලංකාවේ සෑම දිස්ත්‍රික්කයකටම 5G තාක්ෂණය ලබාදීම අවසන් අදියරේ",
+        summary: "ශ්‍රී ලංකාවේ සියලුම දිස්ත්‍රික්ක 25 තුළ 5G ජාලය ස්ථාපනය කිරීම අවසන් අදියරට පැමිණ ඇත.",
+        fullContent: "ශ්‍රී ලංකාව තුළ 5G ජාල ආවරණය සෑම දිස්ත්‍රික්කයකටම ව්‍යාප්ත කිරීමේ ව්‍යාපෘතිය අවසන් අදියරට පැමිණ ඇත.\n\nවර්තමාන තත්ත්වය:\n• දිස්ත්‍රික්ක 25 තුළම 5G towers ස්ථාපනය 92% සම්පූර්ණයි\n• Dialog, Mobitel සහ Hutch සමාගම් මෙම ව්‍යාපෘතියට දායක වෙයි\n• ග්‍රාමීය ප්‍රදේශ වලටද අධි-වේග අන්තර්ජාල පහසුකම්\n• 2026 අගෝස්තු මාසය වන විට සම්පූර්ණ ආවරණය අපේක්ෂිතයි\n\nමෙය ශ්‍රී ලංකාවේ ඩිජිටල් ආර්ථිකය වේගවත් කිරීමට සහ online education, telemedicine වැනි සේවා ග්‍රාමීය ප්‍රදේශවලටද ගෙන ඒමට උපකාරී වනු ඇත.",
+        category: "Hardware",
+        date: "2026-03-15",
+        color: "#22C55E",
+    },
+    {
+        title: "SpaceX Starship යානය අඟහරු වෙත භාණ්ඩ ප්‍රවාහනය කිරීමේ පරීක්ෂණය සාර්ථකයි",
+        summary: "SpaceX සමාගමේ Starship යානය අඟහරු ග්‍රහයා වෙත භාණ්ඩ යැවීමේ පළමු පරීක්ෂණය සාර්ථකව නිමා කර ඇත.",
+        fullContent: "SpaceX සමාගම Starship යානය භාවිතයෙන් අඟහරු ග්‍රහයා වෙත භාණ්ඩ ප්‍රවාහනය කිරීමේ පළමු පරීක්ෂණ මෙහෙයුම සාර්ථකව නිමා කර ඇත.\n\nමෙහෙයුමේ විස්තර:\n• ටොන් 50ක භාණ්ඩ බරක් සාර්ථකව අඟහරු කක්ෂයට යැවීමට සමත් වූහ\n• Mars landing systems පරීක්ෂණය 100% සාර්ථකයි\n• ඉන්ධන පිරවීමේ නව තාක්ෂණය භාවිතා කරන ලදී\n• 2028 වන විට මානව මෙහෙයුම් ආරම්භ කිරීමට Elon Musk සැලසුම් කරයි\n\nමෙය මානව ජාතියේ බහු-ග්‍රහලෝක ශිෂ්ටාචාරයක් සෑදීමේ සිහිනය යථාර්ථයක් කිරීමට තවත් පියවරක් වේ.",
+        category: "Hardware",
+        date: "2026-03-15",
+        color: "#3B82F6",
+    },
+    {
         title: "AI Models Now Write Production-Ready Code",
         summary: "The latest generation of AI coding assistants has reached a new milestone in software development.",
         fullContent: "The latest generation of AI coding assistants has reached a new milestone in software development. Major tech companies including Google, OpenAI, and Anthropic have unveiled models that can generate complete, production-ready applications from natural language descriptions.\n\nThese new AI coding tools go beyond simple code completion — they understand entire project architectures, handle dependency management, write comprehensive test suites, and even optimize for performance. Early adopters report 40-60% productivity gains in both frontend and backend development.\n\nKey breakthroughs include:\n• Multi-file project generation with proper architecture\n• Automatic bug detection and fixing during generation\n• Integration with CI/CD pipelines for immediate deployment\n• Natural language code review and refactoring suggestions\n\nExperts predict that by 2027, AI-assisted coding will become the standard, not the exception, fundamentally changing how software teams operate and scale.",
