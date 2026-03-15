@@ -7,7 +7,8 @@ export type AdFormat =
     | "728x90"
     | "160x600"
     | "468x60"
-    | "320x100";
+    | "320x100"
+    | "banner";
 
 interface AdPlacementProps {
     format: AdFormat;
@@ -26,6 +27,7 @@ const ADS: Record<AdFormat, { key: string; w: number; h: number }> = {
     "160x600": { key: "YOUR_160X600_ID_HERE", w: 160, h: 600 },
     "468x60": { key: "YOUR_468X60_ID_HERE", w: 468, h: 60 },
     "320x100": { key: "YOUR_320X100_ID_HERE", w: 320, h: 100 },
+    "banner": { key: "YOUR_728X90_ID_HERE", w: 728, h: 90 },
 };
 
 /* ── Generates a self-contained HTML doc for banner ads ── */
