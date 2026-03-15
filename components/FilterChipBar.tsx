@@ -7,8 +7,8 @@ import { useRouter, usePathname } from "next/navigation";
 interface ChipTab {
     key: string;
     label: string;
-    scrollTo?: string;
     href?: string;
+    scrollTo?: string;
 }
 
 const TABS: ChipTab[] = [
@@ -36,66 +36,57 @@ const TABS: ChipTab[] = [
     { key: "feedback", label: "Feedback", href: "/community" },
 ];
 
-/* ─── Detect if running inside Android WebView app ─── */
+/* ─── Detect WebView ─── */
 function isAppWebView(): boolean {
     if (typeof window === "undefined") return false;
-
     const ua = navigator.userAgent || "";
-
-    // Detect Android WebView: contains "wv" (WebView marker)
-    // or custom app identifier "TecsubApp"
     if (/; wv\)/.test(ua) || /TecsubApp/i.test(ua)) return true;
-
-    // Also detect via URL parameter: ?app=1 or ?mode=app
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("app") === "1" || params.get("mode") === "app") return true;
-
-    return false;
+    const p = new URLSearchParams(window.location.search);
+    return p.get("app") === "1" || p.get("mode") === "app";
 }
 
-/* ─── Component ─── */
+/* ═══════════════════════════════════════════════
+   Component
+   ═══════════════════════════════════════════════ */
 export default function FilterChipBar() {
     const [activeTab, setActiveTab] = useState("all");
     const [isApp, setIsApp] = useState(false);
-    const scrollRef = useRef<HTMLDivElement>(null);
+    const [paused, setPaused] = useState(false);
+    const wrapperRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const pathname = usePathname();
 
-    /* ─── Detect app on mount ─── */
+    /* ─── Detect app ─── */
     useEffect(() => {
         const inApp = isAppWebView();
         setIsApp(inApp);
-
-        // When running in app, set CSS variable to 0 so content
-        // margin-top adjusts (no chip bar height)
         if (inApp) {
             document.documentElement.style.setProperty("--yt-chipbar-height", "0px");
         }
     }, []);
 
+    /* ─── Sync animation-play-state via CSS var ─── */
+    useEffect(() => {
+        const el = wrapperRef.current;
+        if (!el) return;
+        el.style.animationPlayState = paused ? "paused" : "running";
+    }, [paused]);
+
     const handleChipClick = useCallback(
         (tab: ChipTab) => {
             setActiveTab(tab.key);
-
             if (tab.key === "all") {
-                if (pathname !== "/") {
-                    router.push("/");
-                } else {
+                if (pathname !== "/") { router.push("/"); }
+                else {
                     window.dispatchEvent(new CustomEvent("tecsub-reshuffle-feed"));
                     window.scrollTo({ top: 0, behavior: "smooth" });
                 }
                 return;
             }
-
-            if (tab.href) {
-                router.push(tab.href);
-                return;
-            }
-
+            if (tab.href) { router.push(tab.href); return; }
             if (tab.scrollTo) {
-                if (pathname !== "/") {
-                    router.push(`/#${tab.scrollTo}`);
-                } else {
+                if (pathname !== "/") { router.push(`/#${tab.scrollTo}`); }
+                else {
                     const el = document.getElementById(tab.scrollTo);
                     if (el) el.scrollIntoView({ behavior: "smooth" });
                 }
@@ -104,21 +95,44 @@ export default function FilterChipBar() {
         [pathname, router]
     );
 
-    /* ─── Hide completely when inside app ─── */
     if (isApp) return null;
 
     return (
-        <div className="chip-bar" id="yt-chip-bar">
-            <div ref={scrollRef} className="chip-bar-scroll">
-                {TABS.map((tab) => (
-                    <button
-                        key={tab.key}
-                        onClick={() => handleChipClick(tab)}
-                        className={`chip-item ${activeTab === tab.key ? "chip-item-active" : ""}`}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
+        <div
+            className="chip-bar"
+            id="yt-chip-bar"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            onTouchStart={() => setPaused(true)}
+            onTouchEnd={() => setTimeout(() => setPaused(false), 1200)}
+        >
+            {/* ─── Ticker wrapper: the two duplicate sets ─── */}
+            <div ref={wrapperRef} className="chip-ticker-wrapper">
+                {/* Set A */}
+                <div className="chip-ticker-set">
+                    {TABS.map((tab) => (
+                        <button
+                            key={`a-${tab.key}`}
+                            onClick={() => handleChipClick(tab)}
+                            className={`chip-item ${activeTab === tab.key ? "chip-item-active" : ""}`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+                {/* Set B — duplicate for seamless loop */}
+                <div className="chip-ticker-set" aria-hidden="true">
+                    {TABS.map((tab) => (
+                        <button
+                            key={`b-${tab.key}`}
+                            onClick={() => handleChipClick(tab)}
+                            className={`chip-item ${activeTab === tab.key ? "chip-item-active" : ""}`}
+                            tabIndex={-1}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
             </div>
         </div>
     );

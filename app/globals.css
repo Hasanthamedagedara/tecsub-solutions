@@ -3399,3 +3399,130 @@ html.light .replies-list {
   gap: 8px;
   align-items: flex-start;
 }
+
+/* ═══════════════════════════════════════════════
+   Infinite Ticker Chip Bar
+   ═══════════════════════════════════════════════ */
+
+/* ─── Container: sticks below the header ─── */
+.chip-bar {
+  position: sticky;
+  top: var(--yt-header-height, 48px);
+  z-index: 49;
+  width: 100%;
+  overflow: hidden;
+  /* hides everything outside the track */
+  background: var(--yt-bg, #0f0f0f);
+  border-bottom: 1px solid var(--yt-border, rgba(255, 255, 255, 0.08));
+  height: var(--yt-chipbar-height, 48px);
+  display: flex;
+  align-items: center;
+  /* Fade edges so the scroll feels infinite */
+  -webkit-mask-image: linear-gradient(to right,
+      transparent 0%,
+      #000 4%,
+      #000 96%,
+      transparent 100%);
+  mask-image: linear-gradient(to right,
+      transparent 0%,
+      #000 4%,
+      #000 96%,
+      transparent 100%);
+}
+
+/* ─── Wrapper: holds both chip sets side-by-side ─── */
+.chip-ticker-wrapper {
+  display: flex;
+  width: max-content;
+  /* wide enough to hold both sets */
+  align-items: center;
+  animation: chip-ticker-scroll 30s linear infinite;
+  will-change: transform;
+  /* GPU layer */
+}
+
+/* Pause on hover or touch */
+.chip-bar:hover .chip-ticker-wrapper,
+.chip-bar:focus-within .chip-ticker-wrapper {
+  animation-play-state: paused;
+}
+
+/* ─── Each set of chips ─── */
+.chip-ticker-set {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+
+/* ─── Individual chip button ─── */
+.chip-item {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  border: 1px solid var(--yt-border, rgba(255, 255, 255, 0.15));
+  background: var(--yt-chip-bg, rgba(255, 255, 255, 0.07));
+  color: var(--yt-text-primary, #f1f1f1);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: "Roboto", sans-serif;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease,
+    border-color 0.18s ease, transform 0.15s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.chip-item:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.chip-item:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* ─── Active chip ─── */
+.chip-item-active {
+  background: var(--yt-chip-active-bg, #f1f1f1) !important;
+  color: var(--yt-chip-active-text, #0f0f0f) !important;
+  border-color: transparent !important;
+  font-weight: 600;
+}
+
+/* ─── Light mode ─── */
+html.light .chip-bar {
+  background: #ffffff;
+  border-bottom-color: #d9d9d9;
+}
+
+html.light .chip-item {
+  border-color: rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.05);
+  color: #0f0f0f;
+}
+
+html.light .chip-item:hover {
+  background: rgba(0, 0, 0, 0.09);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+html.light .chip-item-active {
+  background: #0f0f0f !important;
+  color: #ffffff !important;
+}
+
+/* ─── The keyframe: translate exactly half the total width ─── */
+@keyframes chip-ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
