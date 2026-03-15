@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Engagement documents ─────────────────────────────────
+    match /engagement/{contentId} {
+      // Anyone can read engagement counts
+      allow read: true;
+
+      // Only allow increment/decrement on numeric fields (not arbitrary writes)
+      allow write: if request.resource.data.keys().hasOnly(['likes','reposts','views','commentCount'])
+                   && request.resource.data.likes is number
+                   && request.resource.data.reposts is number
+                   && request.resource.data.views is number
+                   && request.resource.data.commentCount is number;
+
+      // ─── Comments subcollection ─────────────────────────────
+      match /comments/{commentId} {
+        allow read: true;
+
+        // Allow creating a comment (must have required fields)
+        allow create: if request.resource.data.keys().hasAll(['author','avatar','text','timestamp','likes','likedBy','replies'])
+                      && request.resource.data.text is string
+                      && request.resource.data.text.size() > 0
+                      && request.resource.data.text.size() < 1000;
+
+        // Allow updating likes + likedBy + replies only
+        allow update: if request.resource.data.diff(resource.data).affectedKeys()
+                           .hasOnly(['likes','likedBy','replies']);
+
+        allow delete: if false;
+      }
+    }
+  }
+}
