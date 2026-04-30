@@ -31,7 +31,6 @@ const sidebarItems: SidebarItem[] = [
     { icon: "🎓", label: "Courses", href: "/courses" },
     { icon: "⬇️", label: "Down Now", href: "/explore" },
     { icon: "💳", label: "TECSUB POS", href: "https://tecsubsolution.kozow.com" },
-    { icon: "🌐", label: "UNIVERSAL POS", href: "https://tecsubuniversalposs.kozow.com" },
     { icon: "", label: "", href: "", type: "divider" },
     { icon: "", label: "More", href: "", type: "section-title" },
     { icon: "🌐", label: "Community", href: "/community" },
