@@ -30,6 +30,8 @@ const sidebarItems: SidebarItem[] = [
     { icon: "🎨", label: "Wallpapers", href: "/explore" },
     { icon: "🎓", label: "Courses", href: "/courses" },
     { icon: "⬇️", label: "Down Now", href: "/explore" },
+    { icon: "💳", label: "TECSUB POS", href: "https://tecsubsolution.kozow.com" },
+    { icon: "🌐", label: "UNIVERSAL POS", href: "https://tecsubuniversalposs.kozow.com" },
     { icon: "", label: "", href: "", type: "divider" },
     { icon: "", label: "More", href: "", type: "section-title" },
     { icon: "🌐", label: "Community", href: "/community" },
@@ -65,6 +67,11 @@ export default function SidePanel() {
 
     const handleNav = (href: string) => {
         setMobileOpen(false);
+
+        if (href.startsWith("http")) {
+            window.open(href, "_blank", "noopener,noreferrer");
+            return;
+        }
 
         if (href.startsWith("/")) {
             router.push(href);
@@ -161,11 +168,11 @@ export default function SidePanel() {
                                     </svg>
                                 </button>
                                 <a href="/" className="flex items-center gap-2">
-                                    <div className="w-7 h-7 rounded-md flex items-center justify-center bg-[#ff0000] p-0.5">
+                                    <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-black">
                                         <img
-                                            src="/logo/tecsub.svg"
+                                            src="/logo/tecsub.jpg"
                                             alt="Logo"
-                                            className="w-full h-full object-contain brightness-0 invert"
+                                            className="w-full h-full object-cover"
                                         />
                                     </div>
                                     <span className="text-base font-bold text-[#f1f1f1]">TECSUB</span>
