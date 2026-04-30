@@ -107,6 +107,46 @@ export default function Navbar() {
                         <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
                     </svg>
                 </button>
+
+                {/* TECSUB POS Link */}
+                <a
+                    href="https://tecsubsolution.kozow.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 ml-4 px-3 py-1.5 rounded-lg hover:bg-yt-bg-hover transition-colors group shrink-0"
+                    title="Open TECSUB POS"
+                >
+                    <div className="w-8 h-8 rounded-full bg-yt-accent/10 flex items-center justify-center text-yt-accent group-hover:bg-yt-accent group-hover:text-white transition-all">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                            <line x1="8" y1="21" x2="16" y2="21" />
+                            <line x1="12" y1="17" x2="12" y2="21" />
+                        </svg>
+                    </div>
+                    <div className="flex flex-col leading-tight hidden lg:flex">
+                        <span className="text-[10px] font-bold text-yt-text-secondary uppercase tracking-tighter">System</span>
+                        <span className="text-sm font-bold text-yt-text group-hover:text-yt-accent whitespace-nowrap">TECSUB POS</span>
+                    </div>
+                </a>
+
+                {/* Google Play Store Link */}
+                <a
+                    href="https://play.google.com/store/apps/details?id=com.tecsub.solutions&hl=en"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 ml-4 px-3 py-1.5 rounded-lg hover:bg-yt-bg-hover transition-colors group shrink-0"
+                    title="Download Tecsub App on Google Play"
+                >
+                    <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 group-hover:bg-green-500 group-hover:text-white transition-all">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.523 15.3414L20.355 12.5094L17.523 9.67742V15.3414ZM3.65503 2.50742L11.587 10.4394L13.841 8.18542L3.65503 2.50742ZM3.65503 22.5114L13.841 16.8334L11.587 14.5794L3.65503 22.5114ZM2.85503 3.32742V21.6914L10.771 13.7754L2.85503 3.32742ZM14.655 8.99942L12.385 11.2694L16.713 15.5974L21.155 13.3134C21.611 13.0854 21.855 12.6514 21.855 12.2134C21.855 11.7754 21.611 11.3414 21.155 11.1134L14.655 8.99942Z" />
+                        </svg>
+                    </div>
+                    <div className="flex flex-col leading-tight hidden lg:flex">
+                        <span className="text-[10px] font-bold text-yt-text-secondary uppercase tracking-tighter">Android App</span>
+                        <span className="text-sm font-bold text-yt-text group-hover:text-green-500 whitespace-nowrap">Play Store</span>
+                    </div>
+                </a>
             </div>
 
             {/* ─── Right: Icons ─── */}

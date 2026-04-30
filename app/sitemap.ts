@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 
-const BASE_URL = "https://tecsubsolutions.com";
+const BASE_URL = "https://tecsub.online";
 
 /**
  * Auto-generated sitemap covering all public pages.

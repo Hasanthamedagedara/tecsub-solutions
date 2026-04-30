@@ -10,7 +10,7 @@ import AuthModal from "@/components/AuthModal";
 import PostComposer from "@/components/PostComposer";
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://tecsubsolutions.com"),
+    metadataBase: new URL("https://tecsub.online"),
     title: {
         default: "Tecsub Solutions | Engineering the Future",
         template: "%s | Tecsub Solutions",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     description:
         "AI-driven reviews, high-performance applications, scalable software, and next-gen technology solutions by Tecsub Solutions.",
     keywords: ["Tecsub", "AI", "Software", "Web Development", "Technology", "Solutions", "Tech News", "Online Tools", "Courses", "AI Prompts"],
-    authors: [{ name: "Tecsub Solutions", url: "https://tecsubsolutions.com" }],
+    authors: [{ name: "Tecsub Solutions", url: "https://tecsub.online" }],
     creator: "Tecsub Solutions",
     publisher: "Tecsub Solutions",
     robots: {
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: "Tecsub Solutions",
         description: "Engineering the Future — AI-driven reviews, high-performance apps & scalable software.",
-        url: "https://tecsubsolutions.com",
+        url: "https://tecsub.online",
         siteName: "Tecsub Solutions",
         type: "website",
         locale: "en_US",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
         description: "Engineering the Future — AI-driven reviews, high-performance apps & scalable software.",
     },
     alternates: {
-        canonical: "https://tecsubsolutions.com",
+        canonical: "https://tecsub.online",
     },
 };
 
