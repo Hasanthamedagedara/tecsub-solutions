@@ -16,7 +16,7 @@ export default function PrivacyPolicy() {
       <p className="mb-8">
         At TecSub Solutions, accessible from{" "}
         <a
-          href="https://tecsubsolution.kozow.com/"
+          href="https://tecsub.online/"
           className="text-tecsubCyan hover:underline"
           target="_blank"
           rel="noopener noreferrer"

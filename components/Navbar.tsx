@@ -110,9 +110,7 @@ export default function Navbar() {
 
                 {/* TECSUB POS Link */}
                 <a
-                    href="https://tecsubsolution.kozow.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href="/pos"
                     className="flex items-center gap-2 ml-4 px-3 py-1.5 rounded-lg hover:bg-yt-bg-hover transition-colors group shrink-0"
                     title="Open TECSUB POS"
                 >

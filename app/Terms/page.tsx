@@ -5,8 +5,8 @@ export default function TermsAndConditions() {
       <p className="mb-6 text-sm text-gray-400">Last Updated: February 28, 2026</p>
       <p className="mb-4">
         Welcome to TecSub Solutions. These Terms and Conditions outline the rules and regulations for the use of TecSub Solutions&apos; Website (
-        <a href="https://tecsubsolution.kozow.com/" className="text-tecsubCyan hover:underline" target="_blank" rel="noopener noreferrer">
-          https://tecsubsolution.kozow.com/
+        <a href="https://tecsub.online/" className="text-tecsubCyan hover:underline" target="_blank" rel="noopener noreferrer">
+          https://tecsub.online/
         </a>
         ) and the <strong className="text-white">TECSUB</strong> mobile application.
       </p>
