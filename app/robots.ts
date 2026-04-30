@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
                 disallow: ["/admin", "/api/"],
             },
         ],
-        sitemap: "https://tecsubsolutions.com/sitemap.xml",
+        sitemap: "https://tecsub.online/sitemap.xml",
     };
 }
