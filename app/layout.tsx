@@ -45,6 +45,11 @@ export const metadata: Metadata = {
     alternates: {
         canonical: "https://tecsub.online",
     },
+    icons: {
+        icon: "/favicon.ico",
+        shortcut: "/favicon.ico",
+        apple: "/apple-icon.png",
+    },
 };
 
 export default function RootLayout({
