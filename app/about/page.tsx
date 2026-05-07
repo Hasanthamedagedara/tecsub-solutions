@@ -4,6 +4,90 @@ import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AdPlacement from "@/components/AdPlacement";
+import Script from "next/script";
+
+const personJsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "Person",
+    "name": "Medagedara Hasantha Dilshan Medagedara",
+    "alternateName": "Hasantha Medagedara",
+    "url": "https://tecsub.online/",
+    "image": "https://tecsub.online/path-to-your-photo.jpg",
+    "jobTitle": "Founder & CEO, Software Developer, Content Creator",
+    "gender": "Male",
+    "nationality": {
+        "@type": "Country",
+        "name": "Sri Lanka"
+    },
+    "birthDate": "2002-06-08",
+    "homeLocation": {
+        "@type": "Place",
+        "name": "Matale, Sri Lanka"
+    },
+    "email": [
+        "tecsubsolutions@gmail.com",
+        "hasanthadilshanmedagedara@gmail.com"
+    ],
+    "knowsLanguage": ["Sinhala", "English"],
+    "worksFor": {
+        "@type": "Organization",
+        "name": "TECSUB SOLUTIONS PVT LTD",
+        "url": "https://tecsub.online/"
+    },
+    "brand": {
+        "@type": "Brand",
+        "name": "TECSUB SOLUTIONS PVT LTD",
+        "url": "https://tecsub.online/"
+    },
+    "description": "Founder & CEO of TECSUB SOLUTIONS PVT LTD. Specialist in Vibe Coding, POS/Fintech software, and AI content creation. B.COM Undergraduate at Eastern University and CA Sri Lanka student.",
+    "alumniOf": [
+        {
+            "@type": "CollegeOrUniversity",
+            "name": "Eastern University, Sri Lanka"
+        },
+        {
+            "@type": "EducationalOrganization",
+            "name": "CA Sri Lanka"
+        },
+        {
+            "@type": "School",
+            "name": "CP/WILL/Maraka Maha Vidyalaya"
+        }
+    ],
+    "knowsAbout": [
+        "Vibe Coding",
+        "Software Development",
+        "Content Creation",
+        "Travel & Documenting Heritage",
+        "POS Systems",
+        "Fintech Solutions",
+        "AI-assisted Video Production",
+        "Supply Chain Management"
+    ],
+    "sameAs": [
+        "https://github.com/Hasanthamedagedara",
+        "https://www.facebook.com/Hasanthamedagedara",
+        "https://youtube.com/@hasanthamedagedara",
+        "https://www.linkedin.com/in/Hasanthamedagedara",
+        "https://www.instagram.com/hasanthamedagedra",
+        "http://tiktok.com/@Hasanthamedagedara",
+        "https://t.me/Hasanthamedagedra",
+        "https://www.reddit.com/user/Hasanthamedagedara",
+        "https://www.behance.net/Hasanthamedagedara",
+        "https://www.pinterest.com/Hasanthamedagedar",
+        "https://chat.whatsapp.com/GqVRRGfhZyw3F78wDVsOAx?mode=gi_t"
+    ],
+    "hasPart": [
+        {
+            "@type": "SoftwareApplication",
+            "name": "TECSUB App",
+            "softwareVersion": "12.0.0",
+            "operatingSystem": "Android",
+            "applicationCategory": "BusinessApplication",
+            "installUrl": "https://play.google.com/store/apps/details?id=com.tecsub.solutions"
+        }
+    ]
+};
 
 const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 30 },
@@ -14,6 +98,13 @@ const fadeUp = (delay = 0) => ({
 export default function AboutPage() {
     return (
         <div className="min-h-screen" style={{ background: "var(--bg-primary)" }}>
+            {/* JSON-LD Structured Data for Person Schema */}
+            <Script
+                id="person-jsonld"
+                type="application/ld+json"
+                strategy="afterInteractive"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+            />
             <Navbar />
             <div className="pt-24 sm:pt-28">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
