@@ -8,83 +8,89 @@ import Script from "next/script";
 
 const personJsonLd = {
     "@context": "https://schema.org/",
-    "@type": "Person",
-    "name": "Medagedara Hasantha Dilshan Medagedara",
-    "alternateName": "Hasantha Medagedara",
-    "url": "https://tecsub.online/",
-    "image": "https://tecsub.online/path-to-your-photo.jpg",
-    "jobTitle": "Founder & CEO, Software Developer, Content Creator",
-    "gender": "Male",
-    "nationality": {
-        "@type": "Country",
-        "name": "Sri Lanka"
-    },
-    "birthDate": "2002-06-08",
-    "homeLocation": {
-        "@type": "Place",
-        "name": "Matale, Sri Lanka"
-    },
-    "email": [
-        "tecsubsolutions@gmail.com",
-        "hasanthadilshanmedagedara@gmail.com"
-    ],
-    "knowsLanguage": ["Sinhala", "English"],
-    "worksFor": {
-        "@type": "Organization",
-        "name": "TECSUB SOLUTIONS PVT LTD",
-        "url": "https://tecsub.online/"
-    },
-    "brand": {
-        "@type": "Brand",
-        "name": "TECSUB SOLUTIONS PVT LTD",
-        "url": "https://tecsub.online/"
-    },
-    "description": "Founder & CEO of TECSUB SOLUTIONS PVT LTD. Specialist in Vibe Coding, POS/Fintech software, and AI content creation. B.COM Undergraduate at Eastern University and CA Sri Lanka student.",
-    "alumniOf": [
+    "@graph": [
         {
-            "@type": "CollegeOrUniversity",
-            "name": "Eastern University, Sri Lanka"
+            "@type": "Person",
+            "@id": "https://tecsub.online/#person",
+            "name": "Medagedara Hasantha Dilshan Medagedara",
+            "alternateName": "Hasantha Medagedara",
+            "url": "https://tecsub.online/",
+            "image": "https://tecsub.online/path-to-your-photo.jpg",
+            "jobTitle": "Founder & CEO, Software Developer, Content Creator",
+            "gender": "Male",
+            "nationality": {
+                "@type": "Country",
+                "name": "Sri Lanka"
+            },
+            "birthDate": "2002-06-08",
+            "homeLocation": {
+                "@type": "Place",
+                "name": "Matale, Sri Lanka"
+            },
+            "email": [
+                "tecsubsolutions@gmail.com",
+                "hasanthadilshanmedagedara@gmail.com"
+            ],
+            "knowsLanguage": ["Sinhala", "English"],
+            "worksFor": {
+                "@type": "Organization",
+                "name": "TECSUB SOLUTIONS PVT LTD",
+                "url": "https://tecsub.online/"
+            },
+            "brand": {
+                "@type": "Brand",
+                "name": "TECSUB SOLUTIONS PVT LTD",
+                "url": "https://tecsub.online/"
+            },
+            "description": "Founder & CEO of TECSUB SOLUTIONS PVT LTD. Specialist in Vibe Coding, POS/Fintech software, and AI content creation. B.COM Undergraduate at Eastern University and CA Sri Lanka student.",
+            "alumniOf": [
+                {
+                    "@type": "CollegeOrUniversity",
+                    "name": "Eastern University, Sri Lanka"
+                },
+                {
+                    "@type": "EducationalOrganization",
+                    "name": "CA Sri Lanka"
+                },
+                {
+                    "@type": "School",
+                    "name": "CP/WILL/Maraka Maha Vidyalaya"
+                }
+            ],
+            "knowsAbout": [
+                "Vibe Coding",
+                "Software Development",
+                "Content Creation",
+                "Travel & Documenting Heritage",
+                "POS Systems",
+                "Fintech Solutions",
+                "AI-assisted Video Production",
+                "Supply Chain Management"
+            ],
+            "sameAs": [
+                "https://github.com/Hasanthamedagedara",
+                "https://www.facebook.com/Hasanthamedagedara",
+                "https://youtube.com/@hasanthamedagedara",
+                "https://www.linkedin.com/in/Hasanthamedagedara",
+                "https://www.instagram.com/hasanthamedagedra",
+                "http://tiktok.com/@Hasanthamedagedara",
+                "https://t.me/Hasanthamedagedra",
+                "https://www.reddit.com/user/Hasanthamedagedara",
+                "https://www.behance.net/Hasanthamedagedara",
+                "https://www.pinterest.com/Hasanthamedagedar",
+                "https://chat.whatsapp.com/GqVRRGfhZyw3F78wDVsOAx?mode=gi_t"
+            ]
         },
-        {
-            "@type": "EducationalOrganization",
-            "name": "CA Sri Lanka"
-        },
-        {
-            "@type": "School",
-            "name": "CP/WILL/Maraka Maha Vidyalaya"
-        }
-    ],
-    "knowsAbout": [
-        "Vibe Coding",
-        "Software Development",
-        "Content Creation",
-        "Travel & Documenting Heritage",
-        "POS Systems",
-        "Fintech Solutions",
-        "AI-assisted Video Production",
-        "Supply Chain Management"
-    ],
-    "sameAs": [
-        "https://github.com/Hasanthamedagedara",
-        "https://www.facebook.com/Hasanthamedagedara",
-        "https://youtube.com/@hasanthamedagedara",
-        "https://www.linkedin.com/in/Hasanthamedagedara",
-        "https://www.instagram.com/hasanthamedagedra",
-        "http://tiktok.com/@Hasanthamedagedara",
-        "https://t.me/Hasanthamedagedra",
-        "https://www.reddit.com/user/Hasanthamedagedara",
-        "https://www.behance.net/Hasanthamedagedara",
-        "https://www.pinterest.com/Hasanthamedagedar",
-        "https://chat.whatsapp.com/GqVRRGfhZyw3F78wDVsOAx?mode=gi_t"
-    ],
-    "hasPart": [
         {
             "@type": "SoftwareApplication",
             "name": "TECSUB App",
             "softwareVersion": "12.0.0",
             "operatingSystem": "Android",
             "applicationCategory": "BusinessApplication",
-            "installUrl": "https://play.google.com/store/apps/details?id=com.tecsub.solutions"
+            "installUrl": "https://play.google.com/store/apps/details?id=com.tecsub.solutions",
+            "author": {
+                "@id": "https://tecsub.online/#person"
+            }
         }
     ]
 };
