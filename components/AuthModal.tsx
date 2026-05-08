@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import AuthButton from "@/components/AuthButton";
 import { auth } from "@/lib/firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -13,6 +14,7 @@ export default function AuthModal() {
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const handler = () => setIsOpen(true);
@@ -36,6 +38,7 @@ export default function AuthModal() {
                 const provider = new GoogleAuthProvider();
                 await signInWithPopup(auth, provider);
                 close();
+                router.push("/");
             } else {
                 // Mock for other providers for now
                 setTimeout(() => {
@@ -43,11 +46,22 @@ export default function AuthModal() {
                     close();
                 }, 2000);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(`${providerName} login error:`, error);
             setLoadingProvider(null);
-            alert(`Failed to login with ${providerName}. Please try again.`);
+            
+            let errorMessage = "An unknown error occurred.";
+            if (error.code === 'auth/popup-closed-by-user') {
+                errorMessage = "Login popup was closed before completion.";
+            } else if (error.code === 'auth/unauthorized-domain') {
+                errorMessage = "This domain is not authorized in Firebase. Please add tecsub.online to your authorized domains in Firebase Console.";
+            } else {
+                errorMessage = error.message || "Failed to login. Please try again.";
+            }
+            
+            alert(`Google Login Error: ${errorMessage}`);
         }
+
     };
 
     const handleSubmit = (e: React.FormEvent) => {
