@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthButton from "@/components/AuthButton";
+import { auth } from "@/lib/firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 export default function AuthModal() {
     const [isOpen, setIsOpen] = useState(false);
@@ -26,12 +28,26 @@ export default function AuthModal() {
         setName("");
     };
 
-    const handleSocial = (provider: string) => {
-        setLoadingProvider(provider);
-        setTimeout(() => {
+    const handleSocial = async (providerName: string) => {
+        setLoadingProvider(providerName);
+        
+        try {
+            if (providerName === "google") {
+                const provider = new GoogleAuthProvider();
+                await signInWithPopup(auth, provider);
+                close();
+            } else {
+                // Mock for other providers for now
+                setTimeout(() => {
+                    setLoadingProvider(null);
+                    close();
+                }, 2000);
+            }
+        } catch (error) {
+            console.error(`${providerName} login error:`, error);
             setLoadingProvider(null);
-            close();
-        }, 2000);
+            alert(`Failed to login with ${providerName}. Please try again.`);
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {

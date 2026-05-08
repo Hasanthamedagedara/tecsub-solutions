@@ -6,6 +6,8 @@ import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
 import { useRouter, usePathname } from "next/navigation";
 import AuthButton from "@/components/AuthButton";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, User, signOut } from "firebase/auth";
 
 /* ─── Detect if running inside Android WebView app ─── */
 function isAppWebView(): boolean {
@@ -24,14 +26,23 @@ export default function Navbar() {
     const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
     const [isApp, setIsApp] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
     const { theme, toggleTheme, language, setLanguage } = useAppContext();
     const router = useRouter();
     const searchRef = useRef<HTMLInputElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
 
-    /* ─── Detect app on mount ─── */
+    /* ─── Detect app and Monitor Auth on mount ─── */
     useEffect(() => {
         setIsApp(isAppWebView());
+        
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+            setLoading(false);
+        });
+        
+        return () => unsubscribe();
     }, []);
 
     /* ─── Close profile menu on outside click ─── */
@@ -54,6 +65,16 @@ export default function Navbar() {
         if (searchQuery.trim()) {
             // Future: implement search
             console.log("Search:", searchQuery);
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            setProfileOpen(false);
+            router.push('/');
+        } catch (error) {
+            console.error("Logout error:", error);
         }
     };
 
@@ -186,10 +207,65 @@ export default function Navbar() {
                     )}
                 </button>
 
-                {/* Login / Sign Up */}
+                {/* Login / Sign Up or User Profile */}
                 <div className="flex items-center gap-2">
-                    <AuthButton variant="primary" onClick={() => router.push('/login')}>Login</AuthButton>
-                    <AuthButton variant="outline" className="hidden sm:flex" onClick={() => router.push('/signup')}>Sign Up</AuthButton>
+                    {!loading && (
+                        user ? (
+                            <div className="relative" ref={profileRef}>
+                                <button 
+                                    onClick={() => setProfileOpen(!profileOpen)}
+                                    className="w-10 h-10 rounded-full overflow-hidden border-2 border-yt-accent/20 hover:border-yt-accent transition-all"
+                                >
+                                    <img 
+                                        src={user.photoURL || "/logo/tecsub.jpg"} 
+                                        alt={user.displayName || "User"} 
+                                        className="w-full h-full object-cover"
+                                    />
+                                </button>
+                                
+                                <AnimatePresence>
+                                    {profileOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            className="absolute right-0 mt-2 w-64 bg-yt-bg border border-yt-border rounded-xl shadow-2xl z-[100] overflow-hidden"
+                                        >
+                                            <div className="p-4 border-b border-yt-border bg-yt-bg-hover/30">
+                                                <p className="font-bold text-yt-text truncate">{user.displayName}</p>
+                                                <p className="text-xs text-yt-text-secondary truncate">{user.email}</p>
+                                            </div>
+                                            <div className="p-2">
+                                                <button 
+                                                    onClick={() => { setProfileOpen(false); router.push('/admin'); }}
+                                                    className="w-full text-left px-4 py-2 text-sm text-yt-text hover:bg-yt-bg-hover rounded-lg transition-colors flex items-center gap-3"
+                                                >
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+                                                    </svg>
+                                                    Your Profile
+                                                </button>
+                                                <button 
+                                                    onClick={handleLogout}
+                                                    className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 rounded-lg transition-colors flex items-center gap-3"
+                                                >
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
+                                                    </svg>
+                                                    Sign Out
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        ) : (
+                            <>
+                                <AuthButton variant="primary" onClick={() => router.push('/login')}>Login</AuthButton>
+                                <AuthButton variant="outline" className="hidden sm:flex" onClick={() => router.push('/signup')}>Sign Up</AuthButton>
+                            </>
+                        )
+                    )}
                 </div>
             </div>
 

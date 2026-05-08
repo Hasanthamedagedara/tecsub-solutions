@@ -1,26 +1,20 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
-/* ═══════════════════════════════════════════════
-   Firebase Configuration
-   ═══════════════════════════════════════════════
-   Replace the placeholder values below with your
-   real Firebase project credentials from:
-   https://console.firebase.google.com
-   → Project Settings → Your apps → Web app config
-   ═══════════════════════════════════════════════ */
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID",
+    apiKey: "AIzaSyAXXHwV2GG17rGait_7A3vr5V17T_RCuHQ",
+    authDomain: "gen-lang-client-0698552660.firebaseapp.com",
+    projectId: "gen-lang-client-0698552660",
+    storageBucket: "gen-lang-client-0698552660.firebasestorage.app",
+    messagingSenderId: "370839875671",
+    appId: "1:370839875671:web:3101dc21da5147adb8f312"
 };
 
 /* ─── Initialize (safe for SSR + hot-reload) ─── */
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-export { db };
+export { db, auth };
 export default app;
