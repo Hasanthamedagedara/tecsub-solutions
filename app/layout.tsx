@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import ScrollToTop from "@/components/ScrollToTop";
-import FilterChipBar from "@/components/FilterChipBar";
-import NewsTicker from "@/components/NewsTicker";
+import LayoutBars from "@/components/LayoutBars";
 import ChatPanel from "@/components/ChatPanel";
 import PdfModal from "@/components/PdfModal";
 import AuthModal from "@/components/AuthModal";
-import PostComposer from "@/components/PostComposer";
+import Sidebar from "@/components/Sidebar";
+
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://tecsub.online"),
@@ -84,13 +84,17 @@ export default function RootLayout({
             </head>
             <body className="font-roboto antialiased">
                 <ThemeProvider>
-                    <FilterChipBar />
-                    <NewsTicker />
-                    {children}
+                    <div className="kdj-app-layout">
+                        <Sidebar />
+                        <div className="kdj-app-content">
+                            <LayoutBars />
+                            {children}
+                        </div>
+                    </div>
                     <ChatPanel />
                     <PdfModal />
                     <AuthModal />
-                    <PostComposer />
+
                     <ScrollToTop />
                 </ThemeProvider>
             </body>

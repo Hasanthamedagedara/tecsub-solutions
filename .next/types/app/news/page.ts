@@ -1,4 +1,4 @@
-// File: C:\Users\ASUS\Desktop\github new file web\tecsub solutions\app\news\page.tsx
+// File: C:\Users\ASUS\Desktop\tecsub current works\github new file web\tecsub solutions\app\news\page.tsx
 import * as entry from '../../../../app/news/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

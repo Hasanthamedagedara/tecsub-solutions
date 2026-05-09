@@ -511,6 +511,162 @@ function ImageConverterTool() {
     );
 }
 
+/* ─── Singlish Translator ─── */
+function SinglishTranslator() {
+    const [input, setInput] = useState("");
+    const [output, setOutput] = useState("");
+    const [activeLang, setActiveLang] = useState<"si" | "en" | "ta">("si");
+
+    /* Singlish → Sinhala Unicode transliteration map */
+    const singlishToSinhala: [RegExp, string][] = [
+        /* Conjunct / special combos first */
+        [/nndh/gi, "\u0DB1\u0DCA\u0DB0"], [/nnd/gi, "\u0DB1\u0DCA\u0DAF"],
+        [/nth/gi, "\u0DB1\u0DCA\u0DA: "], [/ndh/gi, "\u0DB1\u0DCA\u0DB0"],
+        [/ng/gi, "\u0D82\u0D9C"], [/nk/gi, "\u0D82\u0D9A"],
+        [/sh/gi, "\u0DC1"], [/Sh/gi, "\u0DC2"],
+        [/th/gi, "\u0DAD"], [/Th/gi, "\u0DA7"],
+        [/dh/gi, "\u0DAF"], [/Dh/gi, "\u0DA9"],
+        [/ch/gi, "\u0DA0"], [/Ch/gi, "\u0DA0"],
+        [/ph/gi, "\u0DB5"], [/bh/gi, "\u0DB7"],
+        [/kh/gi, "\u0D9B"], [/gh/gi, "\u0D9D"],
+        [/jh/gi, "\u0DA3"], [/gn/gi, "\u0D9E"],
+        [/nh/gi, "\u0DAB"], [/mh/gi, "\u0DB8"],
+        [/nd/gi, "\u0DB1\u0DCA\u0DAF"],
+        /* Vowels (standalone) */
+        [/aa/gi, "\u0D86"], [/ae/gi, "\u0D87"], [/aae/gi, "\u0D88"],
+        [/ee/gi, "\u0D8A"], [/oo/gi, "\u0D8C"],
+        [/au/gi, "\u0D8E"], [/ai/gi, "\u0D93"],
+        [/a/gi, "\u0D85"], [/i/gi, "\u0D89"], [/u/gi, "\u0D8B"],
+        [/e/gi, "\u0D91"], [/o/gi, "\u0D94"],
+        /* Consonants */
+        [/k/gi, "\u0D9A"], [/g/gi, "\u0D9C"],
+        [/c/gi, "\u0DA0"], [/j/gi, "\u0DA2"],
+        [/t/gi, "\u0DAD"], [/T/g, "\u0DA7"],
+        [/d/gi, "\u0DAF"], [/D/g, "\u0DA9"],
+        [/N/g, "\u0DAB"], [/n/gi, "\u0DB1"],
+        [/p/gi, "\u0DB4"], [/b/gi, "\u0DB6"],
+        [/m/gi, "\u0DB8"], [/y/gi, "\u0DBA"],
+        [/r/gi, "\u0DBB"], [/l/gi, "\u0DBD"],
+        [/w/gi, "\u0DC0"], [/v/gi, "\u0DC0"],
+        [/s/gi, "\u0DC3"], [/h/gi, "\u0DC4"],
+        [/f/gi, "\u0DC6"],
+        /* Hal kirima */
+        [/\x00/g, "\u0DCA"],
+    ];
+
+    const transliterate = (text: string): string => {
+        if (activeLang !== "si") return text;
+        let result = text;
+        for (const [pattern, replacement] of singlishToSinhala) {
+            result = result.replace(pattern, replacement);
+        }
+        return result;
+    };
+
+    const handleInput = (value: string) => {
+        setInput(value);
+        setOutput(transliterate(value));
+    };
+
+    const wordCount = output.trim() ? output.trim().split(/\s+/).length : 0;
+
+    return (
+        <div className="space-y-4">
+            {/* Language Tabs */}
+            <div className="flex gap-2">
+                {(["si", "en", "ta"] as const).map((lang) => (
+                    <button
+                        key={lang}
+                        onClick={() => { setActiveLang(lang); setOutput(transliterate(input)); }}
+                        className="text-xs py-2 px-4 rounded-lg font-semibold transition-all"
+                        style={{
+                            background: activeLang === lang
+                                ? lang === "si" ? "rgba(220,38,38,0.15)" : "rgba(0,229,255,0.1)"
+                                : "rgba(255,255,255,0.04)",
+                            color: activeLang === lang
+                                ? lang === "si" ? "#ef4444" : "#00E5FF"
+                                : "#888",
+                            border: `1px solid ${activeLang === lang ? (lang === "si" ? "rgba(220,38,38,0.3)" : "rgba(0,229,255,0.2)") : "rgba(255,255,255,0.08)"}`,
+                        }}
+                    >
+                        {lang === "si" ? "🇱🇰 සිංහල" : lang === "en" ? "🇺🇸 English" : "🇱🇰 தமிழ்"}
+                    </button>
+                ))}
+            </div>
+
+            {/* Privacy Banner */}
+            <div className="p-3 rounded-lg text-xs" style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.15)", color: "#22c55e" }}>
+                🔒 100% Private & Secure — All processing happens locally in your browser.
+            </div>
+
+            {/* Input */}
+            <div>
+                <label className="text-xs font-semibold text-gray-400 mb-1 block">Type in Singlish...</label>
+                <textarea
+                    value={input}
+                    onChange={(e) => handleInput(e.target.value)}
+                    placeholder={activeLang === "si" ? "Type in Singlish... (e.g. mama koheda)" : "Type here..."}
+                    rows={4}
+                    className="tool-input font-mono"
+                    style={{ fontSize: "15px", lineHeight: "1.8" }}
+                />
+            </div>
+
+            {/* Output */}
+            <div>
+                <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-semibold text-gray-400">YOUR TEXT</label>
+                    <span className="text-xs text-gray-500">{wordCount} words</span>
+                </div>
+                <div
+                    className="tool-input min-h-[120px] whitespace-pre-wrap"
+                    style={{ fontSize: "18px", lineHeight: "2", fontFamily: "'Noto Sans Sinhala', 'Noto Sans Tamil', sans-serif" }}
+                >
+                    {output || <span className="text-gray-600">{activeLang === "si" ? "ඔබ කතා කළ දේ මෙහි දිස්වේ..." : "Your text will appear here..."}</span>}
+                </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-wrap gap-2">
+                <button
+                    onClick={() => { if (output) navigator.clipboard.writeText(output); }}
+                    className="tool-btn-primary flex items-center gap-2"
+                    disabled={!output}
+                >
+                    📋 Copy
+                </button>
+                <button
+                    onClick={() => {
+                        if (output) {
+                            const blob = new Blob([output], { type: "text/plain;charset=utf-8" });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url; a.download = "singlish-output.txt"; a.click();
+                            URL.revokeObjectURL(url);
+                        }
+                    }}
+                    className="tool-btn flex items-center gap-2"
+                    disabled={!output}
+                >
+                    ⬇️ Download
+                </button>
+                <button
+                    onClick={() => { setInput(""); setOutput(""); }}
+                    className="tool-btn flex items-center gap-2"
+                    style={{ color: "#ef4444" }}
+                >
+                    ✕ Clear
+                </button>
+            </div>
+
+            {/* Tip */}
+            <p className="text-[11px] text-center" style={{ color: "#666" }}>
+                Tip: Type romanized Sinhala (e.g. "ayubowan" → "අයුබොවන්"). Use Singlish phonetic input for best results.
+            </p>
+        </div>
+    );
+}
+
 /* ─── Tool Registry ─── */
 const toolComponents: Record<string, () => JSX.Element> = {
     "Text Case Converter": TextCaseConverter,
@@ -527,6 +683,7 @@ const toolComponents: Record<string, () => JSX.Element> = {
     "Regex Tester": RegexTester,
     "PDF Converter": PdfConverter,
     "Image Converter": ImageConverterTool,
+    "Singlish Translator": SinglishTranslator,
 };
 
 /* ─── Main Component ─── */

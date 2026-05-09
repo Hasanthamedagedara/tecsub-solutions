@@ -5,7 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import AuthButton from "@/components/AuthButton";
 import { auth } from "@/lib/firebase";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { 
+    signInWithPopup, 
+    GoogleAuthProvider, 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword, 
+    updateProfile 
+} from "firebase/auth";
 
 export default function AuthModal() {
     const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +19,7 @@ export default function AuthModal() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
+    const [error, setError] = useState<string | null>(null);
     const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
     const router = useRouter();
 
@@ -28,10 +35,12 @@ export default function AuthModal() {
         setEmail("");
         setPassword("");
         setName("");
+        setError(null);
     };
 
     const handleSocial = async (providerName: string) => {
         setLoadingProvider(providerName);
+        setError(null);
         
         try {
             if (providerName === "google") {
@@ -44,33 +53,53 @@ export default function AuthModal() {
                 setTimeout(() => {
                     setLoadingProvider(null);
                     close();
-                }, 2000);
+                }, 1000);
             }
-        } catch (error: any) {
-            console.error(`${providerName} login error:`, error);
+        } catch (err: any) {
+            console.error(`${providerName} login error:`, err);
             setLoadingProvider(null);
             
             let errorMessage = "An unknown error occurred.";
-            if (error.code === 'auth/popup-closed-by-user') {
+            if (err.code === 'auth/popup-closed-by-user') {
                 errorMessage = "Login popup was closed before completion.";
-            } else if (error.code === 'auth/unauthorized-domain') {
-                errorMessage = "This domain is not authorized in Firebase. Please add tecsub.online to your authorized domains in Firebase Console.";
+            } else if (err.code === 'auth/unauthorized-domain') {
+                errorMessage = "This domain is not authorized. Please add it in Firebase Console.";
             } else {
-                errorMessage = error.message || "Failed to login. Please try again.";
+                errorMessage = err.message || "Failed to login. Please try again.";
             }
-            
-            alert(`Google Login Error: ${errorMessage}`);
+            setError(errorMessage);
         }
-
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoadingProvider("email");
-        setTimeout(() => {
-            setLoadingProvider(null);
+        setError(null);
+
+        try {
+            if (mode === "login") {
+                await signInWithEmailAndPassword(auth, email, password);
+            } else {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(userCredential.user, {
+                    displayName: name || email.split('@')[0],
+                });
+            }
             close();
-        }, 2000);
+        } catch (err: any) {
+            console.error("Auth error:", err);
+            if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
+                setError("Invalid email or password.");
+            } else if (err.code === "auth/email-already-in-use") {
+                setError("This email is already registered.");
+            } else if (err.code === "auth/weak-password") {
+                setError("Password should be at least 6 characters.");
+            } else {
+                setError("An error occurred. Please try again.");
+            }
+        } finally {
+            setLoadingProvider(null);
+        }
     };
 
     return (
@@ -88,23 +117,28 @@ export default function AuthModal() {
 
                     {/* Modal */}
                     <motion.div
-                        initial={{ y: "100%", opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: "100%", opacity: 0 }}
-                        transition={{ type: "spring", damping: 28, stiffness: 320 }}
+                        initial={{ x: "-50%", y: "-45%", opacity: 0 }}
+                        animate={{ x: "-50%", y: "-50%", opacity: 1 }}
+                        exit={{ x: "-50%", y: "-45%", opacity: 0 }}
+                        transition={{ type: "spring", damping: 25, stiffness: 300 }}
                         className="auth-modal"
                     >
-                        {/* Close Button */}
-                        <button onClick={close} className="auth-modal-close" aria-label="Close">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                            </svg>
-                        </button>
+                        {/* Top Actions */}
+                        <div className="auth-modal-top-actions">
+                            <button onClick={close} className="auth-modal-skip-btn">
+                                Skip
+                            </button>
+                            <button onClick={close} className="auth-modal-close" aria-label="Close">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                                </svg>
+                            </button>
+                        </div>
 
                         {/* Header */}
                         <div className="auth-modal-header">
                             <div className="auth-modal-logo">
-                                <span className="text-2xl">🚀</span>
+                                <img src="/logo/tecsub.jpg" alt="TecSub Logo" className="w-full h-full object-cover" />
                             </div>
                             <h2 className="auth-modal-title">
                                 {mode === "login" ? "Welcome back" : "Create account"}
@@ -115,6 +149,13 @@ export default function AuthModal() {
                                     : "Join the Tecsub community today"}
                             </p>
                         </div>
+
+                        {/* Error Message */}
+                        {error && (
+                            <div className="bg-red-500/10 border border-red-500/20 text-red-500 px-4 py-2 rounded-lg text-sm mb-4 text-center">
+                                {error}
+                            </div>
+                        )}
 
                         {/* Social Buttons */}
                         <div className="auth-modal-social">

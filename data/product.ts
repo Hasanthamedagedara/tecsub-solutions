@@ -176,6 +176,12 @@ export const onlineTools = [
         category: "Image",
         icon: "🔄",
     },
+    {
+        title: "Singlish Translator",
+        description: "Type in Singlish (romanized Sinhala) and get real-time Unicode Sinhala output.",
+        category: "Text",
+        icon: "සි",
+    },
 ];
 
 export const techNews = [

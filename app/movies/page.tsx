@@ -7,209 +7,364 @@ import Footer from "@/components/Footer";
 import AdPlacement from "@/components/AdPlacement";
 
 /* ─── Types ─── */
+interface CastMember {
+    name: string;
+    role: string;
+    img: string;
+}
+
+interface DownloadLink {
+    label: string;
+    size: string;
+    link: string;
+}
+
 interface Movie {
     id: string;
     title: string;
-    genre: string;
+    sinhalaTitle: string;
     year: number;
     rating: number;
+    votes: string;
     duration: string;
-    description: string;
+    views: string;
     quality: string;
-    icon: string;
-    color: string;
-    badge?: string;
+    genre: string[];
+    director: string;
+    country: string;
+    poster: string;
+    banner: string;
+    description: string;
+    cast: CastMember[];
+    downloads: DownloadLink[];
 }
 
-/* ─── Demo Movies ─── */
-const DEFAULT_MOVIES: Movie[] = [
+/* ─── Demo Data ─── */
+const MOVIES: Movie[] = [
     {
-        id: "m-001", title: "The AI Revolution", genre: "Documentary", year: 2026, rating: 4.9, duration: "1h 45m",
-        description: "A deep dive into how artificial intelligence is reshaping the modern world, from automation to creative arts.",
-        quality: "4K Ultra HD", icon: "🤖", color: "#3ea6ff", badge: "New Release",
+        id: "mr-x-2026",
+        title: "Mr. X",
+        sinhalaTitle: "මිස්ටර් එක්ස්",
+        year: 2026,
+        rating: 6.1,
+        votes: "1,240",
+        duration: "147 min",
+        views: "15,226",
+        quality: "CAMCopy",
+        genre: ["Action", "Sci-Fi", "Thriller"],
+        director: "Manu Anand",
+        country: "India",
+        poster: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=500",
+        banner: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1200",
+        description: "A mysterious operative known only as Mr. X must stop a global conspiracy that threatens to rewrite history using experimental time-dilation technology. As he navigates a web of lies, he discovers that his own past is the key to the future.",
+        cast: [
+            { name: "Arya", role: "Mr. X", img: "https://i.pravatar.cc/150?u=arya" },
+            { name: "Gautham", role: "Agent K", img: "https://i.pravatar.cc/150?u=gautham" },
+            { name: "Manju", role: "Elena", img: "https://i.pravatar.cc/150?u=manju" },
+            { name: "Saritha", role: "Dr. Rao", img: "https://i.pravatar.cc/150?u=saritha" },
+        ],
+        downloads: [
+            { label: "Direct & Telegram (480p)", size: "800 MB", link: "#" },
+            { label: "Direct & Telegram (720p)", size: "1.7 GB", link: "#" },
+            { label: "Direct & Telegram (1080p)", size: "3.5 GB", link: "#" },
+        ]
     },
     {
-        id: "m-002", title: "Code Runner", genre: "Action / Sci-Fi", year: 2025, rating: 4.7, duration: "2h 15m",
-        description: "In a world where code is currency, a rogue developer must hack his way through the digital underworld to save the grid.",
-        quality: "1080p Bluray", icon: "🏃", color: "#f1f1f1", badge: "Trending",
+        id: "biker-2026",
+        title: "Biker",
+        sinhalaTitle: "බයිකර්",
+        year: 2026,
+        rating: 6.9,
+        votes: "2,100",
+        duration: "135 min",
+        views: "10,500",
+        quality: "WEB-DL",
+        genre: ["Action", "Drama"],
+        director: "S. S. Rajamouli",
+        country: "India",
+        poster: "https://images.unsplash.com/photo-1558981403-c5f91cbba527?q=80&w=500",
+        banner: "https://images.unsplash.com/photo-1558981403-c5f91cbba527?q=80&w=1200",
+        description: "In the high-stakes world of underground bike racing, a young mechanic rises to the top, but soon finds himself caught between rival gangs and a corrupt police force.",
+        cast: [
+            { name: "John Doe", role: "Racer", img: "https://i.pravatar.cc/150?u=john" },
+            { name: "Jane Smith", role: "Mechanic", img: "https://i.pravatar.cc/150?u=jane" },
+        ],
+        downloads: [
+            { label: "Direct Link (720p)", size: "1.2 GB", link: "#" },
+            { label: "Direct Link (1080p)", size: "2.4 GB", link: "#" },
+        ]
     },
+    // Add more movies from the screenshot...
     {
-        id: "m-003", title: "Digital Frontier", genre: "Adventure", year: 2026, rating: 4.5, duration: "1h 55m",
-        description: "Explorers venture into the uncharted territories of the metaverse, discovering civilizations built from pure data.",
-        quality: "4K Ultra HD", icon: "🌐", color: "#00E5FF",
-    },
-    {
-        id: "m-004", title: "Cyber Soul", genre: "Drama", year: 2024, rating: 4.8, duration: "2h 05m",
-        description: "A poignant story about a humanoid AI searching for its identity in a society that only sees it as a machine.",
-        quality: "1080p Bluray", icon: "🧠", color: "#C084FC",
-    },
-    {
-        id: "m-005", title: "The Last Backup", genre: "Thriller", year: 2026, rating: 4.6, duration: "1h 40m",
-        description: "When the global cloud fails, a group of scientists must protect the last remaining physical backup of human history.",
-        quality: "4K Ultra HD", icon: "💾", color: "#F97316", badge: "Must Watch",
-    },
-    {
-        id: "m-006", title: "Silicon Valley Noir", genre: "Crime", year: 2025, rating: 4.4, duration: "2h 10m",
-        description: "A gritty look into the dark side of tech startups, where ambition leads to betrayal and high-stakes espionage.",
-        quality: "1080p Bluray", icon: "🕵️", color: "#34D399",
-    },
+        id: "kraken-2026",
+        title: "Kraken",
+        sinhalaTitle: "ක්‍රැකන්",
+        year: 2026,
+        rating: 5.6,
+        votes: "850",
+        duration: "110 min",
+        views: "4,200",
+        quality: "WEB-DL",
+        genre: ["Horror", "Mystery"],
+        director: "James Wan",
+        country: "USA",
+        poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=500",
+        banner: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200",
+        description: "Deep-sea researchers awaken a prehistoric terror in the Mariana Trench. Now they must find a way back to the surface before the monster claims them all.",
+        cast: [],
+        downloads: []
+    }
 ];
 
-const GENRES = ["All", "Documentary", "Action", "Sci-Fi", "Adventure", "Drama", "Thriller", "Crime"];
+const YEARS = ["2026", "2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018"];
 
 export default function MoviesPage() {
+    const [view, setView] = useState<"grid" | "detail">("grid");
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-    const [selectedGenre, setSelectedGenre] = useState("All");
-    const [searchQuery, setSearchQuery] = useState("");
-    const [movies, setMovies] = useState<Movie[]>(DEFAULT_MOVIES);
+    const [activeYear, setActiveYear] = useState<string | null>(null);
 
-    const filtered = movies.filter((m) => {
-        const matchGenre = selectedGenre === "All" || m.genre.includes(selectedGenre);
-        const matchSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase()) || m.description.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchGenre && matchSearch;
-    });
+    const handleMovieClick = (movie: Movie) => {
+        setSelectedMovie(movie);
+        setView("detail");
+        window.scrollTo(0, 0);
+    };
+
+    const handleBack = () => {
+        setView("grid");
+        setSelectedMovie(null);
+        window.scrollTo(0, 0);
+    };
 
     return (
-        <div className="min-h-screen" style={{ background: "var(--yt-bg)" }}>
+        <div className="min-h-screen text-[#f1f1f1]" style={{ background: "#0f0f0f" }}>
             <Navbar />
-            <div className="pt-24 sm:pt-28">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-
-                    {/* Hero */}
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-                        <h1 className="font-bebas text-5xl sm:text-7xl gradient-text leading-[0.95] mb-4">🎬 TECSUB MOVIES</h1>
-                        <p className="text-sm sm:text-base max-w-2xl mx-auto" style={{ color: "var(--yt-text-secondary)" }}>
-                            Exclusive tech-themed documentaries, sci-fi thrillers, and educational films.
-                        </p>
-                    </motion.div>
-
-                    {/* Search */}
-                    <div className="mb-8 max-w-xl mx-auto">
-                        <div className="relative">
-                            <input
-                                type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search movies..."
-                                className="w-full px-5 py-3 pl-12 rounded-2xl text-sm outline-none"
-                                style={{ background: "rgba(0,0,0,0.4)", border: "1px solid var(--yt-border)", color: "var(--yt-text-primary)" }}
-                            />
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg">🔍</span>
-                        </div>
-                    </div>
-
-                    {/* Genres */}
-                    <div className="flex flex-wrap justify-center gap-2 mb-8">
-                        {GENRES.map((genre) => (
-                            <button
-                                key={genre} onClick={() => setSelectedGenre(genre)}
-                                className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wider transition-all ${selectedGenre === genre ? "bg-yt-accent text-white" : "bg-yt-chip-bg text-yt-text-primary hover:bg-yt-bg-hover"}`}
-                            >
-                                {genre}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Movies Grid */}
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filtered.map((movie, i) => (
+            
+            <div className="pt-24 pb-12">
+                <div className="max-w-[1400px] mx-auto px-4 lg:px-8">
+                    
+                    <AnimatePresence mode="wait">
+                        {view === "grid" ? (
                             <motion.div
-                                key={movie.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.05 }}
-                                onClick={() => setSelectedMovie(movie)}
-                                className="group relative rounded-2xl overflow-hidden cursor-pointer"
-                                style={{ background: "var(--yt-bg-secondary)", border: "1px solid var(--yt-border)" }}
+                                key="grid"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
                             >
-                                <div className="aspect-video w-full flex items-center justify-center text-6xl relative overflow-hidden" style={{ background: `${movie.color}10` }}>
-                                    {movie.icon}
-                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl">▶️</div>
-                                    </div>
-                                </div>
-                                <div className="p-5">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h3 className="font-bold text-lg leading-tight">{movie.title}</h3>
-                                        {movie.badge && <span className="text-[10px] px-2 py-0.5 rounded-full bg-yt-red text-white font-bold">{movie.badge}</span>}
-                                    </div>
-                                    <p className="text-xs mb-3 line-clamp-2" style={{ color: "var(--yt-text-secondary)" }}>{movie.description}</p>
-                                    <div className="flex items-center gap-4 text-[11px]" style={{ color: "var(--yt-text-secondary)" }}>
-                                        <span>📅 {movie.year}</span>
-                                        <span>⏱️ {movie.duration}</span>
-                                        <span style={{ color: "var(--yt-accent)" }}>{movie.quality}</span>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-
-                    {filtered.length === 0 && (
-                        <div className="text-center py-20">
-                            <p className="text-4xl mb-4">🎬</p>
-                            <p style={{ color: "var(--yt-text-secondary)" }}>No movies found in this genre.</p>
-                        </div>
-                    )}
-                </div>
-
-                {/* Modal */}
-                <AnimatePresence>
-                    {selectedMovie && (
-                        <motion.div
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-                            onClick={() => setSelectedMovie(null)}
-                        >
-                            <motion.div
-                                initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
-                                className="w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl"
-                                style={{ background: "var(--yt-bg-secondary)", border: "1px solid var(--yt-border)" }}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <div className="aspect-video w-full flex items-center justify-center text-8xl" style={{ background: `${selectedMovie.color}15` }}>
-                                    {selectedMovie.icon}
-                                </div>
-                                <div className="p-8">
-                                    <div className="flex flex-wrap items-center gap-3 mb-4">
-                                        <h2 className="text-3xl font-bold">{selectedMovie.title}</h2>
-                                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-yt-accent/20 text-yt-accent border border-yt-accent/30">{selectedMovie.genre}</span>
-                                    </div>
-                                    <p className="text-sm leading-relaxed mb-6" style={{ color: "var(--yt-text-secondary)" }}>{selectedMovie.description}</p>
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 text-center">
-                                        <div className="p-3 rounded-2xl bg-black/20 border border-white/5">
-                                            <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: "var(--yt-text-secondary)" }}>Rating</p>
-                                            <p className="font-bold">⭐ {selectedMovie.rating}</p>
-                                        </div>
-                                        <div className="p-3 rounded-2xl bg-black/20 border border-white/5">
-                                            <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: "var(--yt-text-secondary)" }}>Year</p>
-                                            <p className="font-bold">{selectedMovie.year}</p>
-                                        </div>
-                                        <div className="p-3 rounded-2xl bg-black/20 border border-white/5">
-                                            <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: "var(--yt-text-secondary)" }}>Quality</p>
-                                            <p className="font-bold text-yt-accent">{selectedMovie.quality}</p>
-                                        </div>
-                                        <div className="p-3 rounded-2xl bg-black/20 border border-white/5">
-                                            <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: "var(--yt-text-secondary)" }}>Runtime</p>
-                                            <p className="font-bold">{selectedMovie.duration}</p>
-                                        </div>
+                                {/* Header */}
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 border-b border-white/10 pb-6">
+                                    <div>
+                                        <h1 className="text-3xl font-bold mb-2">TECSUB MOVIES</h1>
+                                        <p className="text-sm text-[#aaa]">Explore the latest Sinhala Subtitled movies and TV series.</p>
                                     </div>
                                     <div className="flex gap-4">
-                                        <button className="flex-1 py-4 rounded-xl bg-white text-black font-bold hover:bg-gray-200 transition-all flex items-center justify-center gap-2">
-                                            <span>▶️</span> Watch Now
-                                        </button>
-                                        <button onClick={() => setSelectedMovie(null)} className="px-6 py-4 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-all">
-                                            Close
-                                        </button>
+                                        <div className="relative group">
+                                            <input 
+                                                type="text" 
+                                                placeholder="Search movies..." 
+                                                className="bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-2 text-sm focus:border-yt-red transition-all w-64"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
 
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-6">
-                    <AdPlacement format="banner" />
+                                <div className="flex flex-col lg:flex-row gap-8">
+                                    {/* Grid */}
+                                    <div className="flex-1">
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6">
+                                            {MOVIES.map((movie) => (
+                                                <motion.div
+                                                    key={movie.id}
+                                                    layoutId={movie.id}
+                                                    onClick={() => handleMovieClick(movie)}
+                                                    className="group cursor-pointer relative"
+                                                >
+                                                    {/* Poster Container */}
+                                                    <div className="relative aspect-[2/3] rounded-lg overflow-hidden mb-3 border border-white/5 transition-transform group-hover:scale-[1.02]">
+                                                        <img src={movie.poster} alt={movie.title} className="w-full h-full object-cover" />
+                                                        
+                                                        {/* Badges */}
+                                                        <div className="absolute top-2 left-2 bg-yt-red text-[10px] font-bold px-2 py-0.5 rounded shadow-lg uppercase">
+                                                            {movie.quality}
+                                                        </div>
+                                                        <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-[10px] font-bold px-2 py-0.5 rounded shadow-lg text-yellow-400 flex items-center gap-1">
+                                                            ★ {movie.rating}
+                                                        </div>
+
+                                                        {/* Hover Overlay */}
+                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                            <div className="w-12 h-12 rounded-full bg-yt-red/90 flex items-center justify-center text-white shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform">
+                                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                                                    <path d="M8 5.14v14l11-7-11-7z" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Title */}
+                                                    <h3 className="font-bold text-sm leading-snug group-hover:text-yt-red transition-colors line-clamp-2">
+                                                        {movie.title} ({movie.year}) Sinhala Sub...
+                                                    </h3>
+                                                </motion.div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Sidebar */}
+                                    <aside className="w-full lg:w-64 space-y-8">
+                                        {/* Filters */}
+                                        <div className="bg-[#1a1a1a] rounded-xl p-6 border border-white/5">
+                                            <h4 className="font-bold text-sm mb-4 border-b border-white/10 pb-3 uppercase tracking-wider">Release Year</h4>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                {YEARS.map(y => (
+                                                    <button 
+                                                        key={y} 
+                                                        onClick={() => setActiveYear(y)}
+                                                        className={`text-[11px] py-2 rounded font-medium border transition-all ${activeYear === y ? "bg-yt-red border-yt-red text-white" : "border-white/10 hover:border-white/30 text-[#888]"}`}
+                                                    >
+                                                        {y}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Social Links */}
+                                        <div className="space-y-3">
+                                            <a href="#" className="flex items-center justify-center gap-2 py-3 bg-[#1877F2] rounded-lg text-sm font-bold hover:brightness-110 transition-all">
+                                                Facebook Page
+                                            </a>
+                                            <a href="#" className="flex items-center justify-center gap-2 py-3 bg-[#0088CC] rounded-lg text-sm font-bold hover:brightness-110 transition-all">
+                                                Telegram Channel
+                                            </a>
+                                            <a href="#" className="flex items-center justify-center gap-2 py-3 bg-[#FF0000] rounded-lg text-sm font-bold hover:brightness-110 transition-all">
+                                                Youtube Channel
+                                            </a>
+                                        </div>
+                                    </aside>
+                                </div>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="detail"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                className="space-y-8"
+                            >
+                                {/* Back Button */}
+                                <button onClick={handleBack} className="flex items-center gap-2 text-sm font-medium text-[#888] hover:text-white transition-colors">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                                    </svg>
+                                    Back to Movies
+                                </button>
+
+                                {/* Movie Header Section */}
+                                <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
+                                    {/* Poster */}
+                                    <div className="w-full md:w-[300px] lg:w-[350px] flex-shrink-0">
+                                        <img src={selectedMovie?.poster} alt={selectedMovie?.title} className="w-full rounded-2xl shadow-2xl border border-white/5" />
+                                    </div>
+
+                                    {/* Info */}
+                                    <div className="flex-1 space-y-6">
+                                        <div>
+                                            <h1 className="text-3xl lg:text-4xl font-bold mb-2">{selectedMovie?.title} ({selectedMovie?.year}) Sinhala Subtitles</h1>
+                                            <p className="text-xl text-yt-red font-medium">{selectedMovie?.sinhalaTitle}</p>
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-4 items-center">
+                                            <div className="flex items-center gap-1 text-yellow-400">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <span key={i}>★</span>
+                                                ))}
+                                                <span className="ml-2 text-white font-bold">{selectedMovie?.rating}</span>
+                                                <span className="text-xs text-[#666] ml-1">({selectedMovie?.votes} votes)</span>
+                                            </div>
+                                            <div className="h-4 w-px bg-white/10" />
+                                            <div className="text-sm font-medium text-[#aaa]">{selectedMovie?.duration}</div>
+                                            <div className="h-4 w-px bg-white/10" />
+                                            <div className="text-sm font-medium text-[#aaa]">{selectedMovie?.views} views</div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 py-6 border-y border-white/10">
+                                            <div>
+                                                <p className="text-[10px] uppercase tracking-wider text-[#666] mb-1">Director</p>
+                                                <p className="font-medium">{selectedMovie?.director}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] uppercase tracking-wider text-[#666] mb-1">Country</p>
+                                                <p className="font-medium">{selectedMovie?.country}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] uppercase tracking-wider text-[#666] mb-1">Year</p>
+                                                <p className="font-medium">{selectedMovie?.year}</p>
+                                            </div>
+                                            <div className="col-span-full">
+                                                <p className="text-[10px] uppercase tracking-wider text-[#666] mb-1">Genres</p>
+                                                <div className="flex gap-2">
+                                                    {selectedMovie?.genre.map(g => (
+                                                        <span key={g} className="px-2 py-0.5 rounded bg-white/5 text-[11px] font-medium border border-white/10">{g}</span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Cast */}
+                                        <div>
+                                            <h4 className="font-bold text-sm mb-4 uppercase tracking-wider">Cast</h4>
+                                            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                                                {selectedMovie?.cast.map(c => (
+                                                    <div key={c.name} className="flex-shrink-0 w-24 text-center">
+                                                        <img src={c.img} alt={c.name} className="w-20 h-20 rounded-full object-cover mx-auto mb-2 border border-white/10" />
+                                                        <p className="text-[11px] font-bold truncate">{c.name}</p>
+                                                        <p className="text-[10px] text-[#666] truncate">{c.role}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Description */}
+                                <div className="bg-[#1a1a1a] rounded-2xl p-8 border border-white/5">
+                                    <h4 className="font-bold text-lg mb-4 border-b border-white/10 pb-4">Synopsis</h4>
+                                    <p className="text-[#aaa] leading-relaxed text-sm lg:text-base">
+                                        {selectedMovie?.description}
+                                    </p>
+                                </div>
+
+                                {/* Download Links */}
+                                <div className="space-y-4">
+                                    <h4 className="font-bold text-lg border-b border-white/10 pb-4">Download Links</h4>
+                                    <div className="grid gap-3">
+                                        {selectedMovie?.downloads.map(d => (
+                                            <a 
+                                                key={d.label} 
+                                                href={d.link}
+                                                className="flex items-center justify-between p-4 bg-yt-red/10 border border-yt-red/20 rounded-xl hover:bg-yt-red/20 transition-all group"
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 rounded-full bg-yt-red flex items-center justify-center text-white">
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                                                        </svg>
+                                                    </div>
+                                                    <span className="font-bold text-sm lg:text-base">{d.label}</span>
+                                                </div>
+                                                <span className="font-mono text-sm text-yt-red">{d.size}</span>
+                                            </a>
+                                        ))}
+                                    </div>
+                                </div>
+                                
+                                <AdPlacement format="banner" />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
-                <Footer />
             </div>
+
+            <Footer />
         </div>
     );
 }

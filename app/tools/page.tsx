@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -149,16 +149,48 @@ const toolComponents: Record<string, () => JSX.Element> = {
     "PDF Editor": PdfEditorTool,
 };
 
-/* ─── Category Colors ─── */
+/* ─── Category Config ─── */
+const categories = [
+    { id: "all", label: "All Tools", icon: "🔲" },
+    { id: "Text", label: "Text & Writing", icon: "✏️" },
+    { id: "Developer", label: "Development", icon: "💻" },
+    { id: "Image", label: "Media", icon: "🖼️" },
+    { id: "Design", label: "Design", icon: "🎨" },
+    { id: "Document", label: "Document", icon: "📄" },
+    { id: "Security", label: "Security", icon: "🔒" },
+    { id: "Calculator", label: "Math", icon: "📐" },
+    { id: "Utility", label: "Utilities", icon: "⚙️" },
+];
+
 const categoryColors: Record<string, string> = {
     Text: "#FF6B6B", Developer: "#00E5FF", Image: "#FFD93D", Design: "#C084FC",
-    Calculator: "#4ADE80", Document: "#F97316", Security: "#38BDF8",
+    Calculator: "#4ADE80", Document: "#F97316", Security: "#38BDF8", Utility: "#818CF8",
+};
+
+/* ─── Tag generator ─── */
+const getToolTags = (tool: { title: string; category: string; description: string }): string[] => {
+    const tags: string[] = [tool.category];
+    const lower = (tool.title + " " + tool.description).toLowerCase();
+    if (lower.includes("pdf")) tags.push("PDF");
+    if (lower.includes("image") || lower.includes("compress")) tags.push("Image");
+    if (lower.includes("text") || lower.includes("case")) tags.push("Text");
+    if (lower.includes("code") || lower.includes("json") || lower.includes("regex") || lower.includes("base64")) tags.push("Code");
+    if (lower.includes("password") || lower.includes("security")) tags.push("Security");
+    if (lower.includes("qr")) tags.push("QR");
+    if (lower.includes("color") || lower.includes("gradient") || lower.includes("css")) tags.push("CSS");
+    if (lower.includes("convert")) tags.push("Converter");
+    if (lower.includes("singlish") || lower.includes("sinhala")) tags.push("Sinhala", "Unicode", "Font");
+    if (lower.includes("markdown")) tags.push("Markdown");
+    if (lower.includes("unit")) tags.push("Math");
+    return [...new Set(tags)];
 };
 
 export default function OnlineToolsPage() {
     const [activeTool, setActiveTool] = useState<string | null>(null);
+    const [activeCategory, setActiveCategory] = useState("all");
+    const [searchQuery, setSearchQuery] = useState("");
 
-    // File Handling State
+    /* File handling (Android bridge) */
     const [fileUri, setFileUri] = useState<string | null>(null);
     const [fileData, setFileData] = useState<string | null>(null);
     const [fileError, setFileError] = useState<string | null>(null);
@@ -171,7 +203,6 @@ export default function OnlineToolsPage() {
             const fileParam = urlParams.get('file');
             if (fileParam) {
                 setFileUri(fileParam);
-                // Attempt to read file data via bridge
                 // @ts-expect-error global TecsubApp
                 if (window.TecsubApp && window.TecsubApp.getFileContent) {
                     try {
@@ -179,12 +210,11 @@ export default function OnlineToolsPage() {
                         const base64Data = window.TecsubApp.getFileContent(fileParam);
                         if (base64Data) {
                             setFileData(base64Data);
-                            // Simple heuristic: if URI ends in .pdf or if base64 starts with JVBERi0 (which is "%PDF-")
                             setIsPdf(fileParam.toLowerCase().endsWith(".pdf") || base64Data.startsWith("JVBERi0"));
                         } else {
                             setFileError("Failed to read file data. Please try again.");
                         }
-                    } catch (e) {
+                    } catch {
                         setFileError("Error reading file via bridge.");
                     }
                 } else {
@@ -194,7 +224,19 @@ export default function OnlineToolsPage() {
         }
     }, []);
 
-    // ─── Render Productivity Hub if file opened ───
+    /* Filtered tools */
+    const filteredTools = useMemo(() => {
+        return onlineTools.filter((tool) => {
+            const matchCategory = activeCategory === "all" || tool.category === activeCategory;
+            const matchSearch = searchQuery === "" ||
+                tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                tool.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                tool.category.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchCategory && matchSearch;
+        });
+    }, [activeCategory, searchQuery]);
+
+    /* ─── File Hub Render ─── */
     if (fileUri && showHub) {
         return (
             <div className="min-h-screen flex flex-col" style={{ background: "var(--bg-primary)" }}>
@@ -206,27 +248,19 @@ export default function OnlineToolsPage() {
                         className="max-w-md w-full p-8 rounded-3xl text-center space-y-6 relative"
                         style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(0,229,255,0.2)" }}
                     >
-                        {/* Glow Effect */}
                         <div className="absolute inset-0 bg-cyan-500/10 blur-[60px] rounded-full pointer-events-none -z-10" />
-
                         <div className="text-6xl mb-4">✨</div>
                         <h1 className="font-bebas text-4xl sm:text-5xl gradient-text mb-2">TECSUB PRODUCTIVITY HUB</h1>
                         <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
                             You opened a file from your device. What would you like to do?
                         </p>
-
                         <div className="text-left bg-black/40 p-3 rounded-lg border border-white/10 text-xs overflow-hidden text-ellipsis mb-6 text-white/70 font-mono break-all">
                             {fileUri}
                         </div>
-
                         {fileError ? (
-                            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
-                                {fileError}
-                            </div>
+                            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">{fileError}</div>
                         ) : !fileData ? (
-                            <div className="p-4 text-sm text-cyan-400 animate-pulse font-medium">
-                                Reading file data securely from Android...
-                            </div>
+                            <div className="p-4 text-sm text-cyan-400 animate-pulse font-medium">Reading file data securely from Android...</div>
                         ) : (
                             <div className="space-y-3">
                                 {isPdf && (
@@ -237,14 +271,10 @@ export default function OnlineToolsPage() {
                                 <button className="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all text-sm hover:bg-white/10" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "white" }}>
                                     <span className="text-xl">🌐</span> Translate
                                 </button>
-                                <button className="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all text-sm hover:bg-white/10" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "white" }}>
-                                    <span className="text-xl">📤</span> Share to Feed
-                                </button>
                             </div>
                         )}
-
                         <button onClick={() => window.location.href = '/tools'} className="text-xs hover:underline mt-6 block mx-auto transition-colors" style={{ color: "var(--text-secondary)" }}>
-                            Close & Return to Tools
+                            Close &amp; Return to Tools
                         </button>
                     </motion.div>
                 </div>
@@ -252,96 +282,129 @@ export default function OnlineToolsPage() {
         );
     }
 
+
+
+    /* ─── Main Tools Page ─── */
     return (
         <div className="min-h-screen" style={{ background: "var(--bg-primary)" }}>
             <Navbar />
             <div className="pt-24 sm:pt-28">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+                <div className="kdj-tools-layout">
 
-                    {/* Hero */}
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-                        <h1 className="font-bebas text-5xl sm:text-7xl gradient-text leading-[0.95] mb-4">
-                            🛠️ ONLINE TOOLS
-                        </h1>
-                        <p className="text-sm sm:text-base max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>
-                            Free browser-based tools for developers, designers, and creators. No sign-up required.
-                        </p>
-                    </motion.div>
+                    {/* Main Content */}
+                    <main className="kdj-tools-main">
+                        {/* Search Bar */}
+                        <div className="kdj-tools-search-wrap" style={{ marginBottom: "24px" }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="kdj-tools-search-icon">
+                                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Search tools by name, category, or tags..."
+                                className="kdj-tools-search-input"
+                            />
+                            {searchQuery && (
+                                <button onClick={() => setSearchQuery("")} className="kdj-tools-search-clear">✕</button>
+                            )}
+                        </div>
 
-                    {/* Tools Grid */}
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
-                        {onlineTools.map((tool, i) => {
-                            const color = categoryColors[tool.category] || "#00E5FF";
-                            return (
-                                <motion.button
-                                    key={tool.name}
+                        {/* Category Tabs */}
+                        <div className="kdj-tools-categories">
+                            <div className="kdj-tools-categories-scroll">
+                                {categories.map((cat) => (
+                                    <button
+                                        key={cat.id}
+                                        onClick={() => setActiveCategory(cat.id)}
+                                        className={`kdj-tools-cat-btn ${activeCategory === cat.id ? "active" : ""}`}
+                                    >
+                                        <span className="kdj-tools-cat-icon">{cat.icon}</span>
+                                        <span className="kdj-tools-cat-label">{cat.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Active Tool Panel (if selected) */}
+                        <AnimatePresence mode="wait">
+                            {activeTool && (
+                                <motion.div
+                                    key={activeTool}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.04, duration: 0.4 }}
-                                    onClick={() => setActiveTool(activeTool === tool.name ? null : tool.name)}
-                                    className={`text-left rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02] ${activeTool === tool.name ? "ring-2" : ""}`}
-                                    style={{
-                                        background: activeTool === tool.name ? `${color}08` : "rgba(0,0,0,0.3)",
-                                        border: `1px solid ${activeTool === tool.name ? `${color}40` : "rgba(255,255,255,0.06)"}`,
-                                        // @ts-expect-error ring color
-                                        "--tw-ring-color": color,
-                                    }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="kdj-tool-panel"
+                                    style={{ marginBottom: "24px" }}
                                 >
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ background: `${color}15` }}>
-                                            {tool.icon}
-                                        </div>
-                                        <div>
-                                            <h3 className="font-bold text-xs" style={{ color: "var(--text-primary)" }}>{tool.name}</h3>
-                                            <span className="text-[9px] font-semibold uppercase" style={{ color }}>{tool.category}</span>
-                                        </div>
+                                    <div className="kdj-tool-panel-header">
+                                        <h2 className="kdj-tool-panel-title">{activeTool}</h2>
+                                        <button onClick={() => setActiveTool(null)} className="kdj-tool-panel-close">✕</button>
                                     </div>
-                                    <p className="text-[10px] line-clamp-2" style={{ color: "var(--text-secondary)" }}>{tool.desc}</p>
-                                </motion.button>
-                            );
-                        })}
-                    </div>
+                                    <div className="p-6">
+                                        {activeTool === "PDF Editor" && fileData ? (
+                                            <PdfEditorTool initialBase64Pdf={fileData} initialFileName={fileUri?.split('/').pop() || "Document.pdf"} />
+                                        ) : toolComponents[activeTool] ? (
+                                            toolComponents[activeTool]()
+                                        ) : (
+                                            <PlaceholderTool name={activeTool} />
+                                        )}
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
-                    {/* Active Tool Panel — Full Width */}
-                    <AnimatePresence mode="wait">
-                        {activeTool && (
-                            <motion.div
-                                key={activeTool}
-                                initial={{ opacity: 0, y: 20, height: 0 }}
-                                animate={{ opacity: 1, y: 0, height: "auto" }}
-                                exit={{ opacity: 0, y: -10, height: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="rounded-3xl overflow-hidden"
-                                style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(0,229,255,0.1)" }}
-                            >
-                                <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                                    <h2 className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>
-                                        {activeTool}
-                                    </h2>
-                                    <button
-                                        onClick={() => setActiveTool(null)}
-                                        className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all text-xs"
-                                        style={{ color: "var(--text-secondary)" }}
+                        {/* Tools Grid */}
+                        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5 mb-8">
+                            {filteredTools.map((tool, i) => {
+                                const color = categoryColors[tool.category] || "#00E5FF";
+                                const tags = getToolTags(tool);
+                                const isActive = activeTool === tool.title;
+                                return (
+                                    <motion.button
+                                        key={tool.title}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: i * 0.03, duration: 0.4 }}
+                                        onClick={() => setActiveTool(isActive ? null : tool.title)}
+                                        className={`kdj-tool-card ${isActive ? "active" : ""}`}
+                                        style={{
+                                            // @ts-expect-error css var
+                                            "--tool-accent": color,
+                                        }}
                                     >
-                                        ✕
-                                    </button>
-                                </div>
-                                <div className="p-6">
-                                    {activeTool === "PDF Editor" && fileData ? (
-                                        <PdfEditorTool initialBase64Pdf={fileData} initialFileName={fileUri?.split('/').pop() || "Document.pdf"} />
-                                    ) : toolComponents[activeTool] ? (
-                                        toolComponents[activeTool]()
-                                    ) : (
-                                        <PlaceholderTool name={activeTool} />
-                                    )}
-                                </div>
-                            </motion.div>
+                                        <div className="kdj-tool-card-header">
+                                            <div className="kdj-tool-card-icon" style={{ background: `${color}15`, color }}>
+                                                {tool.icon}
+                                            </div>
+                                            {isActive && (
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" className="kdj-tool-card-arrow">
+                                                    <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
+                                                </svg>
+                                            )}
+                                        </div>
+                                        <h3 className="kdj-tool-card-title">{tool.title}</h3>
+                                        <p className="kdj-tool-card-desc">{tool.description}</p>
+                                        <div className="kdj-tool-card-tags">
+                                            {tags.slice(0, 3).map((tag) => (
+                                                <span key={tag} className="kdj-tool-card-tag">{tag}</span>
+                                            ))}
+                                        </div>
+                                    </motion.button>
+                                );
+                            })}
+                        </div>
+
+                        {filteredTools.length === 0 && (
+                            <div className="text-center py-16">
+                                <p className="text-4xl mb-3">🔍</p>
+                                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>No tools found matching your search.</p>
+                            </div>
                         )}
-                    </AnimatePresence>
-                </div>
-                {/* ─── Ad: Banner ─── */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-6">
-                    <AdPlacement format="banner" />
+
+                        <AdPlacement format="banner" />
+                    </main>
                 </div>
 
                 <Footer />

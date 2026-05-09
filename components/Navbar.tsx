@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppContext } from "@/components/ThemeProvider";
-import { t } from "@/data/translations";
 import { useRouter, usePathname } from "next/navigation";
 import AuthButton from "@/components/AuthButton";
 import { auth } from "@/lib/firebase";
@@ -19,53 +18,104 @@ function isAppWebView(): boolean {
     return false;
 }
 
-/* ─── YouTube-Style Header Bar ─── */
+/* ─── Nav Menu Data ─── */
+const productsMenu = {
+    browse: [
+        { label: "Online Products", desc: "6 web apps", icon: "🌐", href: "/apps", active: true },
+        { label: "Desktop Apps", desc: "1 desktop app", icon: "💻", href: "/software" },
+        { label: "Seasonal & Fun", desc: "1 special product", icon: "🎄", href: "/shop" },
+    ],
+    items: [
+        { label: "TECSUB Tools", desc: "Free web-based tools & utilities", icon: "🔧", href: "/", color: "#6366f1" },
+        { label: "TECSUB POS", desc: "Integrated Point-of-Sale System", icon: "🖥️", href: "/pos", badge: "NEW", color: "#22c55e" },
+        { label: "Vido.lk", desc: "Screen recording & editing tool", icon: "📹", href: "/apps", badge: "NEW", color: "#6366f1" },
+        { label: "Singlish.lk", desc: "Sinhala Unicode typing tool", icon: "🌍", href: "/apps", badge: "NEW", color: "#22c55e" },
+        { label: "Cvme.lk", desc: "CV & resume generator tool", icon: "📄", href: "/apps", badge: "NEW", color: "#6366f1" },
+        { label: "TECSUB Astro", desc: "Astrology & horoscope tools", icon: "✨", href: "/apps", color: "#a855f7" },
+        { label: "TECSUB Singlish", desc: "Real-time Sinhala Unicode typing", icon: "අ", href: "/translator", color: "#6366f1" },
+        { label: "TECSUB Video", desc: "Video editing & creation tools", icon: "🎬", href: "/apps", color: "#6366f1" },
+        { label: "TECSUB Audio", desc: "All-in-one musician platform", icon: "🎵", href: "/apps", color: "#ef4444" },
+    ],
+};
+
+const resourcesMenu = [
+    { label: "Blog", desc: "Articles & tutorials", icon: "📝", href: "/news", color: "#6366f1" },
+    { label: "TECSUB POSS", desc: "Integrated System Solutions", icon: "🔄", href: "/explore", color: "#22c55e" },
+    { label: "Events", desc: "Live & online events", icon: "📅", href: "/community", color: "#ef4444" },
+    { label: "Docs", desc: "API & developer guides", icon: "📚", href: "/about", color: "#6366f1" },
+    { label: "Forum", desc: "Community discussions", icon: "💬", href: "/community", color: "#9ca3af", soon: true },
+];
+
+const academyMenu = [
+    { label: "Courses", desc: "Video courses & paths", icon: "🎓", href: "/courses", color: "#ef4444" },
+    { label: "TECSUB Books", desc: "E-books & digital guides", icon: "📗", href: "/books", color: "#22c55e" },
+    { label: "About", desc: "Mission & philosophy", icon: "ℹ️", href: "/about", color: "#3b82f6", soon: true },
+    { label: "Certificates", desc: "Verify earned certificates", icon: "🏆", href: "/courses", color: "#22c55e", soon: true },
+    { label: "Testimonials", desc: "Student success stories", icon: "⭐", href: "/courses", color: "#9ca3af", soon: true },
+];
+
+const solutionsMenu = [
+    { label: "Enterprise", desc: "Solutions for businesses", icon: "🏢", href: "/about", color: "#6366f1" },
+    { label: "Startups", desc: "Launch & grow faster", icon: "🚀", href: "/about", color: "#22c55e" },
+    { label: "Developers", desc: "APIs & integrations", icon: "⚡", href: "/tools", color: "#f59e0b" },
+    { label: "Education", desc: "Learning platforms", icon: "📖", href: "/courses", color: "#ef4444" },
+];
+
+const aboutMenu = [
+    { label: "Our Story", desc: "Who we are", icon: "📌", href: "/about", color: "#6366f1" },
+    { label: "Team", desc: "Meet the creators", icon: "👥", href: "/about", color: "#22c55e" },
+    { label: "Careers", desc: "Join the team", icon: "💼", href: "/about", color: "#f59e0b", soon: true },
+    { label: "Contact", desc: "Get in touch", icon: "✉️", href: "/about", color: "#3b82f6" },
+];
+
+/* ─── KDJ-Style Header Bar ─── */
 export default function Navbar() {
-    const [searchFocused, setSearchFocused] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [profileOpen, setProfileOpen] = useState(false);
     const [isApp, setIsApp] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-    const { theme, toggleTheme, language, setLanguage } = useAppContext();
+    const { theme, toggleTheme } = useAppContext();
     const router = useRouter();
-    const searchRef = useRef<HTMLInputElement>(null);
+    const pathname = usePathname();
+    const navRef = useRef<HTMLElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
+    const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    /* ─── Detect app and Monitor Auth on mount ─── */
     useEffect(() => {
         setIsApp(isAppWebView());
-        
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
             setLoading(false);
         });
-        
         return () => unsubscribe();
     }, []);
 
-    /* ─── Close profile menu on outside click ─── */
+    /* Close menus on outside click */
     useEffect(() => {
         const handler = (e: MouseEvent) => {
             if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
                 setProfileOpen(false);
+            }
+            if (navRef.current && !navRef.current.contains(e.target as Node)) {
+                setActiveDropdown(null);
             }
         };
         document.addEventListener("mousedown", handler);
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
-    /* ─── Toggle sidebar via custom event ─── */
-    const toggleSidebar = () => {
-        window.dispatchEvent(new CustomEvent("yt-toggle-sidebar"));
-    };
+    /* Close mobile menu on route change */
+    useEffect(() => {
+        setMobileMenuOpen(false);
+        setActiveDropdown(null);
+    }, [pathname]);
 
     const handleSearch = () => {
-        if (searchQuery.trim()) {
-            // Future: implement search
-            console.log("Search:", searchQuery);
-        }
+        if (searchQuery.trim()) console.log("Search:", searchQuery);
     };
 
     const handleLogout = async () => {
@@ -78,233 +128,384 @@ export default function Navbar() {
         }
     };
 
-    /* ─── Hide completely when inside app ─── */
+    const handleDropdownEnter = useCallback((key: string) => {
+        if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+        setActiveDropdown(key);
+    }, []);
+
+    const handleDropdownLeave = useCallback(() => {
+        dropdownTimeoutRef.current = setTimeout(() => setActiveDropdown(null), 200);
+    }, []);
+
     if (isApp) return null;
 
-
-    return (
-        <header className="yt-header" id="yt-header">
-            {/* ─── Left: Hamburger + Logo ─── */}
-            <div className="yt-header-left">
-                <a href="/" className="flex items-center gap-2 group flex-shrink-0">
-                    <div className="w-10 h-10 flex-shrink-0 rounded-lg overflow-hidden flex items-center justify-center bg-black">
-                        <img
-                            src="/logo/tecsub.jpg"
-                            alt="TecSub Logo"
-                            className="w-full h-full object-cover"
-                        />
-                    </div>
-                    <span className="text-lg font-bold tracking-tight text-yt-text leading-none whitespace-nowrap hidden sm:block">
-                        TECSUB
-                    </span>
-                </a>
+    /* ─── Reusable Dropdown Item ─── */
+    const DropdownItem = ({ item, onClick }: { item: { label: string; desc: string; icon: string; href: string; color?: string; badge?: string; soon?: boolean }; onClick?: () => void }) => (
+        <a
+            href={item.soon ? undefined : item.href}
+            onClick={(e) => {
+                if (item.soon) { e.preventDefault(); return; }
+                e.preventDefault();
+                router.push(item.href);
+                setActiveDropdown(null);
+                onClick?.();
+            }}
+            className={`kdj-dropdown-item ${item.soon ? 'kdj-soon' : ''}`}
+        >
+            <div className="kdj-dropdown-icon" style={{ background: `${item.color || '#6366f1'}20`, color: item.color || '#6366f1' }}>
+                <span style={{ fontSize: '16px' }}>{item.icon}</span>
             </div>
-
-            {/* ─── Center: Search Bar ─── */}
-            <div className="yt-header-center hidden md:flex">
-                <div className={`yt-search-bar ${searchFocused ? "border-yt-accent" : ""}`}>
-                    <input
-                        ref={searchRef}
-                        type="text"
-                        className="yt-search-input"
-                        placeholder="Search"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onFocus={() => setSearchFocused(true)}
-                        onBlur={() => setSearchFocused(false)}
-                        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                    />
-                    <button className="yt-search-btn" onClick={handleSearch} aria-label="Search">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20.87,20.17l-5.59-5.59C16.35,13.35,17,11.75,17,10c0-3.87-3.13-7-7-7s-7,3.13-7,7s3.13,7,7,7c1.75,0,3.35-0.65,4.58-1.71l5.59,5.59L20.87,20.17z M5,10c0-2.76,2.24-5,5-5s5,2.24,5,5s-2.24,5-5,5S5,12.76,5,10z" />
-                        </svg>
-                    </button>
-                </div>
-
-                {/* Voice search button */}
-                <button className="yt-icon-btn ml-2" aria-label="Voice search">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z" />
-                        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
-                    </svg>
-                </button>
-
-                {/* TECSUB POS Link */}
-                <a
-                    href="/pos"
-                    className="flex items-center gap-2 ml-4 px-3 py-1.5 rounded-lg hover:bg-yt-bg-hover transition-colors group shrink-0"
-                    title="Open TECSUB POS"
-                >
-                    <div className="w-8 h-8 rounded-full bg-yt-accent/10 flex items-center justify-center text-yt-accent group-hover:bg-yt-accent group-hover:text-white transition-all">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                            <line x1="8" y1="21" x2="16" y2="21" />
-                            <line x1="12" y1="17" x2="12" y2="21" />
-                        </svg>
-                    </div>
-                    <div className="flex flex-col leading-tight hidden lg:flex">
-                        <span className="text-[10px] font-bold text-yt-text-secondary uppercase tracking-tighter">System</span>
-                        <span className="text-sm font-bold text-yt-text group-hover:text-yt-accent whitespace-nowrap">TECSUB POS</span>
-                    </div>
-                </a>
-
-                {/* Google Play Store Link */}
-                <a
-                    href="https://play.google.com/store/apps/details?id=com.tecsub.solutions&hl=en"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 ml-4 px-3 py-1.5 rounded-lg hover:bg-yt-bg-hover transition-colors group shrink-0"
-                    title="Download Tecsub App on Google Play"
-                >
-                    <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 group-hover:bg-green-500 group-hover:text-white transition-all">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M17.523 15.3414L20.355 12.5094L17.523 9.67742V15.3414ZM3.65503 2.50742L11.587 10.4394L13.841 8.18542L3.65503 2.50742ZM3.65503 22.5114L13.841 16.8334L11.587 14.5794L3.65503 22.5114ZM2.85503 3.32742V21.6914L10.771 13.7754L2.85503 3.32742ZM14.655 8.99942L12.385 11.2694L16.713 15.5974L21.155 13.3134C21.611 13.0854 21.855 12.6514 21.855 12.2134C21.855 11.7754 21.611 11.3414 21.155 11.1134L14.655 8.99942Z" />
-                        </svg>
-                    </div>
-                    <div className="flex flex-col leading-tight hidden lg:flex">
-                        <span className="text-[10px] font-bold text-yt-text-secondary uppercase tracking-tighter">Android App</span>
-                        <span className="text-sm font-bold text-yt-text group-hover:text-green-500 whitespace-nowrap">Play Store</span>
-                    </div>
-                </a>
+            <div className="kdj-dropdown-text">
+                <span className="kdj-dropdown-label">
+                    {item.label}
+                    {item.badge && <span className="kdj-badge">{item.badge}</span>}
+                    {item.soon && <span className="kdj-soon-badge">Soon</span>}
+                </span>
+                <span className="kdj-dropdown-desc">{item.desc}</span>
             </div>
+        </a>
+    );
 
-            {/* ─── Right: Icons ─── */}
-            <div className="yt-header-right">
-                {/* Mobile search button */}
-                <button
-                    className="yt-icon-btn md:hidden"
-                    onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-                    aria-label="Search"
-                >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M20.87,20.17l-5.59-5.59C16.35,13.35,17,11.75,17,10c0-3.87-3.13-7-7-7s-7,3.13-7,7s3.13,7,7,7c1.75,0,3.35-0.65,4.58-1.71l5.59,5.59L20.87,20.17z M5,10c0-2.76,2.24-5,5-5s5,2.24,5,5s-2.24,5-5,5S5,12.76,5,10z" />
-                    </svg>
-                </button>
-
-                {/* Theme toggle */}
-                <button
-                    onClick={toggleTheme}
-                    className="yt-icon-btn mr-2"
-                    aria-label="Toggle theme"
-                    title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-                >
-                    {theme === "dark" ? (
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="5" />
-                            <line x1="12" y1="1" x2="12" y2="3" />
-                            <line x1="12" y1="21" x2="12" y2="23" />
-                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                            <line x1="1" y1="12" x2="3" y2="12" />
-                            <line x1="21" y1="12" x2="23" y2="12" />
-                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                        </svg>
-                    ) : (
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3ea6ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                        </svg>
-                    )}
-                </button>
-
-                {/* Login / Sign Up or User Profile */}
-                <div className="flex items-center gap-2">
-                    {!loading && (
-                        user ? (
-                            <div className="relative" ref={profileRef}>
-                                <button 
-                                    onClick={() => setProfileOpen(!profileOpen)}
-                                    className="w-10 h-10 rounded-full overflow-hidden border-2 border-yt-accent/20 hover:border-yt-accent transition-all"
-                                >
-                                    <img 
-                                        src={user.photoURL || "/logo/tecsub.jpg"} 
-                                        alt={user.displayName || "User"} 
-                                        className="w-full h-full object-cover"
-                                    />
-                                </button>
-                                
-                                <AnimatePresence>
-                                    {profileOpen && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            className="absolute right-0 mt-2 w-64 bg-yt-bg border border-yt-border rounded-xl shadow-2xl z-[100] overflow-hidden"
-                                        >
-                                            <div className="p-4 border-b border-yt-border bg-yt-bg-hover/30">
-                                                <p className="font-bold text-yt-text truncate">{user.displayName}</p>
-                                                <p className="text-xs text-yt-text-secondary truncate">{user.email}</p>
-                                            </div>
-                                            <div className="p-2">
-                                                <button 
-                                                    onClick={() => { setProfileOpen(false); router.push('/admin'); }}
-                                                    className="w-full text-left px-4 py-2 text-sm text-yt-text hover:bg-yt-bg-hover rounded-lg transition-colors flex items-center gap-3"
-                                                >
-                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
-                                                    </svg>
-                                                    Your Profile
-                                                </button>
-                                                <button 
-                                                    onClick={handleLogout}
-                                                    className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 rounded-lg transition-colors flex items-center gap-3"
-                                                >
-                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
-                                                    </svg>
-                                                    Sign Out
-                                                </button>
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-                        ) : (
-                            <>
-                                <AuthButton variant="primary" onClick={() => router.push('/login')}>Login</AuthButton>
-                                <AuthButton variant="outline" className="hidden sm:flex" onClick={() => router.push('/signup')}>Sign Up</AuthButton>
-                            </>
-                        )
-                    )}
-                </div>
-            </div>
-
-            {/* ─── Mobile Search Overlay ─── */}
+    /* ─── Nav Link with Dropdown ─── */
+    const NavDropdown = ({ id, label, badge, children }: { id: string; label: string; badge?: string; children: React.ReactNode }) => (
+        <div
+            className="kdj-nav-item-wrap"
+            onMouseEnter={() => handleDropdownEnter(id)}
+            onMouseLeave={handleDropdownLeave}
+        >
+            <button
+                className={`kdj-nav-link ${activeDropdown === id ? 'active' : ''}`}
+                onClick={() => setActiveDropdown(activeDropdown === id ? null : id)}
+            >
+                {label}
+                {badge && <span className="kdj-nav-badge">{badge}</span>}
+                <svg className="kdj-chevron" width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+                    <path d="M2.5 3.5L5 6L7.5 3.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+                </svg>
+            </button>
             <AnimatePresence>
-                {mobileSearchOpen && (
+                {activeDropdown === id && (
                     <motion.div
-                        initial={{ opacity: 0, y: -10 }}
+                        initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="absolute inset-0 bg-[#0f0f0f] z-[70] flex items-center px-3 gap-2"
+                        exit={{ opacity: 0, y: 8 }}
+                        transition={{ duration: 0.18 }}
+                        className="kdj-dropdown"
+                        onMouseEnter={() => handleDropdownEnter(id)}
+                        onMouseLeave={handleDropdownLeave}
                     >
-                        <button
-                            onClick={() => setMobileSearchOpen(false)}
-                            className="yt-icon-btn flex-shrink-0"
-                        >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
-                            </svg>
-                        </button>
-                        <div className="yt-search-bar flex-1">
-                            <input
-                                type="text"
-                                className="yt-search-input"
-                                placeholder="Search"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                                autoFocus
-                            />
-                            <button className="yt-search-btn" onClick={handleSearch}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M20.87,20.17l-5.59-5.59C16.35,13.35,17,11.75,17,10c0-3.87-3.13-7-7-7s-7,3.13-7,7s3.13,7,7,7c1.75,0,3.35-0.65,4.58-1.71l5.59,5.59L20.87,20.17z M5,10c0-2.76,2.24-5,5-5s5,2.24,5,5s-2.24,5-5,5S5,12.76,5,10z" />
-                                </svg>
-                            </button>
-                        </div>
+                        {children}
                     </motion.div>
                 )}
             </AnimatePresence>
-        </header>
+        </div>
+    );
+
+    return (
+        <>
+            {/* ═══ Top Utility Bar ═══ */}
+            <div className="kdj-topbar">
+                <div className="kdj-topbar-left">
+                    <span className="kdj-topbar-item">📞 +94 72 612 8749</span>
+                    <span className="kdj-topbar-sep">·</span>
+                    <span className="kdj-topbar-item">✉️ tecsubsolutions@gmail.com</span>
+                </div>
+                <div className="kdj-topbar-right">
+                    <span className="kdj-topbar-flag">🇱🇰 Made in Sri Lanka</span>
+                </div>
+            </div>
+
+            {/* ═══ Main Navigation ═══ */}
+            <header className="kdj-header" id="yt-header" ref={navRef}>
+                {/* Logo */}
+                <a href="/" className="kdj-logo" onClick={(e) => { e.preventDefault(); router.push('/'); }}>
+                    <div className="kdj-logo-img">
+                        <img src="/logo/tecsub.jpg" alt="TecSub Logo" />
+                    </div>
+                </a>
+
+                {/* Desktop Nav Items */}
+                <nav className="kdj-nav">
+                    {/* Products Mega Menu */}
+                    <NavDropdown id="products" label="Products">
+                        <div className="kdj-mega-products">
+                            <div className="kdj-mega-sidebar">
+                                <div className="kdj-mega-sidebar-title">BROWSE</div>
+                                {productsMenu.browse.map((cat) => (
+                                    <a
+                                        key={cat.label}
+                                        href={cat.href}
+                                        onClick={(e) => { e.preventDefault(); router.push(cat.href); setActiveDropdown(null); }}
+                                        className={`kdj-mega-sidebar-item ${cat.active ? 'active' : ''}`}
+                                    >
+                                        <span style={{ fontSize: '16px' }}>{cat.icon}</span>
+                                        <div>
+                                            <div className="kdj-mega-sidebar-label">{cat.label}</div>
+                                            <div className="kdj-mega-sidebar-desc">{cat.desc}</div>
+                                        </div>
+                                        {cat.active && <span className="kdj-mega-arrow">›</span>}
+                                    </a>
+                                ))}
+                            </div>
+                            <div className="kdj-mega-grid">
+                                {productsMenu.items.map((item) => (
+                                    <DropdownItem key={item.label} item={item} />
+                                ))}
+                            </div>
+                        </div>
+                        <div className="kdj-mega-footer">
+                            <a href="/apps" onClick={(e) => { e.preventDefault(); router.push('/apps'); setActiveDropdown(null); }} className="kdj-explore-link">
+                                Explore all products →
+                            </a>
+                        </div>
+                    </NavDropdown>
+
+                    {/* Resources */}
+                    <NavDropdown id="resources" label="Resources">
+                        <div className="kdj-dropdown-section-title">RESOURCES</div>
+                        <div className="kdj-dropdown-grid-2">
+                            {resourcesMenu.map((item) => (
+                                <DropdownItem key={item.label} item={item} />
+                            ))}
+                        </div>
+                    </NavDropdown>
+
+                    {/* Academy */}
+                    <NavDropdown id="academy" label="Academy" badge="NEW">
+                        <div className="kdj-dropdown-section-title">ACADEMY</div>
+                        <div className="kdj-dropdown-grid-2">
+                            {academyMenu.map((item) => (
+                                <DropdownItem key={item.label} item={item} />
+                            ))}
+                        </div>
+                    </NavDropdown>
+
+                    {/* Solutions */}
+                    <NavDropdown id="solutions" label="Solutions">
+                        <div className="kdj-dropdown-section-title">SOLUTIONS</div>
+                        <div className="kdj-dropdown-grid-2">
+                            {solutionsMenu.map((item) => (
+                                <DropdownItem key={item.label} item={item} />
+                            ))}
+                        </div>
+                    </NavDropdown>
+
+                    {/* About */}
+                    <NavDropdown id="about" label="About">
+                        <div className="kdj-dropdown-section-title">ABOUT</div>
+                        <div className="kdj-dropdown-grid-2">
+                            {aboutMenu.map((item) => (
+                                <DropdownItem key={item.label} item={item} />
+                            ))}
+                        </div>
+                    </NavDropdown>
+
+                    {/* Pricing (no dropdown) */}
+                    <a href="/shop" className="kdj-nav-link" onClick={(e) => { e.preventDefault(); router.push('/shop'); }}>
+                        Pricing
+                    </a>
+                    <a href="/donate" className="kdj-nav-link" style={{ color: "#facc15", fontWeight: "600" }} onClick={(e) => { e.preventDefault(); router.push('/donate'); }}>
+                        Donate ❤️
+                    </a>
+                </nav>
+
+                {/* Right Actions */}
+                <div className="kdj-header-right">
+                    {/* Search */}
+                    <button className="kdj-search-trigger" onClick={() => setSearchOpen(!searchOpen)}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <span className="kdj-search-label">Search</span>
+                        <kbd className="kdj-search-kbd">⌘K</kbd>
+                    </button>
+
+                    {/* Theme Toggle */}
+                    <button onClick={toggleTheme} className="kdj-icon-btn" aria-label="Toggle theme" title={theme === "dark" ? "Light mode" : "Dark mode"}>
+                        {theme === "dark" ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" strokeWidth="2" strokeLinecap="round">
+                                <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                            </svg>
+                        ) : (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3ea6ff" strokeWidth="2" strokeLinecap="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                            </svg>
+                        )}
+                    </button>
+
+                    {/* Notifications */}
+                    <button className="kdj-icon-btn" aria-label="Notifications">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                    </button>
+
+                    {/* User / Login */}
+                    <div className="flex items-center">
+                        {!loading && (
+                            user ? (
+                                <div className="relative" ref={profileRef}>
+                                    <button onClick={() => setProfileOpen(!profileOpen)} className="kdj-avatar-btn">
+                                        <img src={user.photoURL || "/logo/tecsub.jpg"} alt={user.displayName || "User"} />
+                                    </button>
+                                    <AnimatePresence>
+                                        {profileOpen && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                className="kdj-profile-menu"
+                                            >
+                                                {/* User Info Header */}
+                                                <div className="kdj-profile-user-header">
+                                                    <div className="kdj-profile-user-row">
+                                                        <img
+                                                            src={user.photoURL || "/logo/tecsub.jpg"}
+                                                            alt={user.displayName || "User"}
+                                                            className="kdj-profile-avatar"
+                                                        />
+                                                        <div className="kdj-profile-user-info">
+                                                            <p className="kdj-profile-name">{user.displayName || "User"}</p>
+                                                            <p className="kdj-profile-username">{user.email?.split('@')[0] || "user"}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Current Plan */}
+                                                <div className="kdj-profile-plan">
+                                                    <div className="kdj-profile-plan-row">
+                                                        <span className="kdj-profile-plan-icon">🎯</span>
+                                                        <span className="kdj-profile-plan-label">Current Plan</span>
+                                                        <span className="kdj-profile-plan-badge">Free</span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Menu Items */}
+                                                <div className="kdj-profile-menu-items">
+                                                    <button onClick={() => { setProfileOpen(false); router.push('/admin'); }} className="kdj-profile-menu-item">
+                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                                        </svg>
+                                                        <span>Profile</span>
+                                                        <svg className="kdj-profile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                                                    </button>
+                                                    <button onClick={() => { setProfileOpen(false); router.push('/explore'); }} className="kdj-profile-menu-item">
+                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2">
+                                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                                        </svg>
+                                                        <span>Favorites</span>
+                                                        <svg className="kdj-profile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                                                    </button>
+                                                    <button onClick={() => { setProfileOpen(false); }} className="kdj-profile-menu-item">
+                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1-2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                                        </svg>
+                                                        <span>Settings</span>
+                                                        <svg className="kdj-profile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                                                    </button>
+                                                </div>
+
+                                                {/* Sign Out */}
+                                                <div className="kdj-profile-signout-wrap">
+                                                    <button onClick={handleLogout} className="kdj-profile-menu-item signout">
+                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                                                        </svg>
+                                                        <span>Sign Out</span>
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={() => window.dispatchEvent(new Event("tecsub-open-auth"))}
+                                    className="px-5 py-2 rounded-full bg-white text-black text-sm font-bold hover:bg-white/90 transition-all flex items-center gap-2 shadow-lg shadow-white/10"
+                                >
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                    Sign In
+                                </button>
+                            )
+                        )}
+                    </div>
+
+                    {/* Mobile Hamburger */}
+                    <button className="kdj-hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
+                        <span className={`kdj-hamburger-line ${mobileMenuOpen ? 'open' : ''}`}/>
+                        <span className={`kdj-hamburger-line ${mobileMenuOpen ? 'open' : ''}`}/>
+                        <span className={`kdj-hamburger-line ${mobileMenuOpen ? 'open' : ''}`}/>
+                    </button>
+                </div>
+            </header>
+
+            {/* ═══ Search Overlay ═══ */}
+            <AnimatePresence>
+                {searchOpen && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="kdj-search-overlay" onClick={() => setSearchOpen(false)}>
+                        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="kdj-search-modal" onClick={(e) => e.stopPropagation()}>
+                            <div className="kdj-search-modal-bar">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                                <input
+                                    type="text" placeholder="Search TECSUB..." autoFocus
+                                    value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                                    onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); if (e.key === "Escape") setSearchOpen(false); }}
+                                />
+                                <kbd onClick={() => setSearchOpen(false)}>ESC</kbd>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* ═══ Mobile Menu ═══ */}
+            <AnimatePresence>
+                {mobileMenuOpen && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="kdj-mobile-overlay" onClick={() => setMobileMenuOpen(false)}>
+                        <motion.div
+                            initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+                            transition={{ type: 'tween', duration: 0.3 }}
+                            className="kdj-mobile-menu" onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="kdj-mobile-menu-header">
+                                <span className="font-bold text-lg" style={{ color: 'var(--yt-text-primary)' }}>Menu</span>
+                                <button onClick={() => setMobileMenuOpen(false)} className="kdj-icon-btn">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+                            <div className="kdj-mobile-menu-body">
+                                {[
+                                    { label: 'Products', items: productsMenu.items.slice(0, 5) },
+                                    { label: 'Resources', items: resourcesMenu },
+                                    { label: 'Academy', items: academyMenu },
+                                    { label: 'Solutions', items: solutionsMenu },
+                                    { label: 'About', items: aboutMenu },
+                                ].map((section) => (
+                                    <div key={section.label} className="kdj-mobile-section">
+                                        <div className="kdj-mobile-section-title">{section.label}</div>
+                                        {section.items.map((item) => (
+                                            <a key={item.label} href={item.href} onClick={(e) => { e.preventDefault(); router.push(item.href); setMobileMenuOpen(false); }} className="kdj-mobile-link">
+                                                <span style={{ fontSize: '14px' }}>{item.icon}</span>
+                                                <span>{item.label}</span>
+                                                {item.badge && <span className="kdj-badge">{item.badge}</span>}
+                                                {item.soon && <span className="kdj-soon-badge">Soon</span>}
+                                            </a>
+                                        ))}
+                                    </div>
+                                ))}
+                                <a href="/shop" onClick={(e) => { e.preventDefault(); router.push('/shop'); setMobileMenuOpen(false); }} className="kdj-mobile-link" style={{ fontWeight: 600 }}>
+                                    💰 Pricing
+                                </a>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </>
     );
 }
