@@ -1,4 +1,10 @@
 {
+  "app\\designer\\page.tsx -> fabric": {
+    "id": "app\\designer\\page.tsx -> fabric",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_fabric_dist_fabric_js.js"
+    ]
+  },
   "components\\TranslatorTool.tsx -> html2pdf.js": {
     "id": "components\\TranslatorTool.tsx -> html2pdf.js",
     "files": [

@@ -452,12 +452,22 @@ export default function Navbar() {
                         )}
                     </div>
 
-                    {/* Mobile Hamburger */}
-                    <button className="kdj-hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
-                        <span className={`kdj-hamburger-line ${mobileMenuOpen ? 'open' : ''}`}/>
-                        <span className={`kdj-hamburger-line ${mobileMenuOpen ? 'open' : ''}`}/>
-                        <span className={`kdj-hamburger-line ${mobileMenuOpen ? 'open' : ''}`}/>
-                    </button>
+                    {/* Mobile Menu Actions */}
+                    <div className="flex md:hidden items-center gap-1">
+                        <button 
+                            className="kdj-icon-btn" 
+                            onClick={() => window.dispatchEvent(new Event("tecsub-toggle-sidebar-mobile"))}
+                            aria-label="Toggle sidebar"
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                        </button>
+                        <button className="kdj-hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
+                            <span className={`kdj-hamburger-line ${mobileMenuOpen ? 'open' : ''}`}/>
+                            <span className={`kdj-hamburger-line ${mobileMenuOpen ? 'open' : ''}`}/>
+                            <span className={`kdj-hamburger-line ${mobileMenuOpen ? 'open' : ''}`}/>
+                        </button>
+                    </div>
+
                 </div>
             </header>
 
@@ -497,7 +507,7 @@ export default function Navbar() {
                             </div>
                             <div className="kdj-mobile-menu-body">
                                 {[
-                                    { label: 'Products', items: productsMenu.items.slice(0, 5) },
+                                    { label: 'Products', items: productsMenu.items },
                                     { label: 'Resources', items: resourcesMenu },
                                     { label: 'Academy', items: academyMenu },
                                     { label: 'Solutions', items: solutionsMenu },

@@ -1,8 +1,8 @@
 {
   "/page": "app/page.js",
-  "/singlish/page": "app/singlish/page.js",
-  "/software/page": "app/software/page.js",
-  "/pricing/page": "app/pricing/page.js",
-  "/payment/[id]/page": "app/payment/[id]/page.js",
-  "/pos/page": "app/pos/page.js"
+  "/tools/page": "app/tools/page.js",
+  "/prompts/page": "app/prompts/page.js",
+  "/pos/page": "app/pos/page.js",
+  "/apps/page": "app/apps/page.js",
+  "/ocr/page": "app/ocr/page.js"
 }

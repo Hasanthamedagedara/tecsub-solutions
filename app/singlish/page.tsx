@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAppContext } from "@/components/ThemeProvider";
+import AdPlacement from "@/components/AdPlacement";
 
 // Enhanced Singlish Mapping based on user provided 3.0 tables
 const CONSONANTS: Record<string, string> = {
@@ -337,12 +338,32 @@ export default function SinglishPage() {
                     </div>
                 </div>
 
-                {/* Bottom CTA */}
-                <div className="mt-16 bg-black rounded-[3rem] p-12 text-center relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-red-600/20 to-transparent pointer-events-none" />
-                    <h3 className="text-3xl sm:text-4xl font-black text-white italic tracking-tighter mb-4 relative z-10">READY FOR PRODUCTION?</h3>
-                    <p className="text-gray-400 font-medium max-w-xl mx-auto mb-8 relative z-10">Start typing or speaking to generate clean, high-standard Sinhala Unicode text for your websites, documents, and social media.</p>
-                    <button onClick={handleClear} className="px-12 py-4 bg-white text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-110 transition-transform relative z-10">New Session</button>
+                {/* Tecsub Advertisement Framework - 4 Slots */}
+                <div className="mt-16 space-y-8">
+                    <div className="flex items-center gap-4">
+                        <div className="h-px flex-1 bg-gray-200 dark:bg-white/5" />
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">Featured Sponsors & Ads</h2>
+                        <div className="h-px flex-1 bg-gray-200 dark:bg-white/5" />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="bg-white dark:bg-[#0d0d0d] border border-gray-100 dark:border-white/5 rounded-3xl p-4 flex items-center justify-center min-h-[280px]">
+                            <AdPlacement format="300x250" />
+                        </div>
+                        <div className="bg-white dark:bg-[#0d0d0d] border border-gray-100 dark:border-white/5 rounded-3xl p-4 flex items-center justify-center min-h-[280px]">
+                            <AdPlacement format="300x250" />
+                        </div>
+                        <div className="bg-white dark:bg-[#0d0d0d] border border-gray-100 dark:border-white/5 rounded-3xl p-4 flex items-center justify-center min-h-[280px]">
+                            <AdPlacement format="300x250" />
+                        </div>
+                        <div className="bg-white dark:bg-[#0d0d0d] border border-gray-100 dark:border-white/5 rounded-3xl p-4 flex items-center justify-center min-h-[280px]">
+                            <AdPlacement format="300x250" />
+                        </div>
+                    </div>
+
+                    <div className="pt-8">
+                        <AdPlacement format="banner" className="w-full" />
+                    </div>
                 </div>
             </main>
 

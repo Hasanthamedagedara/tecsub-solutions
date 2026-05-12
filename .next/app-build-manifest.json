@@ -1,9 +1,9 @@
 {
   "pages": {
-    "/page": [
+    "/chat/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/chat/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -11,75 +11,85 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/chat/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/chat/page.js"
-    ],
-    "/shop/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/shop/page.js"
-    ],
-    "/translator/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/translator/page.js"
-    ],
     "/news/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/news/page.js"
     ],
-    "/pricing/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/pricing/page.js"
+      "static/chunks/app/page.js"
     ],
-    "/payment/[id]/page": [
+    "/tools/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/payment/[id]/page.js"
-    ],
-    "/videos/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/videos/page.js"
+      "static/chunks/app/tools/page.js"
     ],
     "/singlish/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/singlish/page.js"
     ],
-    "/ocr/page": [
+    "/captions/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/ocr/page.js"
-    ],
-    "/enhancer/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/enhancer/page.js"
-    ],
-    "/bg-remover/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/bg-remover/page.js"
+      "static/chunks/app/captions/page.js"
     ],
     "/designer/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/designer/page.js"
     ],
-    "/software/page": [
+    "/bg-remover/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/software/page.js"
+      "static/chunks/app/bg-remover/page.js"
+    ],
+    "/ocr/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/ocr/page.js"
+    ],
+    "/yt-tags/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/yt-tags/page.js"
+    ],
+    "/keywords/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/keywords/page.js"
+    ],
+    "/translator/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/translator/page.js"
+    ],
+    "/resizer/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/resizer/page.js"
+    ],
+    "/downloader/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/downloader/page.js"
+    ],
+    "/prompts/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/prompts/page.js"
     ],
     "/pos/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/pos/page.js"
+    ],
+    "/apps/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/apps/page.js"
     ]
   }
 }

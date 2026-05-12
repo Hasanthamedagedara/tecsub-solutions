@@ -185,6 +185,62 @@ export const onlineTools = [
         icon: "🔑",
     },
     {
+        title: "Tecsub Image Resizer",
+        description: "Resize images to social media standards like YouTube, Instagram, and TikTok instantly.",
+        category: "Image",
+        icon: "📏",
+        color: "#3b82f6",
+        href: "/resizer"
+    },
+    {
+        title: "Tecsub Image Converter",
+        description: "Convert images between 13+ professional formats including WebP, ICO, and AVIF.",
+        category: "Image",
+        icon: "🔄",
+        color: "#ef4444",
+        href: "/converter"
+    },
+    {
+        title: "Tecsub AI Clipping",
+        description: "Turn any long-form video into viral clips for TikTok, Shorts, and Reels using AI.",
+        category: "Video",
+        icon: "✨",
+        color: "#00ff88",
+        href: "/clipping"
+    },
+    {
+        title: "Tecsub Downloader",
+        description: "Download high-quality videos from YouTube, TikTok, Facebook, and 50+ other platforms.",
+        category: "Video",
+        icon: "📥",
+        color: "#10b981",
+        href: "/downloader"
+    },
+    {
+        title: "Tecsub YT Tag Extractor",
+        description: "Extract hidden meta tags and keywords from any YouTube video for SEO optimization.",
+        category: "Video",
+        icon: "🎬",
+        color: "#dc2626",
+        href: "/yt-tags"
+    },
+    {
+        title: "Tecsub Keyword Gen",
+        description: "Generate high-ranking AI keywords for your content and products instantly.",
+        category: "AI",
+        icon: "🔍",
+        color: "#3b82f6",
+        href: "/keywords"
+    },
+    {
+        title: "Envato Pro Downloader",
+        description: "Bypass premium restrictions and download Envato Elements assets for TECSUB Pro members.",
+        category: "Utility",
+        icon: "🍃",
+        color: "#82b440",
+        href: "/envato"
+    },
+    {
         title: "Tecsub BG Remover",
         description: "Remove image backgrounds instantly with high precision using neural networks.",
         category: "Image",

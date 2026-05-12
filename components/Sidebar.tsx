@@ -23,6 +23,12 @@ const sidebarTools = [
     { title: "OCR Scanner", href: "/ocr", icon: "📸" },
     { title: "BG Remover", href: "/bg-remover", icon: "✂️" },
     { title: "Image Enhancer", href: "/enhancer", icon: "🪄" },
+    { title: "Image Resizer", href: "/resizer", icon: "📏" },
+    { title: "Image Converter", href: "/converter", icon: "🔄" },
+    { title: "AI Clipping", href: "/clipping", icon: "✨" },
+    { title: "Downloader", href: "/downloader", icon: "📥" },
+    { title: "YT Tag Extractor", href: "/yt-tags", icon: "🎬" },
+    { title: "Keyword Gen", href: "/keywords", icon: "🔍" },
     { title: "Translator", href: "/translator", icon: "🌐" },
     { title: "AI Prompts", href: "/prompts", icon: "🤖" },
     { title: "File Editor", href: "/editor", icon: "✏️" },
@@ -68,9 +74,12 @@ export default function Sidebar() {
         window.addEventListener("storage", checkMembership);
 
         const handleToggle = () => setCollapsed(prev => !prev);
+        const handleMobileToggle = () => setMobileOpen(prev => !prev);
         window.addEventListener("tecsub-toggle-sidebar", handleToggle);
+        window.addEventListener("tecsub-toggle-sidebar-mobile", handleMobileToggle);
         return () => {
             window.removeEventListener("tecsub-toggle-sidebar", handleToggle);
+            window.removeEventListener("tecsub-toggle-sidebar-mobile", handleMobileToggle);
             window.removeEventListener("storage", checkMembership);
         };
     }, []);
@@ -102,7 +111,7 @@ export default function Sidebar() {
                     className="kdj-sidebar-item"
                 >
                     <span className="kdj-sidebar-item-icon">{item.icon}</span>
-                    {!collapsed && <span className="kdj-sidebar-item-label">{item.title}</span>}
+                    {(!collapsed || mobileOpen) && <span className="kdj-sidebar-item-label">{item.title}</span>}
                     {!collapsed && (
                         <svg className="ml-auto opacity-40" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
@@ -120,7 +129,7 @@ export default function Sidebar() {
             >
                 {active && <span className="kdj-sidebar-indicator" />}
                 <span className="kdj-sidebar-item-icon">{item.icon}</span>
-                {!collapsed && <span className="kdj-sidebar-item-label">{item.title}</span>}
+                {(!collapsed || mobileOpen) && <span className="kdj-sidebar-item-label">{item.title}</span>}
             </Link>
         );
     };
@@ -168,7 +177,7 @@ export default function Sidebar() {
                             <path d="M16 15l-3-3 3-3" />
                         </svg>
                     </button>
-                    {!collapsed && (
+                    {(!collapsed || mobileOpen) && (
                         <div className="kdj-sidebar-brand-simple">
                             <span className="kdj-sidebar-brand-name">
                                 TecSub<span style={{ color: "#dc2626" }}>.lk</span>
@@ -181,19 +190,19 @@ export default function Sidebar() {
                 <nav className="kdj-sidebar-nav">
                     {sidebarMain.map((item, idx) => <NavItem key={`${item.href}-${idx}`} item={item} />)}
 
-                    {!collapsed && <div className="kdj-sidebar-section-label">TOOLS</div>}
+                    {(!collapsed || mobileOpen) && <div className="kdj-sidebar-section-label">TOOLS</div>}
                     {sidebarTools.map((item) => <NavItem key={item.href} item={item} />)}
 
-                    {!collapsed && <div className="kdj-sidebar-section-label">CONTENT</div>}
+                    {(!collapsed || mobileOpen) && <div className="kdj-sidebar-section-label">CONTENT</div>}
                     {sidebarContent.map((item) => <NavItem key={item.href} item={item} />)}
 
-                    {!collapsed && <div className="kdj-sidebar-section-label">MORE</div>}
+                    {(!collapsed || mobileOpen) && <div className="kdj-sidebar-section-label">MORE</div>}
                     {sidebarAccount.filter(item => item.title !== "Donate" || hasMembership).map((item) => <NavItem key={item.href} item={item} />)}
                 </nav>
 
                 {/* Footer */}
                 <div className="kdj-sidebar-footer">
-                    {!collapsed ? (
+                    {(!collapsed || mobileOpen) ? (
                         <div className="kdj-sidebar-footer-text">
                             <span>© 2026 TecSub Solutions</span>
                         </div>

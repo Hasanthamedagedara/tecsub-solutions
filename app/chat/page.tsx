@@ -9,6 +9,8 @@ export default function AIChatPage() {
     const [mode, setMode] = useState<"image" | "video" | "chat">("chat");
     const [prompt, setPrompt] = useState("");
     const [isGenerating, setIsGenerating] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
+    const [autoDownload, setAutoDownload] = useState(false);
     
     // Menu Visibility States
     const [showModelsMenu, setShowModelsMenu] = useState(false);
@@ -29,6 +31,8 @@ export default function AIChatPage() {
     const [selectedStyle, setSelectedStyle] = useState("General");
     const [selectedChatModel, setSelectedChatModel] = useState("Gemini 1.5 Flash");
     const [chatResponse, setChatResponse] = useState("");
+
+    const [recentGenerations, setRecentGenerations] = useState<any[]>([]);
 
     const menuRef = useRef<HTMLDivElement>(null);
     const sizeRef = useRef<HTMLDivElement>(null);
@@ -54,99 +58,159 @@ export default function AIChatPage() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    const handleDownload = () => {
+        if (mode === "chat") return;
+        const url = mode === "image" ? "/generations/woman_saree.png" : "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=1200";
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `tecsub-${mode}-${Date.now()}.${mode === "image" ? "png" : "mp4"}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const handleGenerate = async () => {
         if (!prompt.trim()) return;
         setIsGenerating(true);
+        setShowPreview(true);
         
         if (mode === "chat") {
             try {
                 const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: prompt }]
-                        }]
-                    })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
-                
                 const data = await response.json();
-                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Error generating response. Please check your API key or connection.";
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Generation error.";
                 setChatResponse(text);
+                setRecentGenerations(prev => [{ url: "", type: "chat", text: text.substring(0, 30), widthClass: "w-[250px] h-[340px]" }, ...prev]);
             } catch (error) {
-                console.error("Error generating chat:", error);
-                setChatResponse("Failed to connect to the AI service. Please try again later.");
+                setChatResponse("Service connection failed.");
             }
         } else {
-            // Mock for image/video
-            setTimeout(() => setIsGenerating(false), 4000);
+            // Mock for image/video cinematic flow
+            setTimeout(() => {
+                setIsGenerating(false);
+                const mockUrl = mode === "image" ? "/generations/woman_saree.png" : "/generations/tea_plantation.png";
+                setRecentGenerations(prev => [{ url: mockUrl, type: mode, widthClass: mode === "image" ? "w-[210px] h-[340px]" : "w-[500px] h-[340px]" }, ...prev]);
+                if (autoDownload) handleDownload();
+            }, 3000);
             return;
         }
         setIsGenerating(false);
     };
-
     return (
         <div className="min-h-screen flex flex-col bg-white dark:bg-[#050505] text-gray-900 dark:text-white selection:bg-lime-500/30 font-sans antialiased transition-colors duration-300">
             <Navbar />
 
-            <main className="flex-1 flex flex-col items-center justify-center p-4">
+            <main className="flex-1 flex flex-col items-center p-4 pt-12">
+                
+                {/* GENERATION PREVIEW GALLERY (Requested Type - Moved to Top) */}
+                <div className="w-full mb-12 overflow-hidden">
+                    <div className="max-w-[98%] mx-auto flex gap-4 items-start">
+                        {/* Left Side Icons - Styled like screenshot */}
+                        <div className="flex flex-col gap-8 pt-4 px-3">
+                            <button className="text-gray-400 hover:text-white transition-colors">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                            </button>
+                            <button className="text-gray-400 hover:text-white transition-colors">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </button>
+                            <button className="text-gray-400 hover:text-white transition-colors">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                            </button>
+                        </div>
+
+                        <div className="flex-1 overflow-x-auto scrollbar-hide flex gap-4 py-2 snap-x">
+                            {recentGenerations.map((gen, idx) => (
+                                <motion.div 
+                                    key={idx}
+                                    whileHover={{ scale: 1.01 }}
+                                    className={`relative flex-shrink-0 group overflow-hidden rounded-[2rem] border border-white/5 bg-black/40 shadow-2xl snap-start ${gen.widthClass}`}
+                                >
+                                    <img 
+                                        src={gen.url} 
+                                        alt="Generation" 
+                                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-90 group-hover:opacity-100" 
+                                    />
+                                    
+                                    {/* Type Icon Overlay - Small in bottom left as per screenshot */}
+                                    <div className="absolute bottom-4 left-4 w-6 h-6 rounded-md bg-black/20 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 shadow-lg">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex-1 flex flex-col items-center justify-center w-full">
                 <div className="w-full max-w-5xl flex flex-col gap-4">
                     
-                    {/* PREVIEW AREA (RESULTS ABOVE INTERFACE) - Slightly smaller */}
+                    {/* PREVIEW AREA (Google Flow Style) */}
                     <div className="w-full flex justify-center">
-                        <AnimatePresence>
-                            {isGenerating || prompt.trim() ? (
+                        <AnimatePresence mode="wait">
+                            {showPreview && (
                                 <motion.div 
-                                    initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    className="w-[85%] aspect-video rounded-3xl overflow-hidden border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 relative group shadow-[0_30px_60px_rgba(0,0,0,0.1)] dark:shadow-[0_50px_100px_rgba(0,0,0,0.5)]"
+                                    key="preview-active"
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    className="w-[90%] aspect-video rounded-3xl overflow-hidden border border-gray-200 dark:border-white/10 bg-black relative shadow-2xl"
                                 >
-                                {isGenerating ? (
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-white/40 dark:bg-black/40 backdrop-blur-md">
-                                        <div className="w-12 h-12 border-4 border-[#d9ff00]/20 border-t-[#d9ff00] rounded-full animate-spin" />
-                                        <p className="text-[#d9ff00] dark:text-[#d9ff00] text-xs font-black uppercase tracking-widest animate-pulse">
-                                            {mode === "chat" ? "AI is thinking..." : "Generating Cinematic Masterpiece..."}
-                                        </p>
-                                    </div>
-                                ) : mode === "chat" && chatResponse ? (
-                                    <div className="p-6 h-full overflow-y-auto scrollbar-hide flex flex-col gap-4">
-                                        <div className="self-end max-w-[85%] bg-blue-500/10 text-blue-500 px-4 py-2.5 rounded-2xl border border-blue-500/20 text-xs font-medium">
-                                            {prompt}
+                                    {isGenerating ? (
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 bg-black">
+                                            <div className="relative w-24 h-24">
+                                                <div className="absolute inset-0 border-4 border-[#d9ff00]/10 rounded-full" />
+                                                <div className="absolute inset-0 border-4 border-t-[#d9ff00] rounded-full animate-spin" />
+                                            </div>
+                                            <div className="flex flex-col items-center gap-2">
+                                                <h2 className="text-[#d9ff00] text-sm font-black uppercase tracking-[0.4em] animate-pulse">Generating</h2>
+                                                <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden">
+                                                    <motion.div 
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: "100%" }}
+                                                        transition={{ duration: 3, ease: "easeInOut" }}
+                                                        className="h-full bg-[#d9ff00]"
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="self-start max-w-[90%] bg-white/5 text-gray-700 dark:text-gray-300 px-5 py-4 rounded-2xl border border-gray-200 dark:border-white/10 text-[13px] leading-relaxed whitespace-pre-wrap">
-                                            {chatResponse}
+                                    ) : (
+                                        <div className="relative w-full h-full">
+                                            {mode === "chat" ? (
+                                                <div className="p-8 h-full bg-[#0a0a0a] overflow-y-auto scrollbar-hide">
+                                                    <div className="max-w-2xl mx-auto space-y-6">
+                                                        <div className="bg-blue-600/10 border border-blue-600/20 p-4 rounded-2xl text-blue-400 text-sm">{prompt}</div>
+                                                        <div className="text-gray-300 text-base leading-relaxed whitespace-pre-wrap">{chatResponse}</div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <img 
+                                                    src={mode === "image" ? "/generations/woman_saree.png" : "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=1200"} 
+                                                    className="w-full h-full object-cover" 
+                                                    alt="Generated Result" 
+                                                />
+                                            )}
+                                            
+                                            {/* Preview Metadata Overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
+                                                <div className="flex items-end justify-between">
+                                                    <div className="space-y-1">
+                                                        <span className="text-[10px] font-black text-[#d9ff00] uppercase tracking-widest">{mode} Success</span>
+                                                        <h3 className="text-2xl font-bold text-white max-w-xl">{prompt}</h3>
+                                                    </div>
+                                                    <div className="flex gap-3">
+                                                        <button onClick={() => setShowPreview(false)} className="h-12 px-6 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white text-xs font-bold transition-all">Create New</button>
+                                                        <button onClick={handleDownload} className="h-12 w-12 rounded-xl bg-[#d9ff00] flex items-center justify-center text-black shadow-lg hover:scale-105 active:scale-95 transition-all"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                ) : (
-                                    <img 
-                                        src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=1200" 
-                                        className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-700" 
-                                        alt="Generation Preview" 
-                                    />
-                                )}
-                                <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between">
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-[10px] font-black text-[#d9ff00] uppercase tracking-[0.2em] drop-shadow-md">{mode} Generation</span>
-                                        <h3 className="text-xl font-bold text-white drop-shadow-lg">{prompt.substring(0, 40)}{prompt.length > 40 ? '...' : ''}</h3>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <button className="h-10 w-10 rounded-xl bg-white/60 dark:bg-black/60 backdrop-blur-xl border border-white/20 dark:border-white/10 flex items-center justify-center text-gray-900 dark:text-white hover:bg-[#d9ff00] hover:text-black transition-all shadow-lg">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                                        </button>
-                                        <button className="h-10 w-10 rounded-xl bg-white/60 dark:bg-black/60 backdrop-blur-xl border border-white/20 dark:border-white/10 flex items-center justify-center text-gray-900 dark:text-white hover:bg-[#d9ff00] hover:text-black transition-all shadow-lg">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
-                                        </button>
-                                    </div>
-                                </div>
+                                    )}
                                 </motion.div>
-                            ) : (
-                                <div className="w-[85%] aspect-video rounded-3xl border-2 border-dashed border-gray-200 dark:border-white/5 flex flex-col items-center justify-center text-gray-400 dark:text-gray-800">
-                                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="mb-4 opacity-20"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M21 15l-5-5L5 21"/></svg>
-                                    <p className="text-sm font-bold uppercase tracking-[0.3em] opacity-30">Waiting for prompt</p>
-                                </div>
                             )}
                         </AnimatePresence>
                     </div>
@@ -444,6 +508,10 @@ export default function AIChatPage() {
                                                 </div>
                                                 <button className="h-10 px-4 bg-gray-100 dark:bg-[#1a1a1a] hover:bg-gray-200 dark:hover:bg-[#222] rounded-xl border border-gray-200 dark:border-white/10 text-[11px] font-bold flex items-center gap-2 transition-all"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg> Creative</button>
                                                 <button className="h-10 px-4 bg-gray-100 dark:bg-[#1a1a1a] hover:bg-gray-200 dark:hover:bg-[#222] rounded-xl border border-gray-200 dark:border-white/10 text-[11px] font-bold flex items-center gap-2 transition-all"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Web Search</button>
+                                                <button onClick={() => setAutoDownload(!autoDownload)} className={`h-10 px-4 ${autoDownload ? 'bg-[#d9ff00] border-[#d9ff00] text-black' : 'bg-gray-100 dark:bg-[#1a1a1a] text-gray-500'} hover:opacity-80 rounded-xl border border-gray-200 dark:border-white/10 text-[11px] font-bold flex items-center gap-2 transition-all`}>
+                                                    <div className={`w-3 h-3 rounded-full border-2 ${autoDownload ? 'bg-black border-black' : 'border-gray-400'}`} /> Auto Download
+                                                </button>
+                                                <button className="h-10 px-4 bg-gray-100 dark:bg-[#1a1a1a] hover:bg-gray-200 dark:hover:bg-[#222] rounded-xl border border-gray-200 dark:border-white/10 text-[11px] font-bold flex items-center gap-2 transition-all"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20M4 19.5V3a2.5 2.5 0 012.5-2.5H20"/></svg> Presentation</button>
                                             </>
                                         )}
                                     </div>
@@ -494,6 +562,8 @@ export default function AIChatPage() {
                             </div>
                         </div>
                     </div>
+                </div>
+
                 </div>
             </main>
             <Footer />

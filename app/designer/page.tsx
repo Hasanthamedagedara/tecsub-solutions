@@ -1,198 +1,256 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppContext } from "@/components/ThemeProvider";
 
+const PRESETS = [
+    { name: "1:1 Square", width: 1080, height: 1080 },
+    { name: "16:9 YouTube", width: 1280, height: 720 },
+    { name: "9:16 Story", width: 1080, height: 1920 },
+];
+
 export default function DesignerPage() {
-    const [activeTab, setActiveTab] = useState("shapes");
+    const [canvas, setCanvas] = useState<any>(null);
+    const [fabric, setFabric] = useState<any>(null);
     const [aspectRatio, setAspectRatio] = useState("1:1 Square");
     const [bgColor, setBgColor] = useState("#ffffff");
-    const { theme, language } = useAppContext();
+    const [layers, setLayers] = useState<any[]>([]);
+    const [selectedObject, setSelectedObject] = useState<any>(null);
+    const { theme } = useAppContext();
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    // Initialize Fabric
+    useEffect(() => {
+        const initFabric = async () => {
+            const fabricModule = await import("fabric");
+            const f = fabricModule.fabric;
+            setFabric(f);
+
+            if (canvasRef.current) {
+                const fabricCanvas = new f.Canvas(canvasRef.current, {
+                    width: 1080,
+                    height: 1080,
+                    backgroundColor: "#ffffff",
+                    preserveObjectStacking: true,
+                });
+
+                const updateState = () => {
+                    setLayers([...fabricCanvas.getObjects()].reverse());
+                    setSelectedObject(fabricCanvas.getActiveObject());
+                };
+
+                fabricCanvas.on("object:added", updateState);
+                fabricCanvas.on("object:removed", updateState);
+                fabricCanvas.on("object:modified", updateState);
+                fabricCanvas.on("selection:created", updateState);
+                fabricCanvas.on("selection:updated", updateState);
+                fabricCanvas.on("selection:cleared", () => setSelectedObject(null));
+
+                setCanvas(fabricCanvas);
+                const scale = 0.4;
+                fabricCanvas.setDimensions({ width: 1080 * scale, height: 1080 * scale }, { cssOnly: true });
+                fabricCanvas.setZoom(scale);
+            }
+        };
+        initFabric();
+        return () => { if (canvas) canvas.dispose(); };
+    }, []);
+
+    const handleResize = (presetName: string) => {
+        if (!canvas) return;
+        const preset = PRESETS.find(p => p.name === presetName) || PRESETS[0];
+        setAspectRatio(preset.name);
+        
+        // Dynamic scale based on container height
+        const scale = 400 / preset.height;
+        
+        canvas.setDimensions({ width: preset.width, height: preset.height });
+        canvas.setDimensions({ width: preset.width * scale, height: preset.height * scale }, { cssOnly: true });
+        canvas.setZoom(scale);
+        canvas.renderAll();
+    };
+
+    const addText = () => {
+        if (!canvas || !fabric) return;
+        const text = new fabric.IText("Type something...", {
+            left: 100, top: 100,
+            fontFamily: "Inter, sans-serif",
+            fontSize: 60,
+            fill: "#000000",
+        });
+        canvas.add(text);
+        canvas.setActiveObject(text);
+    };
+
+    const addShape = (type: string) => {
+        if (!canvas || !fabric) return;
+        let shape;
+        const props = { fill: "#dc2626", left: 150, top: 150 };
+        if (type === "rect") shape = new fabric.Rect({ ...props, width: 200, height: 200 });
+        else if (type === "circle") shape = new fabric.Circle({ ...props, radius: 100 });
+        else if (type === "triangle") shape = new fabric.Triangle({ ...props, width: 200, height: 200 });
+        canvas.add(shape);
+        canvas.setActiveObject(shape);
+    };
+
+    const downloadDesign = () => {
+        if (!canvas) return;
+        const link = document.createElement("a");
+        link.download = `tecsub-design.png`;
+        link.href = canvas.toDataURL({ format: "png", multiplier: 2 });
+        link.click();
+    };
 
     return (
-        <div className="h-screen flex flex-col overflow-hidden font-sans select-none" style={{ background: "var(--yt-bg)", color: "var(--yt-text-primary)" }}>
-            {/* ═══ Top Header / Toolbar ═══ */}
-            <header className="h-14 flex items-center justify-between px-4 z-50 border-b" style={{ background: "var(--yt-bg-secondary)", borderColor: "var(--yt-border)" }}>
-                <div className="flex items-center gap-6">
-                    <a href="/" className="hover:opacity-70 transition-opacity" style={{ color: "var(--yt-text-primary)" }}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                    </a>
+        <div className="h-screen flex flex-col overflow-hidden bg-[#0a0f1d] text-white font-sans select-none">
+            {/* ═══ TOP TOOLBAR ═══ */}
+            <header className="h-12 flex items-center justify-between px-4 bg-[#141b2d] border-b border-white/5 z-50">
+                <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                        <span className="text-red-500 text-lg font-black italic tracking-tighter">Singlish Designer</span>
-                        <span className="bg-red-500/10 text-red-500 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-widest">BETA</span>
+                        <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center font-bold">T</div>
+                        <span className="text-[11px] font-black italic tracking-tighter text-white uppercase">TECSUB Designer</span>
                     </div>
-                    
-                    <div className="h-6 w-px mx-2" style={{ background: "var(--yt-border)" }} />
-
-                    {/* Aspect Ratio Selector */}
-                    <div className="flex items-center px-3 py-1.5 rounded-lg gap-2 cursor-pointer transition-all" style={{ background: "var(--yt-bg-hover)" }}>
-                        <span className="text-[10px] font-black uppercase" style={{ color: "var(--yt-text-secondary)" }}>Ratio</span>
-                        <span className="text-[11px] font-bold">{aspectRatio}</span>
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m6 9 6 6 6-6"/></svg>
+                    <div className="h-6 w-px bg-white/10 mx-2" />
+                    <div className="flex items-center gap-3">
+                        <select 
+                            onChange={(e) => handleResize(e.target.value)}
+                            className="bg-[#1e273d] text-[10px] font-bold px-2 py-1 rounded outline-none border border-white/10 cursor-pointer"
+                        >
+                            {PRESETS.map(p => <option key={p.name}>{p.name}</option>)}
+                        </select>
+                        <div className="flex gap-1">
+                            {["T", "□", "△", "○"].map(icon => <button key={icon} className="w-8 h-8 hover:bg-white/10 rounded flex items-center justify-center text-sm">{icon}</button>)}
+                        </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <div className="flex gap-1 mr-4">
-                        {["undo", "redo"].map(act => (
-                            <button key={act} className="w-8 h-8 flex items-center justify-center rounded-lg transition-all" style={{ color: "var(--yt-text-secondary)" }}>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                    {act === "undo" ? <path d="M3 7v6h6M3 13a9 9 0 1 1 3 7.7"/> : <path d="M21 7v6h-6M21 13a9 9 0 1 0-3 7.7"/>}
-                                </svg>
-                            </button>
-                        ))}
-                    </div>
-                    <button className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-600/20 flex items-center gap-2 transition-all">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                        Download
-                    </button>
-                    <div className="flex items-center gap-1.5 p-1 rounded-xl" style={{ background: "var(--yt-bg-hover)" }}>
-                        {["Copy", "Share", "WA", "FB"].map(label => (
-                            <button key={label} className="px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all" style={{ color: "var(--yt-text-secondary)" }}>{label}</button>
-                        ))}
+                <div className="flex items-center gap-2">
+                    <button className="px-3 py-1.5 bg-[#1e273d] hover:bg-white/10 rounded text-[10px] font-bold uppercase transition-all">JSON</button>
+                    <button className="px-3 py-1.5 bg-[#1e273d] hover:bg-white/10 rounded text-[10px] font-bold uppercase transition-all">Open</button>
+                    <div className="h-6 w-px bg-white/10 mx-2" />
+                    <span className="text-[10px] font-bold opacity-50">100%</span>
+                    <button onClick={downloadDesign} className="px-4 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded text-[10px] font-bold uppercase tracking-widest transition-all">Download</button>
+                    <div className="flex gap-1 ml-2">
+                        <button className="w-8 h-8 bg-blue-600 hover:bg-blue-500 rounded flex items-center justify-center text-xs">Share</button>
+                        <button className="w-8 h-8 bg-green-600 hover:bg-green-500 rounded flex items-center justify-center text-xs">WA</button>
+                        <button className="w-8 h-8 bg-blue-700 hover:bg-blue-600 rounded flex items-center justify-center text-xs">FB</button>
                     </div>
                 </div>
             </header>
 
-            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-                {/* ═══ Left Sidebar ═══ */}
-                <aside className="w-full lg:w-64 border-b lg:border-r flex flex-col order-2 lg:order-1 h-1/3 lg:h-auto" style={{ background: "var(--yt-bg-secondary)", borderColor: "var(--yt-border)" }}>
-                    <div className="flex-1 p-4 space-y-8 overflow-y-auto scrollbar-none">
-                        {/* Icons Section */}
-                        <section>
-                            <div className="flex items-center justify-between mb-4 group cursor-pointer">
-                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] group-hover:text-red-500 transition-colors" style={{ color: "var(--yt-text-secondary)" }}>Icons (Iconify)</h3>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m18 15-6-6-6 6"/></svg>
-                            </div>
-                        </section>
-
-                        {/* Shapes Section */}
-                        <section>
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] mb-4" style={{ color: "var(--yt-text-secondary)" }}>Shapes</h3>
-                            <div className="grid grid-cols-4 gap-2">
-                                {["square", "circle", "triangle", "diamond", "star", "hexagon", "plus", "minus"].map(shape => (
-                                    <button key={shape} className="aspect-square rounded-lg flex items-center justify-center transition-all" style={{ background: "var(--yt-bg-hover)" }}>
-                                        <div className={`w-4 h-4 border-2 ${shape === "circle" ? "rounded-full" : ""}`} style={{ borderColor: "var(--yt-text-secondary)" }} />
-                                    </button>
-                                ))}
-                            </div>
-                        </section>
-
-                        <div className="p-4 rounded-2xl" style={{ background: "var(--yt-bg-hover)" }}>
-                            <input 
-                                type="text" 
-                                placeholder="Design name..." 
-                                className="w-full bg-transparent border-none outline-none text-[11px] font-bold mb-3"
-                                style={{ color: "var(--yt-text-primary)" }}
-                            />
-                            <button className="w-full py-2 bg-red-600 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-xl text-white">Save</button>
-                        </div>
-
-                        {/* Layers Section */}
-                        <section>
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] mb-4" style={{ color: "var(--yt-text-secondary)" }}>Layers</h3>
-                            <div className="space-y-2">
-                                <div className="text-[11px] font-bold italic text-center py-8" style={{ color: "var(--yt-text-secondary)" }}>No layers yet</div>
-                            </div>
-                        </section>
-                    </div>
-
-                    {/* Bottom Action Bar */}
-                    <div className="p-4 border-t grid grid-cols-2 gap-2" style={{ background: "var(--yt-bg-elevated)", borderColor: "var(--yt-border)" }}>
-                        <button className="py-2.5 rounded-xl text-[10px] font-black uppercase" style={{ background: "var(--yt-bg-hover)" }}>+ Text</button>
-                        <button className="py-2.5 rounded-xl text-[10px] font-black uppercase" style={{ background: "var(--yt-bg-hover)" }}>+ Shape</button>
-                        <button className="py-2.5 rounded-xl text-[10px] font-black uppercase col-span-2" style={{ background: "var(--yt-bg-hover)" }}>+ Image</button>
-                        <button className="py-2 rounded-xl text-[9px] font-black uppercase" style={{ background: "var(--yt-bg-hover)", color: "var(--yt-text-secondary)" }}>Move Up</button>
-                        <button className="py-2 rounded-xl text-[9px] font-black uppercase" style={{ background: "var(--yt-bg-hover)", color: "var(--yt-text-secondary)" }}>Move Down</button>
-                        <button className="py-2 bg-blue-600/20 text-blue-500 rounded-xl text-[9px] font-black uppercase">Duplicate</button>
-                        <button className="py-2 bg-red-600/20 text-red-500 rounded-xl text-[9px] font-black uppercase">Delete</button>
-                    </div>
-                </aside>
-
-                {/* ═══ Main Canvas Area ═══ */}
-                <main className="flex-1 relative flex flex-col items-center justify-center p-4 sm:p-12 order-1 lg:order-2 overflow-auto" style={{ background: "var(--yt-bg)" }}>
-                    {/* Background checkerboard for transparency visualization */}
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/checkerboard.png')] opacity-[0.03] pointer-events-none" />
-                    
-                    <motion.div 
-                        layout
-                        className="relative shadow-2xl transition-all origin-center scale-50 sm:scale-75 lg:scale-100"
-                        style={{ 
-                            width: "540px", 
-                            height: "540px", 
-                            backgroundColor: bgColor,
-                            borderRadius: "16px",
-                            boxShadow: theme === "dark" ? "0 40px 100px rgba(0,0,0,0.8)" : "0 40px 100px rgba(0,0,0,0.15)"
-                        }}
-                    >
-                        {/* Placeholder Content */}
-                        <div className="absolute bottom-4 right-4 opacity-30 text-[8px] font-black tracking-widest text-black/40">singlish.lk</div>
-                    </motion.div>
-
-                    <div className="mt-8 text-[10px] font-black tracking-widest uppercase" style={{ color: "var(--yt-text-secondary)" }}>
-                        1080x1080px - 1:1 Square
-                    </div>
-                </main>
-
-                {/* ═══ Right Sidebar ═══ */}
-                <aside className="w-full lg:w-80 border-t lg:border-l flex flex-col p-6 space-y-8 overflow-y-auto scrollbar-none order-3" style={{ background: "var(--yt-bg-secondary)", borderColor: "var(--yt-border)" }}>
-                    {/* AI Assistant */}
+            {/* ═══ MAIN EDITOR ═══ */}
+            <div className="flex-1 flex overflow-hidden">
+                {/* Left Sidebar */}
+                <aside className="w-64 bg-[#141b2d] border-r border-white/5 flex flex-col p-4 space-y-8 overflow-y-auto scrollbar-none">
                     <section>
-                        <div className="flex items-center gap-2 mb-4">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: "var(--yt-text-secondary)" }}>AI Design Assistant</h3>
-                        </div>
-                        <div className="rounded-2xl p-4 border" style={{ background: "var(--yt-bg-hover)", borderColor: "var(--yt-border)" }}>
-                            <textarea 
-                                placeholder="Describe your design in any language..."
-                                className="w-full bg-transparent border-none outline-none resize-none text-[12px] font-medium mb-4 h-20"
-                                style={{ color: "var(--yt-text-primary)" }}
-                            />
-                            <button className="w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2" style={{ background: "var(--yt-bg-hover)" }}>
-                                <span className="text-sm">✨</span> Generate
-                            </button>
-                        </div>
+                        <h3 className="text-[9px] font-black uppercase tracking-[0.2em] mb-4 opacity-40">Icons (Iconify)</h3>
+                        <div className="h-32 bg-white/5 rounded-lg border border-white/5 flex items-center justify-center opacity-20">No icons loaded</div>
                     </section>
 
-                    {/* Background Controls */}
                     <section>
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: "var(--yt-text-secondary)" }}>Background</h3>
-                            <button className="text-[9px] font-black text-red-500 hover:underline">Clean</button>
-                        </div>
-                        <div className="grid grid-cols-5 gap-2 mb-6">
-                            {[
-                                "#dc2626", "#1e1b4b", "#166534", "#ea580c", "#ffffff",
-                                "#f97316", "#0ea5e9", "#4c1d95", "#991b1b"
-                            ].map(color => (
-                                <button 
-                                    key={color}
-                                    onClick={() => setBgColor(color)}
-                                    className={`aspect-square rounded-lg transition-all ${bgColor === color ? "scale-110 shadow-xl border-2 border-white/50" : "hover:scale-105"}`}
-                                    style={{ backgroundColor: color }}
-                                >
-                                    {bgColor === color && color === "#ffffff" && <div className="w-full h-full flex items-center justify-center text-black font-black text-[10px]">✓</div>}
-                                    {bgColor === color && color !== "#ffffff" && <div className="w-full h-full flex items-center justify-center text-white font-black text-[10px]">✓</div>}
+                        <h3 className="text-[9px] font-black uppercase tracking-[0.2em] mb-4 opacity-40">Shapes</h3>
+                        <div className="grid grid-cols-4 gap-2">
+                            {["rect", "circle", "triangle"].map(s => (
+                                <button key={s} onClick={() => addShape(s)} className="aspect-square bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center border border-white/5 transition-all">
+                                    <div className={`w-4 h-4 border-2 border-white/40 ${s === 'circle' ? 'rounded-full' : ''}`} />
                                 </button>
                             ))}
                         </div>
-                        <button className="w-full py-3 border border-dashed rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2" style={{ background: "var(--yt-bg-hover)", borderColor: "var(--yt-border)" }}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7M16 5l2 2 4-4M21 8v.01M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
-                            Upload Background Image
-                        </button>
+                    </section>
+
+                    <section className="flex-1">
+                        <h3 className="text-[9px] font-black uppercase tracking-[0.2em] mb-4 opacity-40">Layers</h3>
+                        <div className="space-y-1.5">
+                            {layers.map((obj, i) => (
+                                <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-white/5 border border-white/5 text-[9px] font-bold uppercase">
+                                    <span className="opacity-30">#{layers.length - i}</span>
+                                    <span className="text-red-500">{obj.type}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    <div className="grid grid-cols-2 gap-2 pt-4 border-t border-white/10">
+                        <button onClick={addText} className="py-2 bg-white/5 hover:bg-white/10 rounded text-[9px] font-bold uppercase tracking-widest">+ Text</button>
+                        <button onClick={() => addShape("rect")} className="py-2 bg-white/5 hover:bg-white/10 rounded text-[9px] font-bold uppercase tracking-widest">+ Shape</button>
+                        <button className="py-2 bg-white/5 hover:bg-white/10 rounded text-[9px] font-bold uppercase tracking-widest col-span-2">+ Image</button>
+                        <button className="py-2 bg-white/5 hover:bg-white/10 rounded text-[9px] font-bold uppercase tracking-widest">Move Up</button>
+                        <button className="py-2 bg-white/5 hover:bg-white/10 rounded text-[9px] font-bold uppercase tracking-widest">Move Down</button>
+                        <button 
+                            onClick={() => {
+                                if (!canvas) return;
+                                const activeObjects = canvas.getActiveObjects();
+                                activeObjects.forEach((obj: any) => {
+                                    obj.clone((cloned: any) => {
+                                        cloned.set({ left: obj.left + 20, top: obj.top + 20 });
+                                        canvas.add(cloned);
+                                    });
+                                });
+                                canvas.discardActiveObject().renderAll();
+                            }}
+                            className="py-2 bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white rounded text-[9px] font-bold uppercase tracking-widest"
+                        >Duplicate</button>
+                        <button 
+                            onClick={() => { 
+                                if (!canvas) return;
+                                const activeObjects = canvas.getActiveObjects();
+                                canvas.remove(...activeObjects);
+                                canvas.discardActiveObject().renderAll();
+                            }}
+                            className="py-2 bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white rounded text-[9px] font-bold uppercase tracking-widest"
+                        >Delete</button>
+                    </div>
+                </aside>
+
+                {/* Canvas Area */}
+                <main className="flex-1 relative flex flex-col items-center justify-center p-12 bg-[#0a0f1d] overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/checkerboard.png')] opacity-[0.03] pointer-events-none" />
+                    <div className="relative shadow-[0_40px_100px_rgba(0,0,0,0.8)] rounded-sm bg-white overflow-hidden transition-all duration-300">
+                        <canvas ref={canvasRef} />
+                    </div>
+                    <div className="mt-8 text-[9px] font-black tracking-widest uppercase opacity-30">{aspectRatio} View Mode</div>
+                </main>
+
+                {/* Right Sidebar */}
+                <aside className="w-80 bg-[#141b2d] border-l border-white/5 flex flex-col p-6 space-y-8 overflow-y-auto scrollbar-none">
+                    <section>
+                        <div className="flex items-center gap-2 mb-4">
+                            <span className="text-yellow-500">✨</span>
+                            <h3 className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">AI Design Assistant</h3>
+                        </div>
+                        <div className="bg-white/5 rounded-xl p-4 border border-white/5">
+                            <textarea placeholder="Describe your design..." className="w-full h-24 bg-transparent outline-none resize-none text-xs opacity-70 mb-4" />
+                            <button className="w-full py-2.5 bg-white/5 hover:bg-white/10 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all">✨ Generate</button>
+                        </div>
+                    </section>
+
+                    <section>
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">Background</h3>
+                            <button onClick={() => setBgColor("#ffffff")} className="text-[9px] font-bold text-red-500 hover:underline">Clean</button>
+                        </div>
+                        <div className="grid grid-cols-5 gap-2 mb-4">
+                            {["#dc2626", "#1e1b4b", "#166534", "#ea580c", "#ffffff", "#f97316", "#0ea5e9", "#4c1d95", "#991b1b", "#000000"].map(color => (
+                                <button key={color} onClick={() => setBgColor(color)} className={`aspect-square rounded-md transition-all ${bgColor === color ? "scale-110 ring-2 ring-white/50" : "hover:scale-105"}`} style={{ backgroundColor: color }} />
+                            ))}
+                        </div>
                     </section>
                 </aside>
             </div>
 
-            {/* Bottom Status Bar */}
-            <footer className="h-8 bg-[#dc2626] flex items-center px-6 justify-between z-50">
+            <footer className="h-8 bg-[#dc2626] flex items-center px-4 justify-between z-50">
                 <div className="flex items-center gap-4">
-                    <span className="text-[10px] font-black text-white italic tracking-tighter">Online</span>
+                    <span className="text-[10px] font-black italic tracking-tighter">Online</span>
                     <span className="text-[9px] font-bold text-white/70">Canvas: Active</span>
                 </div>
-                <div className="text-[9px] font-black text-white/50 uppercase tracking-[0.2em]">Tecsub Designer Engine v1.0.4</div>
+                <div className="text-[9px] font-black text-white/50 uppercase tracking-[0.2em]">TECSUB Designer Engine v2.0.4</div>
             </footer>
+
+            <style jsx global>{`
+                .canvas-container { margin: 0 auto !important; box-shadow: 0 0 50px rgba(0,0,0,0.3); }
+                ::-webkit-scrollbar { width: 0px; background: transparent; }
+            `}</style>
         </div>
     );
 }

@@ -70,6 +70,12 @@ export default function PricingPage() {
                 "📸 Premium OCR Scanner",
                 "🪄 AI Image Enhancer (8K)",
                 "✂️ Precision BG Remover",
+                "📏 Pro Image Resizer",
+                "🔄 Multi-format Converter",
+                "🎬 YT Tag Extractor Pro",
+                "🔍 AI Keyword Generator",
+                "✨ AI Clipping (TikTok/Shorts)",
+                "📥 All Video Downloader (4K)",
                 "🎥 Cinema Studio 3.5 Access",
                 "🤖 Advanced AI Models (Claude/GPT)",
                 "🚀 Priority Global Infrastructure"

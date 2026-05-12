@@ -4,6 +4,8 @@ import Footer from "@/components/Footer";
 import AdPlacement from "@/components/AdPlacement";
 import TechNews from "@/components/TechNews";
 import RecentUpdates from "@/components/RecentUpdates";
+import TrendingTechNews from "@/components/TrendingTechNews";
+import AINews from "@/components/AINews";
 
 export const metadata: Metadata = {
     title: "News & Technology Updates | Tecsub Solutions",
@@ -19,23 +21,28 @@ export default function NewsPage() {
         <div className="min-h-screen" style={{ background: "var(--yt-bg)" }}>
             <Navbar />
             <div className="pt-24 sm:pt-28">
-                <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-                    <h1 className="font-bebas text-5xl sm:text-7xl gradient-text leading-[0.95] mb-8 text-center mt-4">
+                <main className="max-w-7xl mx-auto pb-20">
+                    <h1 className="font-bebas text-5xl sm:text-7xl gradient-text leading-[0.95] mb-12 text-center mt-4">
                         TECH NEWS & UPDATES
                     </h1>
 
-                    <div className="mb-12">
-                        <RecentUpdates />
-                    </div>
+                    <TrendingTechNews />
+                    <AINews />
 
-                    <div className="section-divider my-8" />
+                    <div className="px-4 sm:px-6 lg:px-8">
+                        <div className="mb-12">
+                            <RecentUpdates />
+                        </div>
 
-                    <div className="mb-12">
-                        <TechNews />
-                    </div>
+                        <div className="section-divider my-8" />
 
-                    <div className="my-8">
-                        <AdPlacement format="banner" />
+                        <div className="mb-12">
+                            <TechNews />
+                        </div>
+
+                        <div className="my-8">
+                            <AdPlacement format="banner" />
+                        </div>
                     </div>
                 </main>
                 <Footer />
