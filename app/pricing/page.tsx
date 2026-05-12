@@ -112,13 +112,13 @@ export default function PricingPage() {
 
     const formatPrice = (usd: number) => {
         let finalUsd = usd;
-        if (isApplied) finalUsd = usd * 0.8;
+        if (isApplied) finalUsd = usd * 0.8; // 20% Discount
         if (currency === "USD") return `$${finalUsd.toFixed(2)}`;
         return `Rs. ${(finalUsd * LKR_RATE).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
     };
 
     const handleApplyCoupon = () => {
-        if (coupon === "TECSU.dev.me") {
+        if (coupon.toLowerCase() === "tecsub.dev.me") {
             setIsApplied(true);
             setCouponError(false);
         } else {

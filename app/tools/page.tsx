@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
+import { useRouter } from "next/navigation";
 import Footer from "@/components/Footer";
 import AdPlacement from "@/components/AdPlacement";
 import { onlineTools } from "@/data/product";
@@ -186,6 +187,7 @@ const getToolTags = (tool: { title: string; category: string; description: strin
 };
 
 export default function OnlineToolsPage() {
+    const router = useRouter();
     const [activeTool, setActiveTool] = useState<string | null>(null);
     const [activeCategory, setActiveCategory] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
@@ -367,7 +369,13 @@ export default function OnlineToolsPage() {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: i * 0.03, duration: 0.4 }}
-                                        onClick={() => setActiveTool(isActive ? null : tool.title)}
+                                        onClick={() => {
+                                            if (tool.href) {
+                                                router.push(tool.href);
+                                            } else {
+                                                setActiveTool(isActive ? null : tool.title);
+                                            }
+                                        }}
                                         className={`kdj-tool-card ${isActive ? "active" : ""}`}
                                         style={{
                                             // @ts-expect-error css var

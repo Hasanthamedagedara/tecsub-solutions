@@ -97,49 +97,56 @@ export const onlineTools = [
         description: "Professional canvas-based design tool for Sinhala content creators with AI assistance.",
         category: "Design",
         icon: "🎨",
-        color: "#dc2626"
+        color: "#dc2626",
+        href: "/designer"
     },
     {
         title: "Tecsub Sinhala Typing",
         description: "Type in Singlish phonetics and get instant Sinhala Unicode with 41,000+ word smart dictionary.",
         category: "Text",
         icon: "⌨️",
-        color: "#dc2626"
+        color: "#dc2626",
+        href: "/singlish"
     },
     {
         title: "Tecsub Voice Typing",
         description: "Speak Sinhala, get text instantly. 100% private — processed locally in your browser.",
         category: "Utility",
         icon: "🎙️",
-        color: "#3b82f6"
+        color: "#3b82f6",
+        href: "/singlish"
     },
     {
         title: "Tecsub AI Ground",
         description: "Sinhala AI assistant — ask questions, write content, and get smart replies in Sinhala.",
         category: "AI",
         icon: "✨",
-        color: "#a855f7"
+        color: "#a855f7",
+        href: "/chat"
     },
     {
         title: "Tecsub OCR Scanner",
         description: "Extract Sinhala text from images and scanned documents with high accuracy.",
         category: "Image",
         icon: "🖼️",
-        color: "#10b981"
+        color: "#10b981",
+        href: "/ocr"
     },
     {
         title: "Tecsub PDF Converter",
         description: "Convert FM Abhaya legacy PDFs to clean, searchable Sinhala Unicode instantly.",
         category: "Document",
         icon: "📄",
-        color: "#f97316"
+        color: "#f97316",
+        href: "/translator"
     },
     {
         title: "Tecsub Captions",
         description: "Auto-generate Sinhala subtitles and captions for your videos.",
         category: "Video",
         icon: "🎫",
-        color: "#ec4899"
+        color: "#ec4899",
+        href: "/captions"
     },
     {
         title: "Tecsub JSON Formatter",
@@ -182,14 +189,16 @@ export const onlineTools = [
         description: "Remove image backgrounds instantly with high precision using neural networks.",
         category: "Image",
         icon: "✂️",
-        color: "#f59e0b"
+        color: "#f59e0b",
+        href: "/bg-remover"
     },
     {
         title: "Tecsub Image Enhancer",
         description: "Upscale and enhance your photos using advanced AI neural networks.",
         category: "Image",
         icon: "🪄",
-        color: "#3b82f6"
+        color: "#3b82f6",
+        href: "/enhancer"
     },
     {
         title: "Tecsub QR Code Generator",

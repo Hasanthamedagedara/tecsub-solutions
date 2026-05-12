@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 const sidebarMain = [
     { title: "Home", href: "/", icon: "🏠" },
     { title: "TECSUB AI", href: "/chat", icon: "🤖" },
-    { title: "TECSUB Tools", href: "/", icon: "🔧" },
+    { title: "TECSUB Tools", href: "/tools", icon: "🔧" },
     { title: "TECSUB APP", href: "https://play.google.com/store/apps/details?id=com.tecsub.solutions", icon: "📱" },
     { title: "TECSUB POSS", href: "/pos", icon: "🖥️" },
     { title: "Videos", href: "/videos", icon: "▶️" },
