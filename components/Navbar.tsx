@@ -36,6 +36,9 @@ const productsMenu = {
         { label: "Tecsub AI Ground", desc: "Sinhala AI assistant", icon: "✨", href: "/tools", color: "#a855f7" },
         { label: "Tecsub Edito", desc: "Professional video & screen editor", icon: "🎬", href: "/software", color: "#6366f1" },
         { label: "Tecsub POS", desc: "Integrated POS System", icon: "🖥️", href: "/pos", color: "#22c55e" },
+        { label: "Tecsub Audio Splitter", desc: "AI-powered music splitting", icon: "🎵", href: "/audio-splitter", badge: "NEW", color: "#6366f1" },
+        { label: "Tecsub Audio Converter", desc: "Convert 20+ audio formats", icon: "🔊", href: "/audio-converter", badge: "NEW", color: "#8b5cf6" },
+        { label: "Tecsub Video Converter", desc: "Professional video conversion", icon: "🎥", href: "/video-converter", badge: "NEW", color: "#ef4444" },
     ],
 };
 

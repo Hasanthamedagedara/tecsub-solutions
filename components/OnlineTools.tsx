@@ -732,7 +732,13 @@ export default function OnlineTools() {
                             initial={{ opacity: 0, y: 30 }}
                             animate={isInView ? { opacity: 1, y: 0 } : {}}
                             transition={{ duration: 0.5, delay: i * 0.06 }}
-                            onClick={() => setActiveTool(tool.title)}
+                            onClick={() => {
+                                if (tool.href) {
+                                    window.location.href = tool.href;
+                                } else {
+                                    setActiveTool(tool.title);
+                                }
+                            }}
                             className="glass-panel p-5 card-hover cursor-pointer group relative text-left"
                         >
                             <div className="flex items-start gap-3">

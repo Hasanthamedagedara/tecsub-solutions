@@ -268,6 +268,33 @@ export const onlineTools = [
         category: "Text",
         icon: "✏️",
     },
+    {
+        title: "Tecsub Audio Splitter",
+        description: "Split music into separate parts like vocals, bass, and drums with AI-powered algorithms.",
+        category: "Utility",
+        icon: "🎵",
+        color: "#6366f1",
+        href: "/audio-splitter",
+        badge: "NEW"
+    },
+    {
+        title: "Tecsub Audio Converter",
+        description: "Convert audio files between MP3, WAV, FLAC, M4A, and 20+ other high-quality formats.",
+        category: "Utility",
+        icon: "🔊",
+        color: "#8b5cf6",
+        href: "/audio-converter",
+        badge: "NEW"
+    },
+    {
+        title: "Tecsub Video Converter",
+        description: "Professional video format conversion for MP4, MKV, MOV, AVI and more with 4K support.",
+        category: "Video",
+        icon: "🎬",
+        color: "#ef4444",
+        href: "/video-converter",
+        badge: "NEW"
+    },
 ];
 
 export const techNews = [

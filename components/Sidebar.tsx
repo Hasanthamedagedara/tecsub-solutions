@@ -30,6 +30,9 @@ const sidebarTools = [
     { title: "YT Tag Extractor", href: "/yt-tags", icon: "🎬" },
     { title: "Keyword Gen", href: "/keywords", icon: "🔍" },
     { title: "Translator", href: "/translator", icon: "🌐" },
+    { title: "Audio Splitter", href: "/audio-splitter", icon: "🎵" },
+    { title: "Audio Converter", href: "/audio-converter", icon: "🔊" },
+    { title: "Video Converter", href: "/video-converter", icon: "🎥" },
     { title: "AI Prompts", href: "/prompts", icon: "🤖" },
     { title: "File Editor", href: "/editor", icon: "✏️" },
 ];
