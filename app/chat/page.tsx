@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export default function AIChatPage() {
-    const [mode, setMode] = useState<"image" | "video" | "chat">("video");
+    const [mode, setMode] = useState<"image" | "video" | "chat">("chat");
     const [prompt, setPrompt] = useState("");
     const [isGenerating, setIsGenerating] = useState(false);
     
@@ -27,7 +27,8 @@ export default function AIChatPage() {
     const [selectedShot, setSelectedShot] = useState("Single shot");
     const [selectedRes, setSelectedRes] = useState("1080p");
     const [selectedStyle, setSelectedStyle] = useState("General");
-    const [selectedChatModel, setSelectedChatModel] = useState("Claude Sonnet 4.6");
+    const [selectedChatModel, setSelectedChatModel] = useState("Gemini 1.5 Flash");
+    const [chatResponse, setChatResponse] = useState("");
 
     const menuRef = useRef<HTMLDivElement>(null);
     const sizeRef = useRef<HTMLDivElement>(null);
@@ -53,10 +54,38 @@ export default function AIChatPage() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const handleGenerate = () => {
+    const handleGenerate = async () => {
         if (!prompt.trim()) return;
         setIsGenerating(true);
-        setTimeout(() => setIsGenerating(false), 4000);
+        
+        if (mode === "chat") {
+            try {
+                const apiKey = "AIzaSyCmsbLxXLZwp3MOWpEaO0wcs9VnZYmugKQ";
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: prompt }]
+                        }]
+                    })
+                });
+                
+                const data = await response.json();
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Error generating response. Please check your API key or connection.";
+                setChatResponse(text);
+            } catch (error) {
+                console.error("Error generating chat:", error);
+                setChatResponse("Failed to connect to the AI service. Please try again later.");
+            }
+        } else {
+            // Mock for image/video
+            setTimeout(() => setIsGenerating(false), 4000);
+            return;
+        }
+        setIsGenerating(false);
     };
 
     return (
@@ -78,7 +107,18 @@ export default function AIChatPage() {
                                 {isGenerating ? (
                                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-white/40 dark:bg-black/40 backdrop-blur-md">
                                         <div className="w-12 h-12 border-4 border-[#d9ff00]/20 border-t-[#d9ff00] rounded-full animate-spin" />
-                                        <p className="text-[#d9ff00] dark:text-[#d9ff00] text-xs font-black uppercase tracking-widest animate-pulse">Generating Cinematic Masterpiece...</p>
+                                        <p className="text-[#d9ff00] dark:text-[#d9ff00] text-xs font-black uppercase tracking-widest animate-pulse">
+                                            {mode === "chat" ? "AI is thinking..." : "Generating Cinematic Masterpiece..."}
+                                        </p>
+                                    </div>
+                                ) : mode === "chat" && chatResponse ? (
+                                    <div className="p-6 h-full overflow-y-auto scrollbar-hide flex flex-col gap-4">
+                                        <div className="self-end max-w-[85%] bg-blue-500/10 text-blue-500 px-4 py-2.5 rounded-2xl border border-blue-500/20 text-xs font-medium">
+                                            {prompt}
+                                        </div>
+                                        <div className="self-start max-w-[90%] bg-white/5 text-gray-700 dark:text-gray-300 px-5 py-4 rounded-2xl border border-gray-200 dark:border-white/10 text-[13px] leading-relaxed whitespace-pre-wrap">
+                                            {chatResponse}
+                                        </div>
                                     </div>
                                 ) : (
                                     <img 
@@ -388,7 +428,7 @@ export default function AIChatPage() {
                                                                     <div>
                                                                         <div className="px-2 py-1 text-[11px] font-bold text-purple-600">Google</div>
                                                                         <div className="space-y-0.5">
-                                                                            {["Gemini 3.1 Pro"].map(m => (
+                                                                            {["Gemini 1.5 Flash", "Gemini 1.5 Pro"].map(m => (
                                                                                 <button key={m} onClick={() => { setSelectedChatModel(m); setShowChatModelsMenu(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left text-[13px] font-medium transition-all ${selectedChatModel === m ? 'bg-blue-500 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5'}`}>
                                                                                     <div className={`w-6 h-6 rounded flex items-center justify-center text-xs ${selectedChatModel === m ? 'bg-white/20' : 'bg-purple-100 dark:bg-white/10'}`}>✨</div>
                                                                                     <span className="flex-1">{m}</span>
