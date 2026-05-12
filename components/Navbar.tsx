@@ -23,18 +23,19 @@ const productsMenu = {
     browse: [
         { label: "Online Products", desc: "6 web apps", icon: "🌐", href: "/apps", active: true },
         { label: "Desktop Apps", desc: "1 desktop app", icon: "💻", href: "/software" },
-        { label: "Seasonal & Fun", desc: "1 special product", icon: "🎄", href: "/shop" },
+        { label: "Games", desc: "Retro & modern web games", icon: "🎮", href: "/games" },
     ],
     items: [
-        { label: "TECSUB Tools", desc: "Free web-based tools & utilities", icon: "🔧", href: "/", color: "#6366f1" },
-        { label: "TECSUB POS", desc: "Integrated Point-of-Sale System", icon: "🖥️", href: "/pos", badge: "NEW", color: "#22c55e" },
-        { label: "Vido.lk", desc: "Screen recording & editing tool", icon: "📹", href: "/apps", badge: "NEW", color: "#6366f1" },
-        { label: "Singlish.lk", desc: "Sinhala Unicode typing tool", icon: "🌍", href: "/apps", badge: "NEW", color: "#22c55e" },
-        { label: "Cvme.lk", desc: "CV & resume generator tool", icon: "📄", href: "/apps", badge: "NEW", color: "#6366f1" },
-        { label: "TECSUB Astro", desc: "Astrology & horoscope tools", icon: "✨", href: "/apps", color: "#a855f7" },
-        { label: "TECSUB Singlish", desc: "Real-time Sinhala Unicode typing", icon: "අ", href: "/translator", color: "#6366f1" },
-        { label: "TECSUB Video", desc: "Video editing & creation tools", icon: "🎬", href: "/apps", color: "#6366f1" },
-        { label: "TECSUB Audio", desc: "All-in-one musician platform", icon: "🎵", href: "/apps", color: "#ef4444" },
+        { label: "Tecsub Tools", desc: "Free web-based tools & utilities", icon: "🔧", href: "/tools", color: "#6366f1" },
+        { label: "Tecsub Designer", desc: "Advanced canvas design tool", icon: "🎨", href: "/designer", badge: "HOT", color: "#dc2626" },
+        { label: "Tecsub Sinhala Typing", desc: "Sinhala Unicode typing tool", icon: "🌍", href: "/singlish", badge: "NEW", color: "#22c55e" },
+        { label: "Tecsub Captions", desc: "AI video subtitle generator", icon: "🎫", href: "/captions", badge: "NEW", color: "#ec4899" },
+        { label: "Tecsub OCR Scanner", desc: "Image to Sinhala text", icon: "📸", href: "/ocr", badge: "HOT", color: "#10b981" },
+        { label: "Tecsub BG Remover", desc: "Remove image background", icon: "✂️", href: "/bg-remover", badge: "NEW", color: "#f59e0b" },
+        { label: "Tecsub Image Enhancer", desc: "AI photo upscaling", icon: "🪄", href: "/enhancer", color: "#3b82f6" },
+        { label: "Tecsub AI Ground", desc: "Sinhala AI assistant", icon: "✨", href: "/tools", color: "#a855f7" },
+        { label: "Tecsub Edito", desc: "Professional video & screen editor", icon: "🎬", href: "/software", color: "#6366f1" },
+        { label: "Tecsub POS", desc: "Integrated POS System", icon: "🖥️", href: "/pos", color: "#22c55e" },
     ],
 };
 
@@ -78,6 +79,7 @@ export default function Navbar() {
     const [isApp, setIsApp] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [hasMembership, setHasMembership] = useState(false);
     const { theme, toggleTheme } = useAppContext();
     const router = useRouter();
     const pathname = usePathname();
@@ -87,11 +89,24 @@ export default function Navbar() {
 
     useEffect(() => {
         setIsApp(isAppWebView());
+        
+        const checkMembership = () => {
+            const isPro = localStorage.getItem("tecsub_sub_pro_paid") === "true";
+            const isUltra = localStorage.getItem("tecsub_sub_ultra_paid") === "true";
+            setHasMembership(isPro || isUltra);
+        };
+        checkMembership();
+        window.addEventListener("storage", checkMembership);
+
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
             setLoading(false);
         });
-        return () => unsubscribe();
+
+        return () => {
+            unsubscribe();
+            window.removeEventListener("storage", checkMembership);
+        };
     }, []);
 
     /* Close menus on outside click */
@@ -301,12 +316,14 @@ export default function Navbar() {
                     </NavDropdown>
 
                     {/* Pricing (no dropdown) */}
-                    <a href="/shop" className="kdj-nav-link" onClick={(e) => { e.preventDefault(); router.push('/shop'); }}>
+                    <a href="/pricing" className="kdj-nav-link" onClick={(e) => { e.preventDefault(); router.push('/pricing'); }}>
                         Pricing
                     </a>
-                    <a href="/donate" className="kdj-nav-link" style={{ color: "#facc15", fontWeight: "600" }} onClick={(e) => { e.preventDefault(); router.push('/donate'); }}>
-                        Donate ❤️
-                    </a>
+                    {hasMembership && (
+                        <a href="/donate" className="kdj-nav-link" style={{ color: "#facc15", fontWeight: "600" }} onClick={(e) => { e.preventDefault(); router.push('/donate'); }}>
+                            Donate ❤️
+                        </a>
+                    )}
                 </nav>
 
                 {/* Right Actions */}
@@ -498,7 +515,7 @@ export default function Navbar() {
                                         ))}
                                     </div>
                                 ))}
-                                <a href="/shop" onClick={(e) => { e.preventDefault(); router.push('/shop'); setMobileMenuOpen(false); }} className="kdj-mobile-link" style={{ fontWeight: 600 }}>
+                                <a href="/pricing" onClick={(e) => { e.preventDefault(); router.push('/pricing'); setMobileMenuOpen(false); }} className="kdj-mobile-link" style={{ fontWeight: 600 }}>
                                     💰 Pricing
                                 </a>
                             </div>

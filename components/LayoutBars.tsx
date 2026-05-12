@@ -31,7 +31,7 @@ export default function LayoutBars() {
 
     return (
         <>
-            <FilterChipBar />
+            {pathname === "/" && <FilterChipBar />}
             <NewsTicker />
         </>
     );

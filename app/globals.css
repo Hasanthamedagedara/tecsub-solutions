@@ -479,6 +479,20 @@ body {
   flex: 1; display: grid;
   grid-template-columns: 1fr 1fr; gap: 2px;
   padding-left: 12px;
+  max-height: 380px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+}
+.kdj-mega-grid::-webkit-scrollbar {
+  width: 5px;
+}
+.kdj-mega-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+.kdj-mega-grid::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
 }
 .kdj-mega-footer {
   border-top: 1px solid #333;
@@ -1917,6 +1931,18 @@ html.light .kdj-sidebar-footer-text { color: #bbb; }
 .kdj-sidebar-item.active {
   background: rgba(220,38,38,0.08);
   color: var(--yt-text-primary, #eee);
+}
+.kdj-sidebar-item.chat-btn {
+  background: linear-gradient(135deg, rgba(62, 166, 255, 0.1), rgba(192, 132, 252, 0.1));
+  border: 1px solid rgba(62, 166, 255, 0.15);
+  margin-bottom: 4px;
+  color: #3ea6ff;
+}
+.kdj-sidebar-item.chat-btn:hover {
+  background: linear-gradient(135deg, rgba(62, 166, 255, 0.2), rgba(192, 132, 252, 0.2));
+  border-color: rgba(62, 166, 255, 0.4);
+  box-shadow: 0 0 15px rgba(62, 166, 255, 0.1);
+  color: #fff;
 }
 .kdj-sidebar-indicator {
   position: absolute; left: 0; top: 20%; bottom: 20%;

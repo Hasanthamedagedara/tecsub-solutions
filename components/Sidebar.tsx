@@ -7,14 +7,22 @@ import { AnimatePresence, motion } from "framer-motion";
 
 /* ─── Sidebar Navigation Config ─── */
 const sidebarMain = [
+    { title: "Home", href: "/", icon: "🏠" },
+    { title: "TECSUB AI", href: "/chat", icon: "🤖" },
     { title: "TECSUB Tools", href: "/", icon: "🔧" },
-    { title: "TECSUB APP", href: "https://play.google.com/store/apps/details?id=com.tecsub.solutions", icon: "🏠" },
-    { title: "TECSUB SHOP", href: "/shop", icon: "🛒" },
+    { title: "TECSUB APP", href: "https://play.google.com/store/apps/details?id=com.tecsub.solutions", icon: "📱" },
+    { title: "TECSUB POSS", href: "/pos", icon: "🖥️" },
     { title: "Videos", href: "/videos", icon: "▶️" },
     { title: "News", href: "/news", icon: "📰" },
 ];
 
 const sidebarTools = [
+    { title: "Designer", href: "/designer", icon: "🎨" },
+    { title: "Sinhala Typing", href: "/singlish", icon: "සි" },
+    { title: "Captions", href: "/captions", icon: "🎫" },
+    { title: "OCR Scanner", href: "/ocr", icon: "📸" },
+    { title: "BG Remover", href: "/bg-remover", icon: "✂️" },
+    { title: "Image Enhancer", href: "/enhancer", icon: "🪄" },
     { title: "Translator", href: "/translator", icon: "🌐" },
     { title: "AI Prompts", href: "/prompts", icon: "🤖" },
     { title: "File Editor", href: "/editor", icon: "✏️" },
@@ -41,6 +49,7 @@ export default function Sidebar() {
     const pathname = usePathname();
     const [collapsed, setCollapsed] = useState(true);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [hasMembership, setHasMembership] = useState(false);
 
     /* Sync CSS variable for fixed bars offset */
     useEffect(() => {
@@ -48,11 +57,22 @@ export default function Sidebar() {
         document.documentElement.style.setProperty("--sidebar-w", w);
     }, [collapsed]);
 
-    /* External toggle listener */
+    /* External toggle listener & Membership sync */
     useEffect(() => {
+        const checkMembership = () => {
+            const isPro = localStorage.getItem("tecsub_sub_pro_paid") === "true";
+            const isUltra = localStorage.getItem("tecsub_sub_ultra_paid") === "true";
+            setHasMembership(isPro || isUltra);
+        };
+        checkMembership();
+        window.addEventListener("storage", checkMembership);
+
         const handleToggle = () => setCollapsed(prev => !prev);
         window.addEventListener("tecsub-toggle-sidebar", handleToggle);
-        return () => window.removeEventListener("tecsub-toggle-sidebar", handleToggle);
+        return () => {
+            window.removeEventListener("tecsub-toggle-sidebar", handleToggle);
+            window.removeEventListener("storage", checkMembership);
+        };
     }, []);
 
     const isActive = (href: string) => {
@@ -62,7 +82,16 @@ export default function Sidebar() {
 
     const NavItem = ({ item }: { item: { title: string; href: string; icon: string } }) => {
         const isExternal = item.href.startsWith("http");
+        const isChat = item.href === "/chat";
         const active = !isExternal && isActive(item.href);
+
+        const handleClick = (e: React.MouseEvent) => {
+            if (item.href === "#chat") {
+                e.preventDefault();
+                window.dispatchEvent(new CustomEvent("tecsub-toggle-chat"));
+            }
+            setMobileOpen(false);
+        };
 
         if (isExternal) {
             return (
@@ -86,8 +115,8 @@ export default function Sidebar() {
         return (
             <Link
                 href={item.href}
-                onClick={() => setMobileOpen(false)}
-                className={`kdj-sidebar-item ${active ? "active" : ""}`}
+                onClick={handleClick}
+                className={`kdj-sidebar-item ${active ? "active" : ""} ${isChat ? "chat-btn" : ""}`}
             >
                 {active && <span className="kdj-sidebar-indicator" />}
                 <span className="kdj-sidebar-item-icon">{item.icon}</span>
@@ -150,7 +179,7 @@ export default function Sidebar() {
 
                 {/* Scrollable Nav */}
                 <nav className="kdj-sidebar-nav">
-                    {sidebarMain.map((item) => <NavItem key={item.href} item={item} />)}
+                    {sidebarMain.map((item, idx) => <NavItem key={`${item.href}-${idx}`} item={item} />)}
 
                     {!collapsed && <div className="kdj-sidebar-section-label">TOOLS</div>}
                     {sidebarTools.map((item) => <NavItem key={item.href} item={item} />)}
@@ -159,7 +188,7 @@ export default function Sidebar() {
                     {sidebarContent.map((item) => <NavItem key={item.href} item={item} />)}
 
                     {!collapsed && <div className="kdj-sidebar-section-label">MORE</div>}
-                    {sidebarAccount.map((item) => <NavItem key={item.href} item={item} />)}
+                    {sidebarAccount.filter(item => item.title !== "Donate" || hasMembership).map((item) => <NavItem key={item.href} item={item} />)}
                 </nav>
 
                 {/* Footer */}
