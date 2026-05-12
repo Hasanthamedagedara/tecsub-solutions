@@ -186,114 +186,6 @@ export default function AIChatPage() {
                     </div>
                 </div>
 
-                <div className="flex-1 flex flex-col items-center justify-center w-full">
-                <div className="w-full max-w-5xl flex flex-col gap-4">
-                    
-                    {/* PREVIEW AREA (Google Flow Style) */}
-                    {/* PREVIEW AREA / CHAT AREA */}
-                    <div className="w-full flex justify-center min-h-[400px]">
-                        <AnimatePresence mode="wait">
-                            {mode === "chat" ? (
-                                <motion.div 
-                                    key="chat-active"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="w-[95%] h-[500px] rounded-3xl overflow-hidden border border-gray-200 dark:border-white/10 bg-black/40 backdrop-blur-md relative shadow-2xl"
-                                >
-                                    <div className="p-6 h-full overflow-y-auto scrollbar-hide flex flex-col gap-6">
-                                        {messages.length === 0 ? (
-                                            <div className="flex-1 flex flex-col items-center justify-center opacity-40 text-center p-12">
-                                                <div className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center text-4xl mb-6 shadow-2xl border border-white/5">✨</div>
-                                                <h2 className="text-2xl font-black mb-3 tracking-tight">TecSub AI Assistant</h2>
-                                                <p className="text-sm max-w-sm font-medium text-gray-400">Your professional AI partner for creativity, coding, and deep thinking. How can I assist you today?</p>
-                                                <div className="flex gap-2 mt-8">
-                                                    {["Write a poem", "Explain quantum physics", "Debug my code"].map(hint => (
-                                                        <button key={hint} onClick={() => setPrompt(hint)} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[11px] font-bold hover:bg-white/10 transition-all">{hint}</button>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <>
-                                                {messages.map((msg, i) => (
-                                                    <motion.div 
-                                                        initial={{ opacity: 0, y: 10 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        key={i} 
-                                                        className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
-                                                    >
-                                                        <div className={`max-w-[80%] p-5 rounded-2xl text-[14px] leading-relaxed shadow-lg ${
-                                                            msg.role === "user" 
-                                                            ? "bg-gradient-to-br from-purple-600/30 to-blue-600/30 border border-white/10 text-white rounded-tr-none" 
-                                                            : "bg-white/5 border border-white/5 text-gray-100 rounded-tl-none"
-                                                        }`}>
-                                                            <div className="whitespace-pre-wrap">{msg.content}</div>
-                                                        </div>
-                                                        <span className="text-[9px] font-bold text-gray-500 mt-2 uppercase tracking-widest px-1">{msg.role}</span>
-                                                    </motion.div>
-                                                ))}
-                                                {isGenerating && (
-                                                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start">
-                                                        <div className="max-w-[80%] p-5 rounded-2xl bg-white/5 border border-white/5 text-gray-400 rounded-tl-none">
-                                                            <div className="flex gap-1.5 items-center">
-                                                                <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-bounce [animation-delay:-0.3s]" />
-                                                                <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-bounce [animation-delay:-0.15s]" />
-                                                                <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-bounce" />
-                                                            </div>
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                                <div ref={chatEndRef} />
-                                            </>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            ) : (
-                                showPreview && (
-                                    <motion.div 
-                                        key="preview-active"
-                                        initial={{ opacity: 0, scale: 0.95 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.9 }}
-                                        className="w-[90%] aspect-video rounded-3xl overflow-hidden border border-gray-200 dark:border-white/10 bg-black relative shadow-2xl"
-                                    >
-                                        {isGenerating ? (
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 bg-black">
-                                                <div className="relative w-24 h-24">
-                                                    <div className="absolute inset-0 border-4 border-[#d9ff00]/10 rounded-full" />
-                                                    <div className="absolute inset-0 border-4 border-t-[#d9ff00] rounded-full animate-spin" />
-                                                </div>
-                                                <div className="flex flex-col items-center gap-2">
-                                                    <h2 className="text-[#d9ff00] text-sm font-black uppercase tracking-[0.4em] animate-pulse">Generating</h2>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="relative w-full h-full">
-                                                <img 
-                                                    src={mode === "image" ? "/generations/woman_saree.png" : "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=1200"} 
-                                                    className="w-full h-full object-cover" 
-                                                    alt="Generated Result" 
-                                                />
-                                                
-                                                {/* Preview Metadata Overlay */}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
-                                                    <div className="flex items-end justify-between">
-                                                        <div className="space-y-1">
-                                                            <span className="text-[10px] font-black text-[#d9ff00] uppercase tracking-widest">{mode} Success</span>
-                                                            <h3 className="text-2xl font-bold text-white max-w-xl">{prompt}</h3>
-                                                        </div>
-                                                        <div className="flex gap-3">
-                                                            <button onClick={() => setShowPreview(false)} className="h-12 px-6 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white text-xs font-bold transition-all">Create New</button>
-                                                            <button onClick={handleDownload} className="h-12 w-12 rounded-xl bg-[#d9ff00] flex items-center justify-center text-black shadow-lg hover:scale-105 active:scale-95 transition-all"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </motion.div>
-                                )
-                            )}
-                        </AnimatePresence>
-                    </div>
                     
                 <div className="w-full max-w-7xl flex gap-6 px-4">
                     
@@ -734,7 +626,7 @@ export default function AIChatPage() {
                     </div>
                 </div>
 
-                </div>
+
             </main>
             <Footer />
         </div>

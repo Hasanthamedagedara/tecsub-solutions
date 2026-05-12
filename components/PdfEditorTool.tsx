@@ -167,7 +167,7 @@ function MergeTab() {
             }
             setProgress(90);
             const mergedBytes = await mergedPdf.save();
-            const blob = new Blob([mergedBytes], { type: "application/pdf" });
+            const blob = new Blob([mergedBytes as any], { type: "application/pdf" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
@@ -284,7 +284,7 @@ function SplitTab({ initialFile }: { initialFile?: File | null }) {
                 const pages = await newPdf.copyPages(srcPdf, indices);
                 pages.forEach((page) => newPdf.addPage(page));
                 const newBytes = await newPdf.save();
-                const blob = new Blob([newBytes], { type: "application/pdf" });
+                const blob = new Blob([newBytes as any], { type: "application/pdf" });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
@@ -369,7 +369,7 @@ function CompressTab({ initialFile }: { initialFile?: File | null }) {
             const compressedSize = compressedBytes.length;
             setSizes({ original: originalSize, compressed: compressedSize });
 
-            const blob = new Blob([compressedBytes], { type: "application/pdf" });
+            const blob = new Blob([compressedBytes as any], { type: "application/pdf" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
@@ -486,7 +486,7 @@ function EditTextTab({ initialFile }: { initialFile?: File | null }) {
 
             setProgress(80);
             const editedBytes = await pdf.save();
-            const blob = new Blob([editedBytes], { type: "application/pdf" });
+            const blob = new Blob([editedBytes as any], { type: "application/pdf" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;

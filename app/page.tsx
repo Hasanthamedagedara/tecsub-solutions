@@ -146,7 +146,7 @@ const toolComponents: Record<string, () => JSX.Element> = {
     "Password Generator": PasswordGenerator,
     "QR Code Generator": QRCodeGenerator,
     "Base64 Encoder/Decoder": Base64Tool,
-    "PDF Editor": PdfEditorTool,
+    "PDF Editor": () => <PdfEditorTool />,
 };
 
 /* ─── Category Config ─── */
@@ -182,7 +182,7 @@ const getToolTags = (tool: { title: string; category: string; description: strin
     if (lower.includes("singlish") || lower.includes("sinhala")) tags.push("Sinhala", "Unicode", "Font");
     if (lower.includes("markdown")) tags.push("Markdown");
     if (lower.includes("unit")) tags.push("Math");
-    return [...new Set(tags)];
+    return Array.from(new Set(tags));
 };
 
 export default function Home() {

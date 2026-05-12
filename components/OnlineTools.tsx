@@ -521,7 +521,7 @@ function SinglishTranslator() {
     const singlishToSinhala: [RegExp, string][] = [
         /* Conjunct / special combos first */
         [/nndh/gi, "\u0DB1\u0DCA\u0DB0"], [/nnd/gi, "\u0DB1\u0DCA\u0DAF"],
-        [/nth/gi, "\u0DB1\u0DCA\u0DA: "], [/ndh/gi, "\u0DB1\u0DCA\u0DB0"],
+        [/nth/gi, "\u0DB1\u0DCA\u0DAD"], [/ndh/gi, "\u0DB1\u0DCA\u0DB0"],
         [/ng/gi, "\u0D82\u0D9C"], [/nk/gi, "\u0D82\u0D9A"],
         [/sh/gi, "\u0DC1"], [/Sh/gi, "\u0DC2"],
         [/th/gi, "\u0DAD"], [/Th/gi, "\u0DA7"],

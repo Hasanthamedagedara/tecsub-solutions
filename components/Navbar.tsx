@@ -522,8 +522,8 @@ export default function Navbar() {
                                             <a key={item.label} href={item.href} onClick={(e) => { e.preventDefault(); router.push(item.href); setMobileMenuOpen(false); }} className="kdj-mobile-link">
                                                 <span style={{ fontSize: '14px' }}>{item.icon}</span>
                                                 <span>{item.label}</span>
-                                                {item.badge && <span className="kdj-badge">{item.badge}</span>}
-                                                {item.soon && <span className="kdj-soon-badge">Soon</span>}
+                                                {(item as any).badge && <span className="kdj-badge">{(item as any).badge}</span>}
+                                                {(item as any).soon && <span className="kdj-soon-badge">Soon</span>}
                                             </a>
                                         ))}
                                     </div>

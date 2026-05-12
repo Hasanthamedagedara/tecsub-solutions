@@ -414,6 +414,10 @@ export const wallets = {
         label: "Binance (USDT TRC20)",
         address: "TXH2cjageXDFGTgKMvVFSwGwbo6YNJtEza",
     },
+    bybit: {
+        label: "Bybit (USDT TRC20)",
+        address: "TXH2cjageXDFGTgKMvVFSwGwbo6YNJtEza", // Using same address as placeholder
+    },
 };
 
 export const youtubeChannels = [
