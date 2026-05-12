@@ -310,6 +310,13 @@ export const downloads = [
     },
 ];
 
+export const videos = [
+    { id: "su_GXRGReTA", title: "Tecsub AI Website Review Masterclass" },
+    { id: "_BwZvuJiCuc", title: "Tecsub Full-Stack App Development" },
+    { id: "v_7Y66M_X7I", title: "Modern Web Design Trends 2026" },
+    { id: "N6v5A6L_X1I", title: "The Future of AI in Coding" },
+];
+
 export const wallets = {
     binance: {
         label: "Binance (USDT TRC20)",
