@@ -40,7 +40,8 @@ const productsMenu = {
         { label: "Tecsub Audio Converter", desc: "Convert 20+ audio formats", icon: "🔊", href: "/audio-converter", badge: "NEW", color: "#8b5cf6" },
         { label: "Tecsub Video Converter", desc: "Professional video conversion", icon: "🎥", href: "/video-converter", badge: "NEW", color: "#ef4444" },
         { label: "Tecsub Movie Indexer", desc: "Legal movie search dork generator", icon: "🎬", href: "/movies/indexer", badge: "NEW", color: "#ef4444" },
-        { label: "Tecsub Research Discovery", desc: "Find free research papers instantly", icon: "🔬", href: "/research", badge: "NEW", color: "#3b82f6" },
+        { label: "Tecsub Research Tool", desc: "Find free research papers instantly", icon: "🔬", href: "/research", badge: "NEW", color: "#3b82f6" },
+        { label: "Tecsub Envato Downloader", desc: "Premium Envato Elements downloader", icon: "🍃", href: "/envato", badge: "PRO", color: "#82b440" },
     ],
 };
 

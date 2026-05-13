@@ -233,7 +233,7 @@ export const onlineTools = [
         href: "/keywords"
     },
     {
-        title: "Envato Pro Downloader",
+        title: "Tecsub Envato Downloader",
         description: "Bypass premium restrictions and download Envato Elements assets for TECSUB Pro members.",
         category: "Utility",
         icon: "🍃",
@@ -305,7 +305,7 @@ export const onlineTools = [
         badge: "NEW"
     },
     {
-        title: "Tecsub Research Discovery",
+        title: "Tecsub Research Tool",
         description: "Find and view millions of open-access research papers instantly using DOI or URL.",
         category: "Utility",
         icon: "🔬",

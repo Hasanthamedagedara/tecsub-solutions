@@ -34,7 +34,8 @@ const sidebarTools = [
     { title: "Audio Converter", href: "/audio-converter", icon: "🔊" },
     { title: "Video Converter", href: "/video-converter", icon: "🎥" },
     { title: "Movie Indexer", href: "/movies/indexer", icon: "🎬" },
-    { title: "Research Discovery", href: "/research", icon: "🔬" },
+    { title: "Research Tool", href: "/research", icon: "🔬" },
+    { title: "Envato Downloader", href: "/envato", icon: "🍃" },
     { title: "AI Prompts", href: "/prompts", icon: "🤖" },
     { title: "File Editor", href: "/editor", icon: "✏️" },
 ];

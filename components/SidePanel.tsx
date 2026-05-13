@@ -20,6 +20,8 @@ const sidebarItems: SidebarItem[] = [
     { icon: "", label: "Explore", href: "", type: "section-title" },
     { icon: "🛠️", label: "Tools", href: "/tools" },
     { icon: "📰", label: "News", href: "/news" },
+    { icon: "🔬", label: "Research Tool", href: "/research" },
+    { icon: "🍃", label: "Envato", href: "/envato" },
     { icon: "🤖", label: "Prompts", href: "/prompts" },
     { icon: "📦", label: "Software", href: "/explore" },
     { icon: "📱", label: "Apps", href: "/apps" },
