@@ -33,6 +33,8 @@ const sidebarTools = [
     { title: "Audio Splitter", href: "/audio-splitter", icon: "🎵" },
     { title: "Audio Converter", href: "/audio-converter", icon: "🔊" },
     { title: "Video Converter", href: "/video-converter", icon: "🎥" },
+    { title: "Movie Indexer", href: "/movies/indexer", icon: "🎬" },
+    { title: "Research Discovery", href: "/research", icon: "🔬" },
     { title: "AI Prompts", href: "/prompts", icon: "🤖" },
     { title: "File Editor", href: "/editor", icon: "✏️" },
 ];

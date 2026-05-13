@@ -39,6 +39,8 @@ const productsMenu = {
         { label: "Tecsub Audio Splitter", desc: "AI-powered music splitting", icon: "🎵", href: "/audio-splitter", badge: "NEW", color: "#6366f1" },
         { label: "Tecsub Audio Converter", desc: "Convert 20+ audio formats", icon: "🔊", href: "/audio-converter", badge: "NEW", color: "#8b5cf6" },
         { label: "Tecsub Video Converter", desc: "Professional video conversion", icon: "🎥", href: "/video-converter", badge: "NEW", color: "#ef4444" },
+        { label: "Tecsub Movie Indexer", desc: "Legal movie search dork generator", icon: "🎬", href: "/movies/indexer", badge: "NEW", color: "#ef4444" },
+        { label: "Tecsub Research Discovery", desc: "Find free research papers instantly", icon: "🔬", href: "/research", badge: "NEW", color: "#3b82f6" },
     ],
 };
 

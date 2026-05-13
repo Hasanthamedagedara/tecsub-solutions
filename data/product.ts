@@ -295,6 +295,24 @@ export const onlineTools = [
         href: "/video-converter",
         badge: "NEW"
     },
+    {
+        title: "Tecsub Movie Indexer",
+        description: "Generate advanced Google Dorks to find direct download links for movies and TV series legal way.",
+        category: "Utility",
+        icon: "🎬",
+        color: "#ef4444",
+        href: "/movies/indexer",
+        badge: "NEW"
+    },
+    {
+        title: "Tecsub Research Discovery",
+        description: "Find and view millions of open-access research papers instantly using DOI or URL.",
+        category: "Utility",
+        icon: "🔬",
+        color: "#3b82f6",
+        href: "/research",
+        badge: "NEW"
+    },
 ];
 
 export const techNews = [

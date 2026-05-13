@@ -269,7 +269,15 @@ export default function MoviesPage() {
                                     <div className="flex-1 space-y-6">
                                         <div>
                                             <h1 className="text-3xl lg:text-4xl font-bold mb-2">{selectedMovie?.title} ({selectedMovie?.year}) Sinhala Subtitles</h1>
-                                            <p className="text-xl text-yt-red font-medium">{selectedMovie?.sinhalaTitle}</p>
+                                            <div className="flex items-center gap-4">
+                                                <p className="text-xl text-yt-red font-medium">{selectedMovie?.sinhalaTitle}</p>
+                                                <a 
+                                                    href={`/movies/indexer?title=${encodeURIComponent(selectedMovie?.title || "")}`}
+                                                    className="px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-[10px] font-bold tracking-widest uppercase flex items-center gap-2 transition-all"
+                                                >
+                                                    🔍 Find Direct Link
+                                                </a>
+                                            </div>
                                         </div>
 
                                         <div className="flex flex-wrap gap-4 items-center">
