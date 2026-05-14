@@ -862,6 +862,22 @@ html.light .kdj-mobile-menu-header { border-bottom-color: #e5e5e5; }
 html.light .kdj-mobile-link { color: #222; }
 html.light .kdj-mobile-link:hover { background: rgba(0,0,0,0.04); }
 
+html.light .kdj-mega-sidebar { border-right-color: #eee; }
+html.light .kdj-mega-sidebar-item { color: #333; }
+html.light .kdj-mega-sidebar-item:hover { background: rgba(0,0,0,0.04); }
+html.light .kdj-mega-sidebar-item.active { background: rgba(34, 197, 94, 0.08); color: #22c55e; }
+html.light .kdj-mega-sidebar-item.active .kdj-mega-sidebar-desc { color: #22c55e; }
+html.light .kdj-mega-sidebar-label { color: #111; }
+html.light .kdj-mega-sidebar-desc { color: #666; }
+
+html.light .kdj-mega-card { background: #f8f8f8; border-color: #eee; }
+html.light .kdj-mega-card:hover { background: #fff; border-color: #22c55e; box-shadow: 0 8px 24px rgba(34, 197, 94, 0.1); }
+html.light .kdj-mega-card-label { color: #111; }
+html.light .kdj-mega-card-desc { color: #666; }
+html.light .kdj-mega-card-icon { background: #fff; border-color: #eee; }
+
+html.light .kdj-mega-footer { border-top-color: #eee; }
+
 /* ═══════════════════════════════════════════════
    YouTube Filter Chip Bar
    ═══════════════════════════════════════════════ */
