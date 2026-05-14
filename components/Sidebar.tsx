@@ -38,6 +38,11 @@ const sidebarTools = [
     { title: "Envato Downloader", href: "/envato", icon: "🍃" },
     { title: "AI Prompts", href: "/prompts", icon: "🤖" },
     { title: "File Editor", href: "/editor", icon: "✏️" },
+    { title: "Text Summarizer", href: "/ai-tools/summarizer", icon: "📝" },
+    { title: "Paraphraser", href: "/ai-tools/paraphraser", icon: "🔄" },
+    { title: "Plagiarism Check", href: "/ai-tools/plagiarism", icon: "🔍" },
+    { title: "Prompt Generator", href: "/ai-tools/prompt-generator", icon: "⚡" },
+    { title: "AI Humanizer", href: "/ai-tools/humanizer", icon: "👤" },
 ];
 
 const sidebarContent = [

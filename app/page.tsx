@@ -108,7 +108,7 @@ function QRCodeGenerator() {
         <div className="space-y-4">
             <input type="text" value={text} onChange={(e) => setText(e.target.value)} placeholder="Enter text or URL..." className="tool-input" />
             <button onClick={generate} className="tool-btn-primary w-full">📱 Generate QR Code</button>
-            {qr && <div className="text-center p-4 rounded-lg bg-white"><img src={qr} alt="QR" className="mx-auto" style={{ maxWidth: "200px" }} /></div>}
+            {qr && <div className="text-center p-4 rounded-lg bg-white"><img src={qr} alt="Generated QR Code for Tecsub Solutions" className="mx-auto" style={{ maxWidth: "200px" }} /></div>}
         </div>
     );
 }
@@ -290,6 +290,14 @@ export default function Home() {
 
                     {/* Main Content */}
                     <main className="kdj-tools-main">
+                        {/* SEO Header - Visually Hidden */}
+                        <h1 className="sr-only">Tecsub Solutions | Professional Software Development & AI Tools</h1>
+                        
+                        <div className="mb-8">
+                            <h2 className="text-3xl font-black italic tracking-tighter gradient-text uppercase">Online Utility Tools</h2>
+                            <p className="text-[10px] font-black text-gray-500 tracking-[0.3em] uppercase">Productivity & Development Workspace</p>
+                        </div>
+
                         {/* Search Bar */}
                         <div className="kdj-tools-search-wrap" style={{ marginBottom: "24px" }}>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="kdj-tools-search-icon">

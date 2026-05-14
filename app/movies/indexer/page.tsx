@@ -134,7 +134,7 @@ function IndexerContent() {
                                             onClick={triggerSearch}
                                             className="flex-1 bg-white text-black font-black py-4 rounded-2xl flex items-center justify-center gap-3 hover:bg-white/90 transition-all group"
                                         >
-                                            <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google" />
+                                            <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google Search Engine" />
                                             SEARCH ON GOOGLE
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="group-hover:translate-x-1 transition-transform">
                                                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />

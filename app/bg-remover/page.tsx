@@ -113,7 +113,7 @@ export default function BgRemoverPage() {
                                                 animate={{ opacity: 1, scale: 1 }}
                                                 className="relative group"
                                             >
-                                                <img src={result} alt="Result" className="max-h-[400px] rounded-2xl drop-shadow-2xl" />
+                                                <img src={result} alt="Background removal result from Tecsub AI" className="max-h-[400px] rounded-2xl drop-shadow-2xl" />
                                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all rounded-2xl flex items-center justify-center">
                                                     <button className="opacity-0 group-hover:opacity-100 px-8 py-3 bg-white text-black rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-2xl hover:scale-110">Download PNG</button>
                                                 </div>

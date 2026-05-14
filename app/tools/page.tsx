@@ -7,11 +7,7 @@ import { useRouter } from "next/navigation";
 import Footer from "@/components/Footer";
 import { onlineTools } from "@/data/product";
 
-const BROWSE_CATEGORIES = [
-    { id: "online", label: "Online Products", sub: "16 web apps", icon: "🌐" },
-    { id: "desktop", label: "Desktop Apps", sub: "2 desktop apps", icon: "💻" },
-    { id: "games", label: "Games", sub: "Retro & modern", icon: "🎮" },
-];
+
 
 export default function OnlineToolsPage() {
     const router = useRouter();
@@ -19,11 +15,27 @@ export default function OnlineToolsPage() {
     const [searchQuery, setSearchQuery] = useState("");
 
     const filteredTools = useMemo(() => {
-        return onlineTools.filter(tool => 
+        let tools = onlineTools;
+        if (activeCategory === "games") {
+            tools = tools.filter(t => t.category === "Games");
+        } else if (activeCategory === "ai-writing") {
+            tools = tools.filter(t => t.category === "AI");
+        } else if (activeCategory === "online") {
+            tools = tools.filter(t => t.category !== "Games");
+        }
+
+        return tools.filter(tool => 
             tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             tool.description.toLowerCase().includes(searchQuery.toLowerCase())
         );
-    }, [searchQuery]);
+    }, [searchQuery, activeCategory]);
+
+    const categories = useMemo(() => [
+        { id: "online", label: "Online Products", sub: `${onlineTools.filter(t => t.category !== "Games").length} web apps`, icon: "🌐" },
+        { id: "desktop", label: "Desktop Apps", sub: "2 desktop apps", icon: "💻" },
+        { id: "games", label: "Games", sub: `${onlineTools.filter(t => t.category === "Games").length} mini games`, icon: "🎮" },
+        { id: "ai-writing", label: "AI & Writing Tools", sub: `${onlineTools.filter(t => t.category === "AI").length} AI tools`, icon: "✨" },
+    ], []);
 
     return (
         <div className="min-h-screen bg-[#0a0a0b] text-white font-sans selection:bg-red-500/30 overflow-hidden flex flex-col">
@@ -35,7 +47,7 @@ export default function OnlineToolsPage() {
                     <div>
                         <h2 className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-6">Browse</h2>
                         <div className="space-y-2">
-                            {BROWSE_CATEGORIES.map(cat => (
+                            {categories.map(cat => (
                                 <button 
                                     key={cat.id}
                                     onClick={() => setActiveCategory(cat.id)}
@@ -59,6 +71,11 @@ export default function OnlineToolsPage() {
 
                 {/* ═══ Right Pane: Scrollable Tools ═══ */}
                 <section className="flex-1 flex flex-col overflow-hidden">
+                    <div className="px-10 pt-8 pb-4">
+                        <h1 className="text-3xl font-black italic tracking-tighter gradient-text uppercase mb-1">Tecsub Online Tools</h1>
+                        <p className="text-[10px] font-black text-gray-500 tracking-[0.3em] uppercase">Professional Software & Engineering Solutions</p>
+                    </div>
+                    
                     {/* Search Area */}
                     <div className="px-10 py-6 border-b border-white/5 bg-[#0a0a0b]/80 backdrop-blur-xl z-10 flex items-center justify-between">
                         <div className="relative flex-1 max-w-xl">

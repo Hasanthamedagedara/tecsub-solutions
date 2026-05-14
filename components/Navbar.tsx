@@ -7,6 +7,7 @@ import { useRouter, usePathname } from "next/navigation";
 import AuthButton from "@/components/AuthButton";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User, signOut } from "firebase/auth";
+import { onlineTools, downloads } from "@/data/product";
 
 /* ─── Detect if running inside Android WebView app ─── */
 function isAppWebView(): boolean {
@@ -19,31 +20,12 @@ function isAppWebView(): boolean {
 }
 
 /* ─── Nav Menu Data ─── */
-const productsMenu = {
-    browse: [
-        { label: "Online Products", desc: "6 web apps", icon: "🌐", href: "/apps", active: true },
-        { label: "Desktop Apps", desc: "1 desktop app", icon: "💻", href: "/software" },
-        { label: "Games", desc: "Retro & modern web games", icon: "🎮", href: "/games" },
-    ],
-    items: [
-        { label: "Tecsub Tools", desc: "Free web-based tools & utilities", icon: "🔧", href: "/tools", color: "#6366f1" },
-        { label: "Tecsub Designer", desc: "Advanced canvas design tool", icon: "🎨", href: "/designer", badge: "HOT", color: "#dc2626" },
-        { label: "Tecsub Sinhala Typing", desc: "Sinhala Unicode typing tool", icon: "🌍", href: "/singlish", badge: "NEW", color: "#22c55e" },
-        { label: "Tecsub Captions", desc: "AI video subtitle generator", icon: "🎫", href: "/captions", badge: "NEW", color: "#ec4899" },
-        { label: "Tecsub OCR Scanner", desc: "Image to Sinhala text", icon: "📸", href: "/ocr", badge: "HOT", color: "#10b981" },
-        { label: "Tecsub BG Remover", desc: "Remove image background", icon: "✂️", href: "/bg-remover", badge: "NEW", color: "#f59e0b" },
-        { label: "Tecsub Image Enhancer", desc: "AI photo upscaling", icon: "🪄", href: "/enhancer", color: "#3b82f6" },
-        { label: "Tecsub AI Ground", desc: "Sinhala AI assistant", icon: "✨", href: "/tools", color: "#a855f7" },
-        { label: "Tecsub Edito", desc: "Professional video & screen editor", icon: "🎬", href: "/software", color: "#6366f1" },
-        { label: "Tecsub POS", desc: "Integrated POS System", icon: "🖥️", href: "/pos", color: "#22c55e" },
-        { label: "Tecsub Audio Splitter", desc: "AI-powered music splitting", icon: "🎵", href: "/audio-splitter", badge: "NEW", color: "#6366f1" },
-        { label: "Tecsub Audio Converter", desc: "Convert 20+ audio formats", icon: "🔊", href: "/audio-converter", badge: "NEW", color: "#8b5cf6" },
-        { label: "Tecsub Video Converter", desc: "Professional video conversion", icon: "🎥", href: "/video-converter", badge: "NEW", color: "#ef4444" },
-        { label: "Tecsub Movie Indexer", desc: "Legal movie search dork generator", icon: "🎬", href: "/movies/indexer", badge: "NEW", color: "#ef4444" },
-        { label: "Tecsub Research Tool", desc: "Find free research papers instantly", icon: "🔬", href: "/research", badge: "NEW", color: "#3b82f6" },
-        { label: "Tecsub Envato Downloader", desc: "Premium Envato Elements downloader", icon: "🍃", href: "/envato", badge: "PRO", color: "#82b440" },
-    ],
-};
+const MEGA_CATEGORIES = [
+    { id: "online", label: "Online Products", desc: "Professional web tools", icon: "🌐" },
+    { id: "desktop", label: "Desktop Apps", desc: "Native software", icon: "💻" },
+    { id: "games", label: "Games", desc: "Retro & modern arcade", icon: "🎮" },
+    { id: "ai-writing", label: "AI & Writing Tools", desc: "Next-gen writing assistants", icon: "✨" },
+];
 
 const resourcesMenu = [
     { label: "Blog", desc: "Articles & tutorials", icon: "📝", href: "/news", color: "#6366f1" },
@@ -81,6 +63,7 @@ export default function Navbar() {
     const [searchQuery, setSearchQuery] = useState("");
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    const [activeMegaCategory, setActiveMegaCategory] = useState("online");
     const [profileOpen, setProfileOpen] = useState(false);
     const [isApp, setIsApp] = useState(false);
     const [user, setUser] = useState<User | null>(null);
@@ -158,6 +141,48 @@ export default function Navbar() {
         dropdownTimeoutRef.current = setTimeout(() => setActiveDropdown(null), 200);
     }, []);
 
+    const getFilteredItems = useCallback(() => {
+        if (activeMegaCategory === "online") {
+            return onlineTools.filter(t => t.category !== "Games" && t.category !== "AI").map(t => ({
+                label: t.title,
+                desc: t.description,
+                icon: t.icon,
+                href: t.href || "/tools",
+                color: t.color,
+                badge: (t as any).badge
+            }));
+        }
+        if (activeMegaCategory === "desktop") {
+            return downloads.map(d => ({
+                label: d.name,
+                desc: d.description,
+                icon: d.icon,
+                href: "/software",
+                color: "#6366f1"
+            }));
+        }
+        if (activeMegaCategory === "games") {
+            return onlineTools.filter(t => t.category === "Games").map(t => ({
+                label: t.title,
+                desc: t.description,
+                icon: t.icon,
+                href: t.href || "/games",
+                color: t.color
+            }));
+        }
+        if (activeMegaCategory === "ai-writing") {
+            return onlineTools.filter(t => t.category === "AI").map(t => ({
+                label: t.title.replace("Tecsub ",""),
+                desc: t.description,
+                icon: t.icon,
+                href: t.href || "/ai-tools",
+                color: t.color,
+                badge: (t as any).badge
+            }));
+        }
+        return [];
+    }, [activeMegaCategory]);
+
     if (isApp) return null;
 
     /* ─── Reusable Dropdown Item ─── */
@@ -171,18 +196,23 @@ export default function Navbar() {
                 setActiveDropdown(null);
                 onClick?.();
             }}
-            className={`kdj-dropdown-item ${item.soon ? 'kdj-soon' : ''}`}
+            className={`kdj-mega-card ${item.soon ? 'kdj-soon' : ''}`}
         >
-            <div className="kdj-dropdown-icon" style={{ background: `${item.color || '#6366f1'}20`, color: item.color || '#6366f1' }}>
-                <span style={{ fontSize: '16px' }}>{item.icon}</span>
+            <div className="kdj-mega-card-icon" style={{ background: `${item.color || '#6366f1'}10`, color: item.color || '#6366f1' }}>
+                <span style={{ fontSize: '18px' }}>{item.icon}</span>
             </div>
-            <div className="kdj-dropdown-text">
-                <span className="kdj-dropdown-label">
-                    {item.label}
-                    {item.badge && <span className="kdj-badge">{item.badge}</span>}
-                    {item.soon && <span className="kdj-soon-badge">Soon</span>}
-                </span>
-                <span className="kdj-dropdown-desc">{item.desc}</span>
+            <div className="kdj-mega-card-text">
+                <div className="kdj-mega-card-label-wrap">
+                    <span className="kdj-mega-card-label">
+                        {item.label}
+                    </span>
+                    {item.badge && (
+                        <span className="kdj-card-badge" style={{ background: item.badge === 'HOT' ? '#ef4444' : '#3b82f6' }}>
+                            {item.badge}
+                        </span>
+                    )}
+                </div>
+                <span className="kdj-mega-card-desc">{item.desc}</span>
             </div>
         </a>
     );
@@ -252,30 +282,46 @@ export default function Navbar() {
                         <div className="kdj-mega-products">
                             <div className="kdj-mega-sidebar">
                                 <div className="kdj-mega-sidebar-title">BROWSE</div>
-                                {productsMenu.browse.map((cat) => (
-                                    <a
-                                        key={cat.label}
-                                        href={cat.href}
-                                        onClick={(e) => { e.preventDefault(); router.push(cat.href); setActiveDropdown(null); }}
-                                        className={`kdj-mega-sidebar-item ${cat.active ? 'active' : ''}`}
+                                {MEGA_CATEGORIES.map((cat) => (
+                                    <div
+                                        key={cat.id}
+                                        onMouseEnter={() => setActiveMegaCategory(cat.id)}
+                                        onClick={() => {
+                                            setActiveMegaCategory(cat.id);
+                                            // Optional: router.push(cat.href) if you want the category labels to be links too
+                                        }}
+                                        className={`kdj-mega-sidebar-item ${activeMegaCategory === cat.id ? 'active' : ''}`}
                                     >
                                         <span style={{ fontSize: '16px' }}>{cat.icon}</span>
                                         <div>
                                             <div className="kdj-mega-sidebar-label">{cat.label}</div>
                                             <div className="kdj-mega-sidebar-desc">{cat.desc}</div>
                                         </div>
-                                        {cat.active && <span className="kdj-mega-arrow">›</span>}
-                                    </a>
+                                        {activeMegaCategory === cat.id && <span className="kdj-mega-arrow">›</span>}
+                                    </div>
                                 ))}
                             </div>
-                            <div className="kdj-mega-grid">
-                                {productsMenu.items.map((item) => (
-                                    <DropdownItem key={item.label} item={item} />
-                                ))}
+                            <div className="kdj-mega-grid-wrap">
+                                <div className="kdj-mega-grid">
+                                    <AnimatePresence mode="wait">
+                                        <motion.div 
+                                            key={activeMegaCategory}
+                                            initial={{ opacity: 0, x: 10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -10 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="kdj-mega-grid-inner"
+                                        >
+                                            {getFilteredItems().map((item) => (
+                                                <DropdownItem key={item.label} item={item} />
+                                            ))}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
                             </div>
                         </div>
                         <div className="kdj-mega-footer">
-                            <a href="/apps" onClick={(e) => { e.preventDefault(); router.push('/apps'); setActiveDropdown(null); }} className="kdj-explore-link">
+                            <a href="/tools" onClick={(e) => { e.preventDefault(); router.push('/tools'); setActiveDropdown(null); }} className="kdj-explore-link">
                                 Explore all products →
                             </a>
                         </div>

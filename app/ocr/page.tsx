@@ -115,7 +115,7 @@ export default function OcrPage() {
                     
                     {image ? (
                         <div className="space-y-4">
-                            <img src={image} alt="Preview" className="max-h-64 mx-auto rounded-xl shadow-2xl" />
+                            <img src={image} alt="OCR Image Preview for Text Recognition" className="max-h-64 mx-auto rounded-xl shadow-2xl" />
                             <p className="text-[10px] font-black text-gray-400 uppercase">Click to replace image</p>
                         </div>
                     ) : (

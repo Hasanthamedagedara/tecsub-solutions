@@ -12,12 +12,12 @@ import Sidebar from "@/components/Sidebar";
 export const metadata: Metadata = {
     metadataBase: new URL("https://tecsub.online"),
     title: {
-        default: "Tecsub Solutions | Engineering the Future",
+        default: "Tecsub Solutions | Software Development & AI Tools Sri Lanka",
         template: "%s | Tecsub Solutions",
     },
     description:
-        "AI-driven reviews, high-performance applications, scalable software, and next-gen technology solutions by Tecsub Solutions.",
-    keywords: ["Tecsub", "AI", "Software", "Web Development", "Technology", "Solutions", "Tech News", "Online Tools", "Courses", "AI Prompts"],
+        "Tecsub Solutions provides high-performance software development, AI writing tools, and engineering solutions in Sri Lanka. Explore our next-gen applications.",
+    keywords: ["Tecsub Solutions", "Software Development Sri Lanka", "AI Tools", "Web Development", "Technology", "Engineering", "Online Tools", "Sri Lanka Tech"],
     authors: [{ name: "Tecsub Solutions", url: "https://tecsub.online" }],
     creator: "Tecsub Solutions",
     publisher: "Tecsub Solutions",
@@ -30,17 +30,19 @@ export const metadata: Metadata = {
         google: "ZPljKHMes5GVg_2Y3XubDmSRrLmCR9KXvOSC5fDNQ0k",
     },
     openGraph: {
-        title: "Tecsub Solutions",
-        description: "Engineering the Future — AI-driven reviews, high-performance apps & scalable software.",
+        title: "Tecsub Solutions | Engineering the Future",
+        description: "Leading software development and AI solutions provider in Sri Lanka.",
         url: "https://tecsub.online",
         siteName: "Tecsub Solutions",
+        images: [{ url: "https://tecsub.online/logo/tecsub.jpg", width: 1200, height: 630, alt: "Tecsub Solutions Logo" }],
         type: "website",
         locale: "en_US",
     },
     twitter: {
         card: "summary_large_image",
-        title: "Tecsub Solutions",
-        description: "Engineering the Future — AI-driven reviews, high-performance apps & scalable software.",
+        title: "Tecsub Solutions | Engineering the Future",
+        description: "High-performance software and AI tools from Tecsub Solutions.",
+        images: ["https://tecsub.online/logo/tecsub.jpg"],
     },
     alternates: {
         canonical: "https://tecsub.online",
@@ -50,6 +52,21 @@ export const metadata: Metadata = {
         shortcut: "/favicon.ico",
         apple: "/apple-icon.png",
     },
+};
+
+const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Tecsub Solutions",
+    "url": "https://tecsub.online",
+    "logo": "https://tecsub.online/logo/tecsub.jpg",
+    "sameAs": [
+        "https://www.facebook.com/Hasanthamedagedara",
+        "https://www.youtube.com/@tecsub.0",
+        "https://whatsapp.com/channel/0029Vb6cPkODuMRkMeIaT31F",
+        "https://t.me/Hasanthamedagedra"
+    ],
+    "description": "Tecsub Solutions is a leading software development provider in Sri Lanka, specializing in AI-driven tools and high-performance applications."
 };
 
 export default function RootLayout({
@@ -75,6 +92,10 @@ export default function RootLayout({
                         }
                     })();
                 `}} />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                />
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link

@@ -1,189 +1,54 @@
 "use client";
-
-import { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useRouter } from "next/navigation";
 
-const GRID_SIZE = 20;
-const INITIAL_SNAKE = [[10, 10], [10, 11], [10, 12]];
-const INITIAL_DIRECTION = [0, -1]; // Up
-const SPEED = 150;
+const GAMES = [
+    { id: "snake", title: "Snake Classic", desc: "Nokia 3310 retro snake game", icon: "🐍", color: "#8dad15", route: "/games/snake" },
+    { id: "angry-birds", title: "Angry Birds", desc: "Launch birds to destroy structures", icon: "🐦", color: "#ef4444", route: "/games/angry-birds" },
+    { id: "car-racing", title: "Mini Car Racing", desc: "Dodge traffic on the highway", icon: "🏎️", color: "#3b82f6", route: "/games/car-racing" },
+    { id: "subway-run", title: "Subway Runner", desc: "Run, jump & dodge obstacles", icon: "🏃", color: "#22c55e", route: "/games/subway-run" },
+    { id: "bubble-shooter", title: "Bubble Shooter", desc: "Match & pop colorful bubbles", icon: "🫧", color: "#a855f7", route: "/games/bubble-shooter" },
+    { id: "media-match", title: "Media Match", desc: "Memory card matching game", icon: "🎴", color: "#f59e0b", route: "/games/media-match" },
+];
 
 export default function GamesPage() {
-    const [snake, setSnake] = useState(INITIAL_SNAKE);
-    const [food, setFood] = useState([5, 5]);
-    const [direction, setDirection] = useState(INITIAL_DIRECTION);
-    const [gameOver, setGameOver] = useState(false);
-    const [score, setScore] = useState(0);
-    const [isPaused, setIsPaused] = useState(true);
-    const gameRef = useRef<HTMLDivElement>(null);
-
-    const generateFood = useCallback(() => {
-        let newFood;
-        while (true) {
-            newFood = [
-                Math.floor(Math.random() * GRID_SIZE),
-                Math.floor(Math.random() * GRID_SIZE)
-            ];
-            const isColliding = snake.some(seg => seg[0] === newFood![0] && seg[1] === newFood![1]);
-            if (!isColliding) break;
-        }
-        setFood(newFood);
-    }, [snake]);
-
-    const moveSnake = useCallback(() => {
-        if (gameOver || isPaused) return;
-
-        const newSnake = [...snake];
-        const head = [newSnake[0][0] + direction[0], newSnake[0][1] + direction[1]];
-
-        // Wall collision
-        if (head[0] < 0 || head[0] >= GRID_SIZE || head[1] < 0 || head[1] >= GRID_SIZE) {
-            setGameOver(true);
-            return;
-        }
-
-        // Self collision
-        if (newSnake.some(seg => seg[0] === head[0] && seg[1] === head[1])) {
-            setGameOver(true);
-            return;
-        }
-
-        newSnake.unshift(head);
-
-        // Food collision
-        if (head[0] === food[0] && head[1] === food[1]) {
-            setScore(prev => prev + 10);
-            generateFood();
-        } else {
-            newSnake.pop();
-        }
-
-        setSnake(newSnake);
-    }, [snake, direction, food, gameOver, isPaused, generateFood]);
-
-    useEffect(() => {
-        const interval = setInterval(moveSnake, SPEED);
-        return () => clearInterval(interval);
-    }, [moveSnake]);
-
-    useEffect(() => {
-        const handleKeyPress = (e: KeyboardEvent) => {
-            switch (e.key) {
-                case "ArrowUp": if (direction[1] !== 1) setDirection([0, -1]); break;
-                case "ArrowDown": if (direction[1] !== -1) setDirection([0, 1]); break;
-                case "ArrowLeft": if (direction[0] !== 1) setDirection([-1, 0]); break;
-                case "ArrowRight": if (direction[0] !== -1) setDirection([1, 0]); break;
-                case " ": setIsPaused(prev => !prev); break;
-            }
-        };
-        window.addEventListener("keydown", handleKeyPress);
-        return () => window.removeEventListener("keydown", handleKeyPress);
-    }, [direction]);
-
-    const resetGame = () => {
-        setSnake(INITIAL_SNAKE);
-        setDirection(INITIAL_DIRECTION);
-        setGameOver(false);
-        setScore(0);
-        setIsPaused(false);
-        generateFood();
-    };
-
+    const router = useRouter();
     return (
         <div className="min-h-screen bg-[#050505] text-white">
             <Navbar />
-
-            <main className="pt-32 pb-20 px-4 max-w-4xl mx-auto flex flex-col items-center">
-                <div className="text-center mb-12">
-                    <h1 className="text-5xl font-black italic tracking-tighter mb-2 gradient-text uppercase">Tecsub Games</h1>
-                    <p className="text-[10px] font-black text-gray-500 tracking-[0.3em] uppercase">Retro Arcade Hub</p>
+            <main className="pt-32 pb-20 px-4 max-w-5xl mx-auto">
+                <div className="text-center mb-16">
+                    <h1 className="text-5xl sm:text-6xl font-black italic tracking-tighter mb-2 gradient-text uppercase">Tecsub Games</h1>
+                    <p className="text-[10px] font-black text-gray-500 tracking-[0.3em] uppercase">Retro & Modern Arcade Hub — {GAMES.length} Games</p>
                 </div>
-
-                {/* Nokia Style Console */}
-                <div className="relative p-8 bg-[#2a2a2a] rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.5)] border-4 border-[#3a3a3a]">
-                    <div className="absolute top-4 left-1/2 -translate-x-1/2 text-[8px] font-black text-white/20 tracking-widest uppercase">Tecsub 3310</div>
-                    
-                    {/* Screen */}
-                    <div className="bg-[#8dad15] w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] rounded-xl border-8 border-black p-1 relative overflow-hidden flex flex-col">
-                        <div className="flex justify-between px-2 py-1 text-black font-mono text-[10px] font-black uppercase border-b border-black/20">
-                            <span>Score: {score}</span>
-                            <span>{isPaused ? "Paused" : "Playing"}</span>
-                        </div>
-
-                        <div className="flex-1 relative">
-                            {/* Grid rendering */}
-                            <div 
-                                className="grid w-full h-full"
-                                style={{ gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)` }}
-                            >
-                                {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
-                                    const x = i % GRID_SIZE;
-                                    const y = Math.floor(i / GRID_SIZE);
-                                    const isSnake = snake.some(seg => seg[0] === x && seg[1] === y);
-                                    const isFood = food[0] === x && food[1] === y;
-                                    const isHead = snake[0][0] === x && snake[0][1] === y;
-
-                                    return (
-                                        <div key={i} className="flex items-center justify-center p-[1px]">
-                                            <div className={`w-full h-full rounded-[1px] transition-all ${isHead ? "bg-black scale-110" : isSnake ? "bg-black/80" : isFood ? "bg-black animate-pulse scale-90 rounded-full" : "opacity-5"}`} />
-                                        </div>
-                                    );
-                                })}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {GAMES.map((game, i) => (
+                        <motion.button
+                            key={game.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.08 }}
+                            onClick={() => router.push(game.route)}
+                            className="group p-6 rounded-[2rem] border text-left transition-all hover:scale-[1.02] relative overflow-hidden"
+                            style={{ background: `${game.color}08`, borderColor: `${game.color}20` }}
+                        >
+                            <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-5 -translate-y-1/2 translate-x-1/2" style={{ background: game.color }} />
+                            <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">{game.icon}</div>
+                            <h3 className="text-lg font-black uppercase tracking-tight mb-1" style={{ color: game.color }}>{game.title}</h3>
+                            <p className="text-xs text-gray-500">{game.desc}</p>
+                            <div className="mt-4 flex items-center gap-2">
+                                <span className="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest" style={{ background: `${game.color}15`, color: game.color }}>Play Now →</span>
                             </div>
-
-                            <AnimatePresence>
-                                {gameOver && (
-                                    <motion.div 
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="absolute inset-0 bg-[#8dad15] flex flex-col items-center justify-center text-black z-20"
-                                    >
-                                        <h2 className="text-3xl font-black italic mb-4 uppercase">Game Over</h2>
-                                        <p className="text-sm font-bold mb-6">Final Score: {score}</p>
-                                        <button 
-                                            onClick={resetGame}
-                                            className="px-8 py-3 bg-black text-[#8dad15] rounded-lg font-black text-[10px] uppercase tracking-widest hover:scale-110 transition-transform"
-                                        >
-                                            Restart
-                                        </button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
-                            {isPaused && !gameOver && (
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/5 backdrop-blur-[1px]">
-                                    <button 
-                                        onClick={() => setIsPaused(false)}
-                                        className="px-10 py-4 bg-black text-[#8dad15] rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl scale-110"
-                                    >
-                                        Press Start
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Controls for mobile */}
-                    <div className="mt-8 grid grid-cols-3 gap-2 sm:hidden">
-                        <div />
-                        <button onClick={() => setDirection([0, -1])} className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-xl">↑</button>
-                        <div />
-                        <button onClick={() => setDirection([-1, 0])} className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-xl">←</button>
-                        <button onClick={() => setIsPaused(prev => !prev)} className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-[8px] font-black">OK</button>
-                        <button onClick={() => setDirection([1, 0])} className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-xl">→</button>
-                        <div />
-                        <button onClick={() => setDirection([0, 1])} className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-xl">↓</button>
-                        <div />
-                    </div>
+                        </motion.button>
+                    ))}
                 </div>
-
-                <div className="mt-12 text-center text-gray-500">
-                    <p className="text-[10px] font-black uppercase tracking-widest">Controls: Arrow Keys to move · Space to pause</p>
+                <div className="mt-16 text-center text-gray-600">
+                    <p className="text-[10px] font-black uppercase tracking-widest">All games run 100% in your browser — no downloads needed</p>
                 </div>
             </main>
-
             <Footer />
         </div>
     );

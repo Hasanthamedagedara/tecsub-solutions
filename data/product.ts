@@ -313,6 +313,99 @@ export const onlineTools = [
         href: "/research",
         badge: "NEW"
     },
+    {
+        title: "Tecsub Text Summarizer",
+        description: "Summarize long articles, essays, and documents instantly with multiple output modes.",
+        category: "AI",
+        icon: "📝",
+        color: "#a855f7",
+        href: "/ai-tools/summarizer",
+        badge: "NEW"
+    },
+    {
+        title: "Tecsub Paraphrasing Tool",
+        description: "Rewrite text in different styles without changing the original meaning — perfect for students.",
+        category: "AI",
+        icon: "🔄",
+        color: "#3b82f6",
+        href: "/ai-tools/paraphraser",
+        badge: "NEW"
+    },
+    {
+        title: "Tecsub Plagiarism Checker",
+        description: "Check if your content is original with detailed sentence-by-sentence analysis and scoring.",
+        category: "AI",
+        icon: "🔍",
+        color: "#ef4444",
+        href: "/ai-tools/plagiarism",
+        badge: "NEW"
+    },
+    {
+        title: "Tecsub AI Prompt Generator",
+        description: "Generate optimized prompts for ChatGPT, Claude, and Gemini across writing, coding, and research.",
+        category: "AI",
+        icon: "⚡",
+        color: "#eab308",
+        href: "/ai-tools/prompt-generator",
+        badge: "NEW"
+    },
+    {
+        title: "Tecsub AI Humanizer",
+        description: "Transform AI-generated text into natural, human-like writing to bypass detection and improve flow.",
+        category: "AI",
+        icon: "👤",
+        color: "#22c55e",
+        href: "/ai-tools/humanizer",
+        badge: "NEW"
+    },
+    {
+        title: "Snake Classic",
+        description: "The legendary retro arcade game. Eat, grow, and don't hit the walls!",
+        category: "Games",
+        icon: "🐍",
+        color: "#8dad15",
+        href: "/games/snake",
+    },
+    {
+        title: "Angry Birds Mini",
+        description: "Physics-based destruction. Launch birds to take down the structures.",
+        category: "Games",
+        icon: "🐦",
+        color: "#ef4444",
+        href: "/games/angry-birds",
+    },
+    {
+        title: "Mini Car Racing",
+        description: "High-speed highway dodging. Test your reflexes in this retro racer.",
+        category: "Games",
+        icon: "🏎️",
+        color: "#3b82f6",
+        href: "/games/car-racing",
+    },
+    {
+        title: "Subway Runner",
+        description: "Endless dash through the tracks. Jump, duck, and collect coins.",
+        category: "Games",
+        icon: "🏃",
+        color: "#22c55e",
+        href: "/games/subway-run",
+    },
+    {
+        title: "Bubble Shooter",
+        description: "Classic match-3 bubble popper. Clear the board to win.",
+        category: "Games",
+        icon: "🫧",
+        color: "#a855f7",
+        href: "/games/bubble-shooter",
+    },
+    {
+        title: "Media Match",
+        description: "Memory training game with media icons. Match all pairs to win.",
+        category: "Games",
+        icon: "🎴",
+        color: "#f59e0b",
+        href: "/games/media-match",
+    },
 ];
 
 export const techNews = [
