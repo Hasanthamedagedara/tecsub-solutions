@@ -394,6 +394,30 @@ export function useAudioProcessor() {
         });
     }, []);
 
+    const setManualMode = useCallback((name: string, duration: number = 600) => {
+        setFileMeta({
+            name: name || "Manual Project",
+            size: 0,
+            duration: duration,
+            format: "MANUAL",
+            channels: 2,
+            sampleRate: 44100,
+        });
+        setWaveformData({
+            peaks: new Float32Array(2000).fill(0.05),
+            duration: duration,
+            sampleRate: 44100,
+        });
+        setChapters([{
+            id: "ch-0",
+            name: "Chapter 1",
+            start: 0,
+            end: duration,
+            color: CHAPTER_COLORS[0],
+        }]);
+        setStatus({ stage: "ready", progress: 100, message: "Manual mode enabled" });
+    }, []);
+
     /* ── Reset ── */
     const reset = useCallback(() => {
         if (sourceRef.current) {
@@ -416,7 +440,7 @@ export function useAudioProcessor() {
         audioBuffer, waveformData, silenceRegions, chapters, status, fileMeta,
         isPlaying, playbackTime,
         /* Actions */
-        analyzeFile, reanalyze, loadFile,
+        analyzeFile, reanalyze, loadFile, setManualMode,
         play, pause, seek,
         updateChapter, deleteChapter, addChapter, mergeChapters,
         setChapters, reset,

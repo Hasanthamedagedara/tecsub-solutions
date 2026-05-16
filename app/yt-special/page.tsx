@@ -40,6 +40,19 @@ export default function YTSpecialPage() {
     const [ytUrl, setYtUrl] = useState("");
     const [ytFetching, setYtFetching] = useState(false);
     const [ytError, setYtError] = useState("");
+    const [useProxy, setUseProxy] = useState(false);
+
+    const PROXIES = [
+        "https://api.allorigins.win/raw?url=",
+        "https://corsproxy.io/?",
+        "https://api.codetabs.com/v1/proxy?quest=",
+    ];
+
+    const COBALT_INSTANCES = [
+        "https://api.cobalt.tools/api/json",
+        "https://cobalt.sh/api/json",
+        "https://api.v0.cobalt.tools/api/json",
+    ];
 
     const isProcessing = processor.status.stage !== "idle" && processor.status.stage !== "ready" && processor.status.stage !== "error";
     const isReady = processor.status.stage === "ready";
@@ -65,7 +78,7 @@ export default function YTSpecialPage() {
     }, [handleFile]);
 
     /* ── YouTube link handler ── */
-    const handleYtFetch = useCallback(async () => {
+    const handleYtFetch = useCallback(async (retryWithProxy = false) => {
         const url = ytUrl.trim();
         if (!url) return;
         if (!isValidYtUrl(url)) {
@@ -74,51 +87,89 @@ export default function YTSpecialPage() {
         }
         setYtError("");
         setYtFetching(true);
+        if (retryWithProxy) setUseProxy(true);
 
-        try {
-            /* Try cobalt.tools API */
-            const res = await fetch("https://api.cobalt.tools/", {
+        const tryFetch = async (instanceUrl: string, body: any) => {
+            const fetchUrl = useProxy || retryWithProxy 
+                ? `${PROXIES[0]}${encodeURIComponent(instanceUrl)}`
+                : instanceUrl;
+            
+            return await fetch(fetchUrl, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    url: url,
-                    audioFormat: "mp3",
-                    isAudioOnly: true,
-                    filenameStyle: "basic",
-                }),
+                body: JSON.stringify(body),
             });
+        };
 
-            if (!res.ok) throw new Error(`Download service returned ${res.status}`);
-            const data = await res.json();
+        try {
+            let res;
+            let success = false;
+            let lastError = "";
 
+            const requestBody = {
+                url: url,
+                aFormat: "mp3",
+                isAudioOnly: true,
+                filepathStyle: "classic",
+            };
+
+            /* Try multiple instances */
+            for (const instance of COBALT_INSTANCES) {
+                try {
+                    res = await tryFetch(instance, requestBody);
+                    if (res.ok) {
+                        success = true;
+                        break;
+                    }
+                } catch (e) {
+                    lastError = (e as Error).message;
+                }
+            }
+
+            if (!success) throw new Error(lastError || "Download service unavailable. Try using the proxy option.");
+            
+            const data = await res!.json();
             if (data.status === "error" || data.status === "rate-limit") {
                 throw new Error(data.error?.code || data.text || "Service busy, try again later");
             }
 
-            const downloadUrl = data.url || data.audio;
+            const downloadUrl = data.url || data.audio || data.stream;
             if (!downloadUrl) throw new Error("No download URL returned");
 
-            /* Fetch the actual audio file — Try direct first, then CORS proxy */
+            /* Fetch the actual audio file with proxy rotation */
             let audioRes;
+            let audioBlob;
+            
+            const fetchMedia = async (pUrl: string) => {
+                const r = await fetch(pUrl);
+                if (!r.ok) throw new Error("Failed to download");
+                return await r.blob();
+            };
+
             try {
+                /* Try direct */
                 audioRes = await fetch(downloadUrl);
                 if (!audioRes.ok) throw new Error();
+                audioBlob = await audioRes.blob();
             } catch {
-                console.log("Direct fetch failed, trying CORS proxy...");
-                /* Fallback to AllOrigins CORS proxy for the media file */
-                audioRes = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(downloadUrl)}`);
+                console.log("Direct media fetch failed, trying proxy rotation...");
+                for (const proxy of PROXIES) {
+                    try {
+                        audioBlob = await fetchMedia(`${proxy}${encodeURIComponent(downloadUrl)}`);
+                        if (audioBlob) break;
+                    } catch (e) {
+                        console.warn(`Proxy ${proxy} failed`);
+                    }
+                }
             }
 
-            if (!audioRes.ok) throw new Error("Failed to download audio from provider");
-
-            const blob = await audioRes.blob();
-            if (blob.size < 100) throw new Error("Downloaded file is empty or too small");
+            if (!audioBlob || audioBlob.size < 100) throw new Error("Failed to download audio even with proxies.");
 
             const filename = data.filename || `youtube-${Date.now()}.mp3`;
-            const audioFile = new File([blob], filename, { type: blob.type || "audio/mpeg" });
+            const audioFile = new File([audioBlob], filename, { type: audioBlob.type || "audio/mpeg" });
 
             setYtFetching(false);
             handleFile(audioFile);
@@ -127,17 +178,14 @@ export default function YTSpecialPage() {
             setYtFetching(false);
             const msg = (err as Error).message;
             if (msg.includes("403") || msg.includes("forbidden")) {
-                setYtError("This video is restricted or private. Please try a different public video.");
+                setYtError("This video is restricted or private. Try the Proxy option or a different video.");
             } else if (msg.includes("429") || msg.includes("rate-limit")) {
-                setYtError("Download limit reached. Please wait a few minutes and try again.");
+                setYtError("Download limit reached. Please wait or use the Proxy option.");
             } else {
-                setYtError(
-                    "Could not fetch audio. This can happen with long videos or regional blocks. " +
-                    "Try another link or download manually and upload the file."
-                );
+                setYtError(msg || "Could not fetch audio. Regional blocks or long videos might be the cause.");
             }
         }
-    }, [ytUrl, isValidYtUrl, handleFile]);
+    }, [ytUrl, isValidYtUrl, handleFile, useProxy]);
 
     const handleExport = useCallback(async (format: ExportFormat, quality: ExportQuality) => {
         if (!file || processor.chapters.length === 0) return;
@@ -268,12 +316,30 @@ export default function YTSpecialPage() {
                                                     </div>
                                                 )}
 
-                                                {/* Error message */}
+                                                {/* Error message & Actions */}
                                                 {ytError && (
                                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                                                        className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-xs text-red-300 text-left leading-relaxed">
-                                                        <p className="font-bold mb-1">⚠️ Unable to fetch</p>
-                                                        <p className="text-red-300/60">{ytError}</p>
+                                                        className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-4 text-xs text-red-300 text-left leading-relaxed space-y-3">
+                                                        <div className="flex items-start gap-3">
+                                                            <span className="text-lg">⚠️</span>
+                                                            <div>
+                                                                <p className="font-bold mb-0.5 text-red-400">Unable to fetch audio</p>
+                                                                <p className="text-red-300/60">{ytError}</p>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div className="flex flex-wrap gap-2 pt-2 border-t border-red-500/10">
+                                                            {!useProxy && (
+                                                                <button onClick={() => handleYtFetch(true)}
+                                                                    className="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-lg font-bold transition-all flex items-center gap-2">
+                                                                    <span>🌐</span> Retry with Proxy
+                                                                </button>
+                                                            )}
+                                                            <button onClick={() => processor.setManualMode("YouTube Project: " + ytUrl.slice(-8), 1200)}
+                                                                className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white/60 rounded-lg font-bold transition-all flex items-center gap-2">
+                                                                <span>📝</span> Skip to Manual Editor
+                                                            </button>
+                                                        </div>
                                                     </motion.div>
                                                 )}
                                             </div>
