@@ -45,7 +45,7 @@ export default function YTSpecialPage() {
     const isReady = processor.status.stage === "ready";
 
     const isValidYtUrl = useCallback((url: string) => {
-        return /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|shorts\/|embed\/)|youtu\.be\/|music\.youtube\.com\/watch\?v=)/i.test(url.trim());
+        return /^(https?:\/\/)?(www\.|music\.|m\.)?(youtube\.com\/(watch\?v=|shorts\/|live\/|embed\/|v\/)|youtu\.be\/)/i.test(url.trim());
     }, []);
 
     const handleFile = useCallback(async (f: File) => {
