@@ -359,6 +359,15 @@ export const onlineTools = [
         badge: "NEW"
     },
     {
+        title: "Tecsub YT Special",
+        description: "AI-powered audio/video asset manager — auto-timestamps, silence removal, smart splitting, and format conversion.",
+        category: "Video",
+        icon: "🎬",
+        color: "#ff6b35",
+        href: "/yt-special",
+        badge: "HOT"
+    },
+    {
         title: "Snake Classic",
         description: "The legendary retro arcade game. Eat, grow, and don't hit the walls!",
         category: "Games",

@@ -11,90 +11,10 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/ai-tools/summarizer/page": [
+    "/yt-special/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/ai-tools/summarizer/page.js"
-    ],
-    "/games/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/games/page.js"
-    ],
-    "/games/snake/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/games/snake/page.js"
-    ],
-    "/games/angry-birds/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/games/angry-birds/page.js"
-    ],
-    "/games/car-racing/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/games/car-racing/page.js"
-    ],
-    "/games/subway-run/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/games/subway-run/page.js"
-    ],
-    "/games/bubble-shooter/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/games/bubble-shooter/page.js"
-    ],
-    "/games/media-match/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/games/media-match/page.js"
-    ],
-    "/ai-tools/summarizer/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/ai-tools/summarizer/layout.js"
-    ],
-    "/ai-tools/paraphraser/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/ai-tools/paraphraser/page.js"
-    ],
-    "/ai-tools/paraphraser/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/ai-tools/paraphraser/layout.js"
-    ],
-    "/research/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/research/page.js"
-    ],
-    "/apps/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/apps/page.js"
-    ],
-    "/tools/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/tools/page.js"
-    ],
-    "/tools/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/tools/layout.js"
-    ],
-    "/singlish/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/singlish/page.js"
-    ],
-    "/captions/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/captions/page.js"
+      "static/chunks/app/yt-special/page.js"
     ]
   }
 }

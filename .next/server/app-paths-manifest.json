@@ -1,7 +1,4 @@
 {
-  "/apps/page": "app/apps/page.js",
   "/page": "app/page.js",
-  "/captions/page": "app/captions/page.js",
-  "/singlish/page": "app/singlish/page.js",
-  "/tools/page": "app/tools/page.js"
+  "/yt-special/page": "app/yt-special/page.js"
 }

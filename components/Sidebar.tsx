@@ -43,6 +43,7 @@ const sidebarTools = [
     { title: "Plagiarism Check", href: "/ai-tools/plagiarism", icon: "🔍" },
     { title: "Prompt Generator", href: "/ai-tools/prompt-generator", icon: "⚡" },
     { title: "AI Humanizer", href: "/ai-tools/humanizer", icon: "👤" },
+    { title: "YT Special", href: "/yt-special", icon: "🎬" },
 ];
 
 const sidebarContent = [

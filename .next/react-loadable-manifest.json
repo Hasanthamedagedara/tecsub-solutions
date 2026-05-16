@@ -1,1 +1,44 @@
-{}
+{
+  "app\\yt-special\\page.tsx -> ./ChapterEditor": {
+    "id": "app\\yt-special\\page.tsx -> ./ChapterEditor",
+    "files": [
+      "static/chunks/_app-pages-browser_app_yt-special_ChapterEditor_tsx.js"
+    ]
+  },
+  "app\\yt-special\\page.tsx -> ./ExportPanel": {
+    "id": "app\\yt-special\\page.tsx -> ./ExportPanel",
+    "files": [
+      "static/chunks/_app-pages-browser_app_yt-special_ExportPanel_tsx.js"
+    ]
+  },
+  "app\\yt-special\\page.tsx -> ./ProcessingOverlay": {
+    "id": "app\\yt-special\\page.tsx -> ./ProcessingOverlay",
+    "files": [
+      "static/chunks/_app-pages-browser_app_yt-special_ProcessingOverlay_tsx.js"
+    ]
+  },
+  "app\\yt-special\\page.tsx -> ./WaveformTimeline": {
+    "id": "app\\yt-special\\page.tsx -> ./WaveformTimeline",
+    "files": [
+      "static/chunks/_app-pages-browser_app_yt-special_WaveformTimeline_tsx.js"
+    ]
+  },
+  "hooks\\useFFmpegSplitter.ts -> @ffmpeg/ffmpeg": {
+    "id": "hooks\\useFFmpegSplitter.ts -> @ffmpeg/ffmpeg",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_ffmpeg_ffmpeg_dist_esm_index_js.js"
+    ]
+  },
+  "hooks\\useFFmpegSplitter.ts -> @ffmpeg/util": {
+    "id": "hooks\\useFFmpegSplitter.ts -> @ffmpeg/util",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_ffmpeg_util_dist_esm_index_js.js"
+    ]
+  },
+  "hooks\\useFFmpegSplitter.ts -> jszip": {
+    "id": "hooks\\useFFmpegSplitter.ts -> jszip",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_jszip_dist_jszip_min_js.js"
+    ]
+  }
+}
