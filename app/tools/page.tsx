@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import { useRouter } from "next/navigation";
 import Footer from "@/components/Footer";
-import { onlineTools } from "@/data/product";
+import { onlineTools, pdfToolsMenu, pdfSubNav } from "@/data/product";
 
 
 
@@ -20,6 +20,15 @@ export default function OnlineToolsPage() {
             tools = tools.filter(t => t.category === "Games");
         } else if (activeCategory === "ai-writing") {
             tools = tools.filter(t => t.category === "AI");
+        } else if (activeCategory === "pdf-tools") {
+            tools = pdfToolsMenu.flatMap(group => group.items.map(item => ({
+                title: item.label,
+                description: `Professional PDF utility for ${item.label.toLowerCase()}`,
+                category: "PDF Tools",
+                icon: item.icon,
+                href: item.href,
+                badge: (item as any).badge
+            }))) as any[];
         } else if (activeCategory === "online") {
             tools = tools.filter(t => t.category !== "Games");
         }
@@ -32,6 +41,7 @@ export default function OnlineToolsPage() {
 
     const categories = useMemo(() => [
         { id: "online", label: "Online Products", sub: `${onlineTools.filter(t => t.category !== "Games").length} web apps`, icon: "🌐" },
+        { id: "pdf-tools", label: "PDF Tools", sub: `${pdfToolsMenu.reduce((acc, group) => acc + group.items.length, 0)} pdf utilities`, icon: "📄" },
         { id: "desktop", label: "Desktop Apps", sub: "2 desktop apps", icon: "💻" },
         { id: "games", label: "Games", sub: `${onlineTools.filter(t => t.category === "Games").length} mini games`, icon: "🎮" },
         { id: "ai-writing", label: "AI & Writing Tools", sub: `${onlineTools.filter(t => t.category === "AI").length} AI tools`, icon: "✨" },
@@ -97,6 +107,30 @@ export default function OnlineToolsPage() {
                             </div>
                         </div>
                     </div>
+                    
+                    {/* PDF Sub Nav */}
+                    <AnimatePresence>
+                        {activeCategory === "pdf-tools" && (
+                            <motion.div 
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="bg-[#111] border-b border-white/5 overflow-x-auto scrollbar-none whitespace-nowrap px-10 flex items-center gap-6"
+                            >
+                                {pdfSubNav.map((item, i) => (
+                                    <a 
+                                        key={i}
+                                        href={item.href}
+                                        onClick={(e) => { e.preventDefault(); router.push(item.href); }}
+                                        className="py-4 text-xs font-bold text-gray-400 hover:text-white transition-colors relative group"
+                                    >
+                                        {item.label}
+                                        <div className="absolute bottom-0 left-0 w-full h-[2px] bg-red-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+                                    </a>
+                                ))}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     {/* Scrollable Grid */}
                     <div className="flex-1 overflow-y-auto p-10 scrollbar-none">

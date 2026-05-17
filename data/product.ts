@@ -556,3 +556,114 @@ export const youtubeChannels = [
         description: "Tech reviews, tutorials, and deep dives",
     },
 ];
+
+export const pdfToolsMenu = [
+    {
+        title: "MERGE",
+        items: [
+            { label: "Alternate & Mix", icon: "🔀", href: "/pdf-tools/alternate-mix" },
+            { label: "Merge", icon: "🔗", href: "/pdf-tools/merge" },
+            { label: "Organize", icon: "📋", href: "/pdf-tools/organize" },
+        ]
+    },
+    {
+        title: "SPLIT",
+        items: [
+            { label: "Extract Pages", icon: "📑", href: "/pdf-tools/extract-pages" },
+            { label: "Split by pages", icon: "📄", href: "/pdf-tools/split-pages" },
+            { label: "Split by bookmarks", icon: "🔖", href: "/pdf-tools/split-bookmarks" },
+            { label: "Split in half", icon: "✂️", href: "/pdf-tools/split-half" },
+            { label: "Split by size", icon: "📏", href: "/pdf-tools/split-size" },
+            { label: "Split by text", icon: "📝", href: "/pdf-tools/split-text" },
+        ]
+    },
+    {
+        title: "EDIT & SIGN",
+        items: [
+            { label: "Edit", icon: "✏️", href: "/pdf-tools/edit" },
+            { label: "Fill & Sign", icon: "✍️", href: "/pdf-tools/fill-sign" },
+            { label: "Create Forms", icon: "📝", href: "/pdf-tools/create-forms" },
+            { label: "Delete Pages", icon: "🗑️", href: "/pdf-tools/delete-pages" },
+        ]
+    },
+    {
+        title: "COMPRESS",
+        items: [
+            { label: "Compress", icon: "🗜️", href: "/pdf-tools/compress" },
+        ]
+    },
+    {
+        title: "SECURITY",
+        items: [
+            { label: "Protect", icon: "🔒", href: "/pdf-tools/protect" },
+            { label: "Unlock", icon: "🔓", href: "/pdf-tools/unlock" },
+            { label: "Watermark", icon: "©️", href: "/pdf-tools/watermark" },
+            { label: "Flatten", icon: "🔨", href: "/pdf-tools/flatten" },
+        ]
+    },
+    {
+        title: "CONVERT FROM PDF",
+        items: [
+            { label: "PDF to Excel", icon: "📊", href: "/pdf-tools/to-excel" },
+            { label: "PDF to JPG", icon: "🖼️", href: "/pdf-tools/to-jpg" },
+            { label: "PDF to PowerPoint", icon: "📽️", href: "/pdf-tools/to-powerpoint" },
+            { label: "PDF to Text", icon: "📝", href: "/pdf-tools/to-text" },
+            { label: "PDF to Word", icon: "📄", href: "/pdf-tools/to-word" },
+        ]
+    },
+    {
+        title: "CONVERT TO PDF",
+        items: [
+            { label: "HTML to PDF", icon: "🌐", href: "/pdf-tools/from-html" },
+            { label: "JPG to PDF", icon: "🖼️", href: "/pdf-tools/from-jpg" },
+            { label: "Word to PDF", icon: "📄", href: "/pdf-tools/from-word" },
+        ]
+    },
+    {
+        title: "OTHER",
+        items: [
+            { label: "Bates Numbering", icon: "🔢", href: "/pdf-tools/bates-numbering" },
+            { label: "Create Bookmarks", icon: "🔖", href: "/pdf-tools/create-bookmarks" },
+            { label: "Crop", icon: "✂️", href: "/pdf-tools/crop" },
+            { label: "Edit Metadata", icon: "ℹ️", href: "/pdf-tools/edit-metadata" },
+            { label: "Extract Images", icon: "🖼️", href: "/pdf-tools/extract-images" },
+            { label: "Grayscale", icon: "🔲", href: "/pdf-tools/grayscale" },
+            { label: "Header & Footer", icon: "📐", href: "/pdf-tools/header-footer" },
+            { label: "N-up", icon: "🔠", href: "/pdf-tools/n-up" },
+            { label: "Page Numbers", icon: "🔢", href: "/pdf-tools/page-numbers" },
+            { label: "Rename", icon: "✏️", href: "/pdf-tools/rename" },
+            { label: "Repair", icon: "🔧", href: "/pdf-tools/repair" },
+            { label: "Resize", icon: "📏", href: "/pdf-tools/resize" },
+            { label: "Rotate", icon: "🔄", href: "/pdf-tools/rotate" },
+            { label: "Remove annotations", icon: "🚫", href: "/pdf-tools/remove-annotations", badge: "New" },
+        ]
+    },
+    {
+        title: "SCANS",
+        items: [
+            { label: "Deskew", icon: "📐", href: "/pdf-tools/deskew" },
+            { label: "OCR", icon: "👁️", href: "/pdf-tools/ocr" },
+        ]
+    },
+    {
+        title: "AUTOMATE",
+        items: [
+            { label: "Workflows", icon: "🤖", href: "/pdf-tools/workflows", badge: "New" },
+        ]
+    }
+];
+
+export const pdfSubNav = [
+    { label: "Merge PDF", href: "/pdf-tools/merge" },
+    { label: "Split PDF", href: "/pdf-tools/split-pages" },
+    { label: "Resize PDF", href: "/pdf-tools/resize" },
+    { label: "Convert PDF", href: "/pdf-tools/convert" },
+    { label: "Crop PDF", href: "/pdf-tools/crop" },
+    { label: "Rotate PDF", href: "/pdf-tools/rotate" },
+    { label: "Optimize PDF", href: "/pdf-tools/compress" },
+    { label: "Reorder PDF", href: "/pdf-tools/organize" },
+    { label: "Delete pages", href: "/pdf-tools/delete-pages" },
+    { label: "N-UP", href: "/pdf-tools/n-up" },
+    { label: "Page numbers", href: "/pdf-tools/page-numbers" },
+];
+

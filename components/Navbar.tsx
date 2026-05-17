@@ -7,7 +7,7 @@ import { useRouter, usePathname } from "next/navigation";
 import AuthButton from "@/components/AuthButton";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User, signOut } from "firebase/auth";
-import { onlineTools, downloads } from "@/data/product";
+import { onlineTools, downloads, pdfToolsMenu } from "@/data/product";
 
 /* ─── Detect if running inside Android WebView app ─── */
 function isAppWebView(): boolean {
@@ -22,6 +22,7 @@ function isAppWebView(): boolean {
 /* ─── Nav Menu Data ─── */
 const MEGA_CATEGORIES = [
     { id: "online", label: "Online Products", desc: "Professional web tools", icon: "🌐" },
+    { id: "pdf-tools", label: "PDF Tools", desc: "Edit, Merge & Convert PDFs", icon: "📄" },
     { id: "desktop", label: "Desktop Apps", desc: "Native software", icon: "💻" },
     { id: "games", label: "Games", desc: "Retro & modern arcade", icon: "🎮" },
     { id: "ai-writing", label: "AI & Writing Tools", desc: "Next-gen writing assistants", icon: "✨" },
@@ -312,9 +313,41 @@ export default function Navbar() {
                                             transition={{ duration: 0.2 }}
                                             className="kdj-mega-grid-inner"
                                         >
-                                            {getFilteredItems().map((item) => (
-                                                <DropdownItem key={item.label} item={item} />
-                                            ))}
+                                            {activeMegaCategory === "pdf-tools" ? (
+                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6 w-full pb-8">
+                                                    {pdfToolsMenu.map((group) => (
+                                                        <div key={group.title} className="flex flex-col gap-2">
+                                                            <div className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-1">
+                                                                {group.title}
+                                                            </div>
+                                                            <div className="flex flex-col space-y-1">
+                                                                {group.items.map((item) => (
+                                                                    <a 
+                                                                        key={item.label} 
+                                                                        href={item.href} 
+                                                                        onClick={(e) => { e.preventDefault(); router.push(item.href); setActiveDropdown(null); }} 
+                                                                        className="flex items-center gap-2.5 py-1.5 px-2 -mx-2 rounded-lg hover:bg-white/5 transition-colors group cursor-pointer"
+                                                                    >
+                                                                        <span className="text-base opacity-70 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0">{item.icon}</span>
+                                                                        <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
+                                                                            {item.label}
+                                                                        </span>
+                                                                        {(item as any).badge && (
+                                                                            <span className="text-[8px] bg-[#10b981]/20 text-[#10b981] px-1.5 py-0.5 rounded font-bold uppercase ml-auto">
+                                                                                {(item as any).badge}
+                                                                            </span>
+                                                                        )}
+                                                                    </a>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                getFilteredItems().map((item) => (
+                                                    <DropdownItem key={item.label} item={item} />
+                                                ))
+                                            )}
                                         </motion.div>
                                     </AnimatePresence>
                                 </div>
