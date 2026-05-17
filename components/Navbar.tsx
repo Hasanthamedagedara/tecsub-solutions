@@ -311,33 +311,28 @@ export default function Navbar() {
                                             animate={{ opacity: 1, x: 0 }}
                                             exit={{ opacity: 0, x: -10 }}
                                             transition={{ duration: 0.2 }}
-                                            className="kdj-mega-grid-inner"
+                                            className={activeMegaCategory === "pdf-tools" ? "w-full" : "kdj-mega-grid-inner"}
                                         >
                                             {activeMegaCategory === "pdf-tools" ? (
-                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6 w-full pb-8">
+                                                <div className="flex flex-col gap-6 w-full pb-8 pr-2">
                                                     {pdfToolsMenu.map((group) => (
                                                         <div key={group.title} className="flex flex-col gap-2">
-                                                            <div className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-1">
+                                                            <div className="text-[11px] font-black uppercase text-gray-500 tracking-[0.1em] pl-3 border-b border-white/5 pb-2">
                                                                 {group.title}
                                                             </div>
-                                                            <div className="flex flex-col space-y-1">
+                                                            <div className="grid grid-cols-2 gap-2">
                                                                 {group.items.map((item) => (
-                                                                    <a 
+                                                                    <DropdownItem 
                                                                         key={item.label} 
-                                                                        href={item.href} 
-                                                                        onClick={(e) => { e.preventDefault(); router.push(item.href); setActiveDropdown(null); }} 
-                                                                        className="flex items-center gap-2.5 py-1.5 px-2 -mx-2 rounded-lg hover:bg-white/5 transition-colors group cursor-pointer"
-                                                                    >
-                                                                        <span className="text-base opacity-70 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0">{item.icon}</span>
-                                                                        <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
-                                                                            {item.label}
-                                                                        </span>
-                                                                        {(item as any).badge && (
-                                                                            <span className="text-[8px] bg-[#10b981]/20 text-[#10b981] px-1.5 py-0.5 rounded font-bold uppercase ml-auto">
-                                                                                {(item as any).badge}
-                                                                            </span>
-                                                                        )}
-                                                                    </a>
+                                                                        item={{
+                                                                            label: item.label,
+                                                                            desc: `PDF ${item.label}`,
+                                                                            icon: item.icon,
+                                                                            href: item.href,
+                                                                            color: "#10b981",
+                                                                            badge: (item as any).badge
+                                                                        }} 
+                                                                    />
                                                                 ))}
                                                             </div>
                                                         </div>
