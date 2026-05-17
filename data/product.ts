@@ -141,6 +141,15 @@ export const onlineTools = [
         href: "/translator"
     },
     {
+        title: "Tecsub PDF Magic Merge",
+        description: "Merge Original & Translated PDF documents side-by-side into a single file instantly.",
+        category: "Document",
+        icon: "📑",
+        color: "#10b981",
+        href: "/pdf-aligner.html",
+        badge: "NEW"
+    },
+    {
         title: "Tecsub Captions",
         description: "Auto-generate Sinhala subtitles and captions for your videos.",
         category: "Video",

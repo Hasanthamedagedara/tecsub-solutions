@@ -37,6 +37,7 @@ const sidebarTools = [
     { title: "Research Tool", href: "/research", icon: "🔬" },
     { title: "Envato Downloader", href: "/envato", icon: "🍃" },
     { title: "AI Prompts", href: "/prompts", icon: "🤖" },
+    { title: "PDF Magic Merge", href: "/pdf-aligner.html", icon: "📑" },
     { title: "File Editor", href: "/editor", icon: "✏️" },
     { title: "Text Summarizer", href: "/ai-tools/summarizer", icon: "📝" },
     { title: "Paraphraser", href: "/ai-tools/paraphraser", icon: "🔄" },
