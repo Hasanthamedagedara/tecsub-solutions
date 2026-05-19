@@ -47,16 +47,6 @@ const sidebarTools = [
     { title: "YT Special", href: "/yt-special", icon: "🎬" },
 ];
 
-const sidebarContent = [
-    { title: "Courses", href: "/courses", icon: "🎓" },
-    { title: "Software", href: "/software", icon: "💻" },
-    { title: "Apps", href: "/apps", icon: "📱" },
-    { title: "Books", href: "/books", icon: "📚" },
-    { title: "Movies", href: "/movies", icon: "🎬" },
-    { title: "Images", href: "/images", icon: "🖼️" },
-    { title: "Wallpapers", href: "/wallpapers", icon: "🎨" },
-    { title: "Assets", href: "/assets", icon: "📦" },
-];
 
 const sidebarAccount = [
     { title: "Community", href: "/community", icon: "👥" },
@@ -206,8 +196,6 @@ export default function Sidebar() {
                     {(!collapsed || mobileOpen) && <div className="kdj-sidebar-section-label">TOOLS</div>}
                     {sidebarTools.map((item) => <NavItem key={item.href} item={item} />)}
 
-                    {(!collapsed || mobileOpen) && <div className="kdj-sidebar-section-label">CONTENT</div>}
-                    {sidebarContent.map((item) => <NavItem key={item.href} item={item} />)}
 
                     {(!collapsed || mobileOpen) && <div className="kdj-sidebar-section-label">MORE</div>}
                     {sidebarAccount.filter(item => item.title !== "Donate" || hasMembership).map((item) => <NavItem key={item.href} item={item} />)}

@@ -37,10 +37,13 @@ export default function PricingPage() {
                 "⚠️ Ad-supported Experience",
                 "🎓 Basic Academy Content",
                 "✅ Tecsub Sinhala Typing",
+                "✅ Free PDF Rotator & Crop Pages",
+                "✅ Basic Technology Articles Hub",
                 "✅ Standard AI Tools (Limited)",
                 "✅ 720p Video Exports",
-                "❌ No Tecsub Designer Pro",
-                "❌ No Tecsub Edito Pro",
+                "❌ No Bilingual Side-by-Side PDF Merger",
+                "❌ No Advanced Batch PDF Converter",
+                "❌ No YT Special Dashboard Access",
                 "❌ No AI Background Remover",
                 "❌ No High-res Image Enhancer"
             ],
@@ -78,7 +81,13 @@ export default function PricingPage() {
                 "📥 All Video Downloader (4K)",
                 "🎥 Cinema Studio 3.5 Access",
                 "🤖 Advanced AI Models (Claude/GPT)",
-                "🚀 Priority Global Infrastructure"
+                "🚀 Priority Global Infrastructure",
+                "✅ Bilingual Side-by-Side PDF Merger",
+                "✅ 30+ Dedicated Standalone PDF Tools",
+                "✅ Advanced YT Special Asset Manager",
+                "✅ YT Dashboard Mark Current Timestamp & Split",
+                "✅ Premium Tech Articles Hub with Search & Filters",
+                "✅ PDF OCR Text Extractor Pro"
             ],
             color: "#3ea6ff",
             buttonText: "Upgrade to Pro",
@@ -108,7 +117,10 @@ export default function PricingPage() {
                 "🏗️ Dedicated GPU Instance",
                 "🏷️ White-label Export Options",
                 "📦 Bulk Media & Asset Downloads",
-                "🎯 Custom Style Training (LoRA)"
+                "🎯 Custom Style Training (LoRA)",
+                "✅ Unlimited Bilingual PDF Merges & Slicing",
+                "✅ Custom PDF Workflows Automation & Bates Numbering",
+                "✅ Dedicated GPU Instance for AI Video Splitting"
             ],
             color: "#d9ff00",
             buttonText: "Go Ultra",

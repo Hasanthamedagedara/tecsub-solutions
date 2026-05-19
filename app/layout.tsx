@@ -46,7 +46,13 @@ export const metadata: Metadata = {
     },
     description:
         "Tecsub Solutions offers high-performance software and AI writing tools in Sri Lanka. Enhance your digital workspace today.",
-    keywords: ["Tecsub Solutions", "Software Development Sri Lanka", "AI Tools", "Web Development", "Technology", "Engineering", "Online Tools", "Sri Lanka Tech"],
+    keywords: [
+        "Tecsub Solutions", "Software Development Sri Lanka", "AI Tools Colombo", "Web Development Colombo", 
+        "Online Utility Tools", "Bilingual Side-by-Side PDF Merger", "Sinhala Typing Online", "Singlish Unicode Converter",
+        "AI Content Humanizer Sri Lanka", "Text Summarizer AI", "PDF split and merge", "Image background remover online",
+        "TECSUB POSS ERP", "Mobile App development Sri Lanka", "Sri Lanka Tech Products", "YouTube video tag extractor",
+        "Sinhala chatbot AI", "Tamil Keyboard input", "Free online image resizer", "PDF metadata editor"
+    ],
     authors: [{ name: "Tecsub Solutions", url: "https://tecsub.online" }],
     creator: "Tecsub Solutions",
     publisher: "Tecsub Solutions",

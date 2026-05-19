@@ -29,12 +29,28 @@ const MEGA_CATEGORIES = [
     { id: "ai-writing", label: "AI & Writing Tools", desc: "Next-gen writing assistants", icon: "✨" },
 ];
 
+const productsMenu = {
+    items: [
+        { label: "Online Tools", icon: "🔧", href: "/tools", color: "#f59e0b" },
+        { label: "PDF Tools", icon: "📑", href: "/pdf-tools", color: "#10b981" },
+        { label: "Desktop Apps", icon: "💻", href: "/software", color: "#3b82f6" },
+        { label: "Sinhala Typing", icon: "සි", href: "/singlish", color: "#8b5cf6" },
+    ]
+};
+
 const resourcesMenu = [
     { label: "Blog", desc: "Articles & tutorials", icon: "📝", href: "/news", color: "#6366f1" },
     { label: "TECSUB POSS", desc: "Integrated System Solutions", icon: "🔄", href: "/explore", color: "#22c55e" },
     { label: "Events", desc: "Live & online events", icon: "📅", href: "/community", color: "#ef4444" },
     { label: "Docs", desc: "API & developer guides", icon: "📚", href: "/about", color: "#6366f1" },
-    { label: "Forum", desc: "Community discussions", icon: "💬", href: "/community", color: "#9ca3af", soon: true },
+    { label: "Courses", desc: "Video courses & paths", icon: "🎓", href: "/courses", color: "#ef4444" },
+    { label: "Software", desc: "Developer tools & extensions", icon: "💻", href: "/software", color: "#22c55e" },
+    { label: "Apps", desc: "Mobile & native web utilities", icon: "📱", href: "/apps", color: "#3b82f6" },
+    { label: "Books", desc: "Academic e-books & references", icon: "📚", href: "/books", color: "#8b5cf6" },
+    { label: "Movies", desc: "Media indexing & streaming", icon: "🎬", href: "/movies", color: "#ec4899" },
+    { label: "Images", desc: "Stock assets & visual gallery", icon: "🖼️", href: "/images", color: "#f43f5e" },
+    { label: "Wallpapers", desc: "Custom designed themes", icon: "🎨", href: "/wallpapers", color: "#06b6d4" },
+    { label: "Assets", desc: "3D resources & template items", icon: "📦", href: "/assets", color: "#f97316" },
 ];
 
 const academyMenu = [
@@ -282,7 +298,7 @@ export default function Navbar() {
                 {/* Desktop Nav Items */}
                 <nav className="kdj-nav">
                     {/* Products Mega Menu */}
-                    <NavDropdown id="products" label="Products">
+                    <NavDropdown id="products" label="TOOLS">
                         <div className="kdj-mega-products">
                             <div className="kdj-mega-sidebar">
                                 <div className="kdj-mega-sidebar-title">BROWSE</div>
@@ -387,6 +403,11 @@ export default function Navbar() {
                             ))}
                         </div>
                     </NavDropdown>
+
+                    {/* Article */}
+                    <a href="/articles" className="kdj-nav-link" onClick={(e) => { e.preventDefault(); router.push('/articles'); }}>
+                        ARTICLE
+                    </a>
 
                     {/* About */}
                     <NavDropdown id="about" label="About">
@@ -590,10 +611,14 @@ export default function Navbar() {
                             </div>
                             <div className="kdj-mobile-menu-body">
                                 {[
-                                    { label: 'Products', items: productsMenu.items },
+                                    { label: 'TOOLS', items: productsMenu.items },
                                     { label: 'Resources', items: resourcesMenu },
                                     { label: 'Academy', items: academyMenu },
                                     { label: 'Solutions', items: solutionsMenu },
+                                    { label: 'ARTICLE', items: [
+                                        { label: "All Articles", icon: "📰", href: "/articles", color: "#00E5FF" },
+                                        { label: "Tech News", icon: "⚡", href: "/news", color: "#f59e0b" },
+                                    ]},
                                     { label: 'About', items: aboutMenu },
                                 ].map((section) => (
                                     <div key={section.label} className="kdj-mobile-section">
