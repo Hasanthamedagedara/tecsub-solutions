@@ -127,6 +127,10 @@ export default function Navbar() {
         if (storedEmail) {
             setProfileEmail(storedEmail);
             setTempEmail(storedEmail);
+            if (storedEmail.toLowerCase() === "hasanthadilshanmedagedara@gmail.com") {
+                localStorage.setItem("tecsub_sub_pro_paid", "true");
+                localStorage.setItem("tecsub_sub_ultra_paid", "true");
+            }
         }
         if (storedPhone) {
             setProfilePhone(storedPhone);
@@ -181,7 +185,14 @@ export default function Navbar() {
         setProfilePhone(tempPhone);
         localStorage.setItem("tecsub-profile-email", tempEmail);
         localStorage.setItem("tecsub-profile-phone", tempPhone);
+        if (tempEmail.toLowerCase() === "hasanthadilshanmedagedara@gmail.com") {
+            localStorage.setItem("tecsub_sub_pro_paid", "true");
+            localStorage.setItem("tecsub_sub_ultra_paid", "true");
+            setHasMembership(true);
+            setPlanType("ULTRA");
+        }
         setSettingsMessage({ text: "📞 Contact details successfully saved!", type: "success" });
+        window.dispatchEvent(new Event("storage"));
     };
 
     const handleSavePayment = () => {
@@ -240,7 +251,8 @@ export default function Navbar() {
         setIsApp(isAppWebView());
         
         const checkMembership = () => {
-            const isDevEmail = localStorage.getItem("tecsub-profile-email") === "hasanthadilshanmedagedara@gmail.com";
+            const email = localStorage.getItem("tecsub-profile-email")?.toLowerCase() || "";
+            const isDevEmail = email === "hasanthadilshanmedagedara@gmail.com";
             if (isDevEmail) {
                 localStorage.setItem("tecsub_sub_pro_paid", "true");
                 localStorage.setItem("tecsub_sub_ultra_paid", "true");
@@ -257,8 +269,8 @@ export default function Navbar() {
 
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
-            if (currentUser && currentUser.email === "hasanthadilshanmedagedara@gmail.com") {
-                localStorage.setItem("tecsub-profile-email", "hasanthadilshanmedagedara@gmail.com");
+            if (currentUser && currentUser.email?.toLowerCase() === "hasanthadilshanmedagedara@gmail.com") {
+                localStorage.setItem("tecsub-profile-email", currentUser.email);
                 localStorage.setItem("tecsub_sub_pro_paid", "true");
                 localStorage.setItem("tecsub_sub_ultra_paid", "true");
                 checkMembership();
@@ -756,6 +768,7 @@ export default function Navbar() {
                                                             src={user.photoURL || "/logo/tecsub.jpg"}
                                                             alt={user.displayName || "User"}
                                                             className="kdj-profile-avatar"
+                                                            style={planType === 'ULTRA' ? { borderRadius: '50%', border: '2px solid #a855f7', boxShadow: '0 0 15px #a855f7', transition: 'all 0.3s ease' } : {}}
                                                         />
                                                         <div className="kdj-profile-user-info">
                                                             <p className="kdj-profile-name">{profileName}</p>

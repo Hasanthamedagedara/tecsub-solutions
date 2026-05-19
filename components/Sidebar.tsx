@@ -69,7 +69,7 @@ export default function Sidebar() {
     /* External toggle listener & Membership sync */
     useEffect(() => {
         const checkMembership = () => {
-            const isDevEmail = localStorage.getItem("tecsub-profile-email") === "hasanthadilshanmedagedara@gmail.com";
+            const isDevEmail = localStorage.getItem("tecsub-profile-email")?.toLowerCase() === "hasanthadilshanmedagedara@gmail.com";
             if (isDevEmail) {
                 localStorage.setItem("tecsub_sub_pro_paid", "true");
                 localStorage.setItem("tecsub_sub_ultra_paid", "true");
