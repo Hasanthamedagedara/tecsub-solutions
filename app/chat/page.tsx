@@ -218,76 +218,76 @@ export default function AIChatPage() {
                         <div className="w-full flex justify-center min-h-[400px]">
                             <AnimatePresence mode="wait">
                                 {mode === "chat" ? (
-                                    <motion.div 
-                                        key="chat-active"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="w-full h-[550px] rounded-[2.5rem] overflow-hidden border border-gray-200 dark:border-white/10 bg-black/40 backdrop-blur-md relative shadow-2xl"
-                                    >
-                                        <div className="p-8 h-full overflow-y-auto scrollbar-hide flex flex-col gap-8">
-                                            {messages.length === 0 ? (
-                                                <div className="flex-1 flex flex-col items-center justify-center opacity-40 text-center p-12">
-                                                    <div className="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center text-5xl mb-8 shadow-2xl border border-white/5">✨</div>
-                                                    <h2 className="text-3xl font-black mb-4 tracking-tight text-white">TecSub AI Assistant</h2>
-                                                    <p className="text-base max-w-md font-medium text-gray-400">Your professional AI partner for creativity, coding, and deep thinking. How can I assist you today?</p>
-                                                    <div className="flex flex-wrap justify-center gap-3 mt-10">
-                                                        {["Write a creative poem", "Explain quantum computing", "Help me debug code", "Plan a travel trip"].map(hint => (
-                                                            <button key={hint} onClick={() => setPrompt(hint)} className="px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-[12px] font-bold hover:bg-white/10 transition-all text-white/70">{hint}</button>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <>
-                                                    {messages.map((msg, i) => (
-                                                        <motion.div 
-                                                            initial={{ opacity: 0, y: 15 }}
-                                                            animate={{ opacity: 1, y: 0 }}
-                                                            key={i} 
-                                                            className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"} group`}
-                                                        >
-                                                            <div className={`relative max-w-[80%] p-6 rounded-[1.8rem] text-[15px] leading-relaxed shadow-2xl transition-all ${
-                                                                msg.role === "user" 
-                                                                ? "bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-tr-none" 
-                                                                : "bg-white/5 border border-white/5 text-gray-100 rounded-tl-none backdrop-blur-md"
-                                                            }`}>
-                                                                <div className="whitespace-pre-wrap">{msg.content}</div>
-                                                                
-                                                                {/* Message Actions */}
-                                                                <div className={`absolute bottom-2 ${msg.role === 'user' ? 'left-2' : 'right-2'} opacity-0 group-hover:opacity-100 transition-opacity flex gap-2`}>
-                                                                    <button 
-                                                                        onClick={() => {
-                                                                            navigator.clipboard.writeText(msg.content);
-                                                                            // Could add a toast here
-                                                                        }}
-                                                                        className="p-1.5 rounded-lg bg-black/20 hover:bg-black/40 text-white/50 hover:text-white transition-all"
-                                                                        title="Copy message"
-                                                                    >
-                                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8 4v8a2 2 0 002 2h8m-10-10a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-8a2 2 0 01-2-2V4z"/></svg>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex items-center gap-2 mt-3 px-1">
-                                                                <div className={`w-1.5 h-1.5 rounded-full ${msg.role === "user" ? "bg-blue-400" : "bg-purple-400"}`} />
-                                                                <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">{msg.role === "user" ? "You" : selectedChatModel}</span>
-                                                            </div>
-                                                        </motion.div>
-                                                    ))}
-                                                    {isGenerating && (
-                                                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start">
-                                                            <div className="max-w-[75%] p-6 rounded-[1.5rem] bg-white/5 border border-white/5 text-gray-400 rounded-tl-none">
-                                                                <div className="flex gap-2 items-center">
-                                                                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce [animation-delay:-0.3s]" />
-                                                                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce [animation-delay:-0.15s]" />
-                                                                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" />
-                                                                </div>
-                                                            </div>
-                                                        </motion.div>
-                                                    )}
-                                                    <div ref={chatEndRef} />
-                                                </>
-                                            )}
-                                        </div>
-                                    </motion.div>
+                                     <motion.div 
+                                         key="chat-active"
+                                         initial={{ opacity: 0 }}
+                                         animate={{ opacity: 1 }}
+                                         className="w-full h-[550px] rounded-[2.5rem] overflow-hidden border border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-black/40 backdrop-blur-md relative shadow-2xl"
+                                     >
+                                         <div className="p-8 h-full overflow-y-auto scrollbar-hide flex flex-col gap-8">
+                                             {messages.length === 0 ? (
+                                                 <div className="flex-1 flex flex-col items-center justify-center opacity-70 dark:opacity-40 text-center p-12">
+                                                     <div className="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center text-5xl mb-8 shadow-2xl border border-gray-200 dark:border-white/5">✨</div>
+                                                     <h2 className="text-3xl font-black mb-4 tracking-tight text-gray-900 dark:text-white">TecSub AI Assistant</h2>
+                                                     <p className="text-base max-w-md font-medium text-gray-600 dark:text-gray-400">Your professional AI partner for creativity, coding, and deep thinking. How can I assist you today?</p>
+                                                     <div className="flex flex-wrap justify-center gap-3 mt-10">
+                                                         {["Write a creative poem", "Explain quantum computing", "Help me debug code", "Plan a travel trip"].map(hint => (
+                                                             <button key={hint} onClick={() => setPrompt(hint)} className="px-5 py-2.5 rounded-2xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-[12px] font-bold hover:bg-gray-200 dark:hover:bg-white/10 transition-all text-gray-700 dark:text-white/70">{hint}</button>
+                                                         ))}
+                                                     </div>
+                                                 </div>
+                                             ) : (
+                                                 <>
+                                                     {messages.map((msg, i) => (
+                                                         <motion.div 
+                                                             initial={{ opacity: 0, y: 15 }}
+                                                             animate={{ opacity: 1, y: 0 }}
+                                                             key={i} 
+                                                             className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"} group`}
+                                                         >
+                                                             <div className={`relative max-w-[80%] p-6 rounded-[1.8rem] text-[15px] leading-relaxed shadow-2xl transition-all ${
+                                                                 msg.role === "user" 
+                                                                 ? "bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-tr-none" 
+                                                                 : "bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/5 text-gray-800 dark:text-gray-100 rounded-tl-none backdrop-blur-md"
+                                                             }`}>
+                                                                 <div className="whitespace-pre-wrap">{msg.content}</div>
+                                                                 
+                                                                 {/* Message Actions */}
+                                                                 <div className={`absolute bottom-2 ${msg.role === 'user' ? 'left-2' : 'right-2'} opacity-0 group-hover:opacity-100 transition-opacity flex gap-2`}>
+                                                                     <button 
+                                                                         onClick={() => {
+                                                                             navigator.clipboard.writeText(msg.content);
+                                                                             // Could add a toast here
+                                                                         }}
+                                                                         className="p-1.5 rounded-lg bg-black/20 hover:bg-black/40 text-white/50 hover:text-white transition-all"
+                                                                         title="Copy message"
+                                                                     >
+                                                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8 4v8a2 2 0 002 2h8m-10-10a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-8a2 2 0 01-2-2V4z"/></svg>
+                                                                     </button>
+                                                                 </div>
+                                                             </div>
+                                                             <div className="flex items-center gap-2 mt-3 px-1">
+                                                                 <div className={`w-1.5 h-1.5 rounded-full ${msg.role === "user" ? "bg-blue-400" : "bg-purple-400"}`} />
+                                                                 <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">{msg.role === "user" ? "You" : selectedChatModel}</span>
+                                                             </div>
+                                                         </motion.div>
+                                                     ))}
+                                                     {isGenerating && (
+                                                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start">
+                                                             <div className="max-w-[75%] p-6 rounded-[1.5rem] bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/5 text-gray-500 dark:text-gray-400 rounded-tl-none">
+                                                                 <div className="flex gap-2 items-center">
+                                                                     <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce [animation-delay:-0.3s]" />
+                                                                     <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce [animation-delay:-0.15s]" />
+                                                                     <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" />
+                                                                 </div>
+                                                             </div>
+                                                         </motion.div>
+                                                     )}
+                                                     <div ref={chatEndRef} />
+                                                 </>
+                                             )}
+                                         </div>
+                                     </motion.div>
                                 ) : (
                                     showPreview && (
                                         <motion.div 

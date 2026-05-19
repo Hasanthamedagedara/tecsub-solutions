@@ -69,7 +69,7 @@ export default function HomeLandingPage() {
     ];
 
     return (
-        <div className="min-h-screen text-white font-sans overflow-hidden flex flex-col" style={{ background: "var(--navy)" }}>
+        <div className="min-h-screen text-[var(--yt-text-primary)] font-sans overflow-hidden flex flex-col" style={{ background: "var(--navy)" }}>
             <Navbar />
 
             {/* Hero Section */}
@@ -96,7 +96,7 @@ export default function HomeLandingPage() {
                         <span className="gradient-text">Future. Today.</span>
                     </h1>
 
-                    <p className="text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed mb-10 text-slate-400">
+                    <p className="text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed mb-10 text-[var(--yt-text-secondary)]">
                         Welcome to Tecsub Solutions. Access 20+ free high-performance online utility tools, offline desktop software releases, and smart local language systems built for creators.
                     </p>
 
@@ -119,12 +119,12 @@ export default function HomeLandingPage() {
             </header>
 
             {/* Stats Section */}
-            <section className="py-12 px-4 sm:px-6 lg:px-8 border-y border-white/5 relative z-10 bg-black/40">
+            <section className="py-12 px-4 sm:px-6 lg:px-8 border-y border-gray-200 dark:border-white/5 relative z-10 bg-gray-50 dark:bg-black/40">
                 <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                     {featuredStats.map((stat, index) => (
                         <div key={index} className="space-y-1">
                             <p className="text-3xl sm:text-4xl font-bebas tracking-wide text-tecsubCyan">{stat.value}</p>
-                            <p className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold text-slate-400">{stat.label}</p>
+                            <p className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold text-[var(--yt-text-secondary)]">{stat.label}</p>
                         </div>
                     ))}
                 </div>
@@ -135,7 +135,7 @@ export default function HomeLandingPage() {
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="font-bebas text-3xl sm:text-5xl tracking-wide mb-3">Our Smart Ecosystem</h2>
-                        <p className="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto font-light">Explore integrated software hubs designed to accelerate development, design, and translation workloads.</p>
+                        <p className="text-xs sm:text-sm text-[var(--yt-text-secondary)] max-w-lg mx-auto font-light">Explore integrated software hubs designed to accelerate development, design, and translation workloads.</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -148,23 +148,23 @@ export default function HomeLandingPage() {
                                 transition={{ delay: i * 0.15, duration: 0.6 }}
                                 className="group relative rounded-[2rem] p-8 flex flex-col border transition-all duration-300 hover:scale-[1.02]"
                                 style={{
-                                    background: `linear-gradient(135deg, ${node.color} 0%, rgba(10,10,11,0.6) 100%)`,
-                                    borderColor: node.borderColor,
+                                    background: `linear-gradient(135deg, ${node.color} 0%, var(--yt-bg-secondary) 100%)`,
+                                    borderColor: "var(--yt-border)",
                                 }}
                             >
                                 <div className="text-4xl mb-6">{node.icon}</div>
-                                <h3 className="font-bebas text-2xl tracking-wide text-white mb-3 group-hover:text-tecsubCyan transition-colors">
+                                <h3 className="font-bebas text-2xl tracking-wide text-[var(--yt-text-primary)] mb-3 group-hover:text-tecsubCyan transition-colors">
                                     {node.title}
                                 </h3>
-                                <p className="text-xs text-slate-400 font-light leading-relaxed mb-8 flex-1">
+                                <p className="text-xs text-[var(--yt-text-secondary)] font-light leading-relaxed mb-8 flex-1">
                                     {node.desc}
                                 </p>
                                 <button
                                     onClick={() => router.push(node.href)}
                                     className="w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300"
                                     style={{
-                                        background: "rgba(255, 255, 255, 0.03)",
-                                        border: "1px solid rgba(255,255,255,0.08)",
+                                        background: "var(--yt-bg-hover)",
+                                        border: "1px solid var(--yt-border)",
                                         color: node.accentColor,
                                     }}
                                     onMouseEnter={(e) => {
@@ -173,7 +173,7 @@ export default function HomeLandingPage() {
                                         e.currentTarget.style.boxShadow = `0 4px 20px ${node.borderColor}`;
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                        e.currentTarget.style.background = "var(--yt-bg-hover)";
                                         e.currentTarget.style.color = node.accentColor;
                                         e.currentTarget.style.boxShadow = "none";
                                     }}
@@ -187,26 +187,26 @@ export default function HomeLandingPage() {
             </section>
 
             {/* Core Values / Why Choose Us */}
-            <section className="py-24 px-4 sm:px-6 lg:px-8 relative z-10 bg-black/30 border-t border-white/5">
+            <section className="py-24 px-4 sm:px-6 lg:px-8 relative z-10 bg-gray-50/50 dark:bg-black/30 border-t border-gray-200 dark:border-white/5">
                 <div className="max-w-6xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
                         <div className="lg:col-span-1 space-y-4">
                             <span className="text-[10px] font-black uppercase tracking-[0.25em] text-tecsubCyan">WHY TECSUB</span>
-                            <h2 className="font-bebas text-4xl sm:text-6xl leading-[0.95] tracking-wide">
+                            <h2 className="font-bebas text-4xl sm:text-6xl leading-[0.95] tracking-wide text-[var(--yt-text-primary)]">
                                 Designed For <br />
                                 <span className="gradient-text italic">Maximum Power.</span>
                             </h2>
-                            <p className="text-xs text-slate-400 font-light leading-relaxed">
+                            <p className="text-xs text-[var(--yt-text-secondary)] font-light leading-relaxed">
                                 We combine robust low-latency algorithms with clean, beautiful design systems to offer utilities that just work.
                             </p>
                         </div>
 
                         <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-6">
                             {valueProps.map((prop, i) => (
-                                <div key={i} className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                                <div key={i} className="p-6 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 space-y-4 shadow-sm dark:shadow-none">
                                     <div className="text-2xl">{prop.icon}</div>
-                                    <h4 className="font-bold text-sm text-white">{prop.title}</h4>
-                                    <p className="text-[11px] text-slate-400 leading-relaxed font-light">{prop.desc}</p>
+                                    <h4 className="font-bold text-sm text-[var(--yt-text-primary)]">{prop.title}</h4>
+                                    <p className="text-[11px] text-[var(--yt-text-secondary)] leading-relaxed font-light">{prop.desc}</p>
                                 </div>
                             ))}
                         </div>
@@ -215,12 +215,12 @@ export default function HomeLandingPage() {
             </section>
 
             {/* Bottom CTA Block */}
-            <section className="py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden z-10 text-center border-t border-white/5">
+            <section className="py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden z-10 text-center border-t border-gray-200 dark:border-white/5">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-[140px] pointer-events-none opacity-20" style={{ background: "radial-gradient(circle, #00E5FF 0%, transparent 70%)" }} />
                 
                 <div className="max-w-3xl mx-auto relative z-10 space-y-6">
-                    <h2 className="font-bebas text-4xl sm:text-6xl tracking-wide leading-none">Ready to Boost Your Digital Workflow?</h2>
-                    <p className="text-xs sm:text-sm text-slate-400 font-light max-w-md mx-auto">Get instant access to our entire catalog of developer resources, language tools, and productivity applications.</p>
+                    <h2 className="font-bebas text-4xl sm:text-6xl tracking-wide leading-none text-[var(--yt-text-primary)]">Ready to Boost Your Digital Workflow?</h2>
+                    <p className="text-xs sm:text-sm text-[var(--yt-text-secondary)] font-light max-w-md mx-auto">Get instant access to our entire catalog of developer resources, language tools, and productivity applications.</p>
                     <button
                         onClick={() => router.push("/tools")}
                         className="px-10 py-4.5 rounded-2xl font-bold text-sm bg-tecsubCyan text-black shadow-[0_4px_30px_rgba(0,229,255,0.25)] hover:scale-105 transition-all duration-300"

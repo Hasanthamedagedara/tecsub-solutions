@@ -39,13 +39,7 @@ const productsMenu = {
 };
 
 const resourcesMenu = [
-    { label: "Blog", desc: "Articles & tutorials", icon: "📝", href: "/news", color: "#6366f1" },
-    { label: "TECSUB POSS", desc: "Integrated System Solutions", icon: "🔄", href: "/explore", color: "#22c55e" },
-    { label: "Events", desc: "Live & online events", icon: "📅", href: "/community", color: "#ef4444" },
-    { label: "Docs", desc: "API & developer guides", icon: "📚", href: "/about", color: "#6366f1" },
     { label: "Courses", desc: "Video courses & paths", icon: "🎓", href: "/courses", color: "#ef4444" },
-    { label: "Software", desc: "Developer tools & extensions", icon: "💻", href: "/software", color: "#22c55e" },
-    { label: "Apps", desc: "Mobile & native web utilities", icon: "📱", href: "/apps", color: "#3b82f6" },
     { label: "Books", desc: "Academic e-books & references", icon: "📚", href: "/books", color: "#8b5cf6" },
     { label: "Movies", desc: "Media indexing & streaming", icon: "🎬", href: "/movies", color: "#ec4899" },
     { label: "Images", desc: "Stock assets & visual gallery", icon: "🖼️", href: "/images", color: "#f43f5e" },
@@ -116,13 +110,9 @@ export default function Navbar() {
     const [settingsMessage, setSettingsMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
     // Notification states
-    const [hasUnreadNotification, setHasUnreadNotification] = useState(true);
+    const [hasUnreadNotification, setHasUnreadNotification] = useState(false);
     const [notificationsOpen, setNotificationsOpen] = useState(false);
-    const [notificationsList, setNotificationsList] = useState([
-        { id: "feat-reminders", title: "⏰ Custom Date Payment Reminders", desc: "Never miss a due date! Schedule custom, daily, or specific date alerts easily.", date: "New Feature", href: "/features/payment-reminders", unread: true },
-        { id: "feat-lang-switch", title: "🗣️ Trilingual Language Switcher", desc: "Access the entire workspace in English, සිංහල, and தமிழ் seamlessly.", date: "New Feature", href: "/features/language-switch", unread: true },
-        { id: "feat-dark-mode", title: "🔆 Sleek HSL Light & Dark Modes", desc: "Adaptive fine-tuned HSL lighting modes for perfect ergo comfort across all features.", date: "New Feature", href: "/features/dark-mode", unread: true },
-    ]);
+    const [notificationsList, setNotificationsList] = useState<{ id: string; title: string; desc: string; date: string; href: string; unread: boolean; timestamp?: number }[]>([]);
 
     useEffect(() => {
         const storedName = localStorage.getItem("tecsub-profile-name");
@@ -199,10 +189,61 @@ export default function Navbar() {
         setSettingsMessage({ text: "💳 Payment details successfully updated!", type: "success" });
     };
 
+    const handleRemoveNotification = (e: React.MouseEvent, id: string) => {
+        e.stopPropagation();
+        const updated = notificationsList.filter(item => item.id !== id);
+        localStorage.setItem("tecsub_notifications_v1", JSON.stringify(updated));
+        setNotificationsList(updated);
+        setHasUnreadNotification(updated.some(item => item.unread));
+    };
+
+    useEffect(() => {
+        const defaultNotifications = [
+            { id: "feat-reminders", title: "⏰ Custom Date Payment Reminders", desc: "Never miss a due date! Schedule custom, daily, or specific date alerts easily.", date: "New Feature", href: "/features/payment-reminders", unread: true },
+            { id: "feat-lang-switch", title: "🗣️ Trilingual Language Switcher", desc: "Access the entire workspace in English, සිංහල, and தமிழ் seamlessly.", date: "New Feature", href: "/features/language-switch", unread: true },
+            { id: "feat-dark-mode", title: "🔆 Sleek HSL Light & Dark Modes", desc: "Adaptive fine-tuned HSL lighting modes for perfect ergo comfort across all features.", date: "New Feature", href: "/features/dark-mode", unread: true },
+        ];
+
+        const stored = localStorage.getItem("tecsub_notifications_v1");
+        let list = [];
+        if (stored) {
+            try {
+                list = JSON.parse(stored);
+            } catch (e) {
+                list = [];
+            }
+        }
+        
+        if (list.length === 0) {
+            const now = Date.now();
+            list = defaultNotifications.map(item => ({ ...item, timestamp: now }));
+            localStorage.setItem("tecsub_notifications_v1", JSON.stringify(list));
+        }
+
+        const TWO_HOURS = 2 * 60 * 60 * 1000;
+        const now = Date.now();
+        const activeList = list.filter((item: any) => {
+            if (!item.timestamp) return true;
+            return now - item.timestamp < TWO_HOURS;
+        });
+
+        if (activeList.length !== list.length) {
+            localStorage.setItem("tecsub_notifications_v1", JSON.stringify(activeList));
+        }
+
+        setNotificationsList(activeList);
+        setHasUnreadNotification(activeList.some((item: any) => item.unread));
+    }, []);
+
     useEffect(() => {
         setIsApp(isAppWebView());
         
         const checkMembership = () => {
+            const isDevEmail = localStorage.getItem("tecsub-profile-email") === "hasanthadilshanmedagedara@gmail.com";
+            if (isDevEmail) {
+                localStorage.setItem("tecsub_sub_pro_paid", "true");
+                localStorage.setItem("tecsub_sub_ultra_paid", "true");
+            }
             const isPro = localStorage.getItem("tecsub_sub_pro_paid") === "true";
             const isUltra = localStorage.getItem("tecsub_sub_ultra_paid") === "true";
             setHasMembership(isPro || isUltra);
@@ -212,6 +253,12 @@ export default function Navbar() {
 
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
+            if (currentUser && currentUser.email === "hasanthadilshanmedagedara@gmail.com") {
+                localStorage.setItem("tecsub-profile-email", "hasanthadilshanmedagedara@gmail.com");
+                localStorage.setItem("tecsub_sub_pro_paid", "true");
+                localStorage.setItem("tecsub_sub_ultra_paid", "true");
+                checkMembership();
+            }
             setLoading(false);
         });
 
@@ -568,7 +615,6 @@ export default function Navbar() {
                             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                         </svg>
                         <span className="kdj-search-label">Search</span>
-                        <kbd className="kdj-search-kbd">⌘K</kbd>
                     </button>
 
                     {/* Theme Toggle */}
@@ -632,30 +678,47 @@ export default function Navbar() {
                                         </button>
                                     </div>
                                     <div className="space-y-3 max-h-64 overflow-y-auto scrollbar-thin">
-                                        {notificationsList.map((notif) => (
-                                            <div
-                                                key={notif.id}
-                                                onClick={() => {
-                                                    if (notif.href) {
-                                                        router.push(notif.href);
-                                                        setNotificationsOpen(false);
-                                                    }
-                                                }}
-                                                className="p-2.5 rounded-xl transition-all cursor-pointer hover:bg-white/5"
-                                                style={{
-                                                    background: notif.unread ? "rgba(0,229,255,0.05)" : "transparent",
-                                                    border: notif.unread ? "1px solid rgba(0,229,255,0.1)" : "1px solid transparent"
-                                                }}
-                                            >
-                                                <div className="flex justify-between items-start gap-2 mb-1">
-                                                    <h4 className="font-black text-xs leading-snug">{notif.title}</h4>
-                                                    <span className="text-[8px] font-black uppercase tracking-tighter px-1.5 py-0.5 rounded bg-cyan-500/25 text-cyan-400">
-                                                        {notif.date}
-                                                    </span>
-                                                </div>
-                                                <p className="text-[10px] leading-relaxed text-gray-400">{notif.desc}</p>
+                                        {notificationsList.length === 0 ? (
+                                            <div className="text-center py-8 text-xs text-gray-500">
+                                                🎉 All caught up! No new updates.
                                             </div>
-                                        ))}
+                                        ) : (
+                                            notificationsList.map((notif) => (
+                                                <div
+                                                    key={notif.id}
+                                                    onClick={() => {
+                                                        if (notif.href) {
+                                                            router.push(notif.href);
+                                                            setNotificationsOpen(false);
+                                                        }
+                                                    }}
+                                                    className="p-2.5 rounded-xl transition-all cursor-pointer hover:bg-white/5"
+                                                    style={{
+                                                        background: notif.unread ? "rgba(0,229,255,0.05)" : "transparent",
+                                                        border: notif.unread ? "1px solid rgba(0,229,255,0.1)" : "1px solid transparent"
+                                                    }}
+                                                >
+                                                    <div className="flex justify-between items-start gap-2 mb-1">
+                                                        <h4 className="font-black text-xs leading-snug">{notif.title}</h4>
+                                                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                                                            <span className="text-[8px] font-black uppercase tracking-tighter px-1.5 py-0.5 rounded bg-cyan-500/25 text-cyan-400">
+                                                                {notif.date}
+                                                            </span>
+                                                            <button
+                                                                onClick={(e) => handleRemoveNotification(e, notif.id)}
+                                                                className="text-gray-500 hover:text-red-400 p-0.5 rounded transition-colors"
+                                                                title="Dismiss Notification"
+                                                            >
+                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                                    <path d="M18 6L6 18M6 6l12 12"/>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-[10px] leading-relaxed text-gray-400">{notif.desc}</p>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
                                 </motion.div>
                             )}

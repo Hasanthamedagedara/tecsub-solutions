@@ -236,7 +236,7 @@ export default function PaymentRemindersClient() {
                                             style={{ background: "var(--yt-bg-secondary)", borderColor: "var(--yt-border)" }}
                                         >
                                             <div>
-                                                <h4 className="font-bold text-sm text-white mb-1">{reminder.title}</h4>
+                                                <h4 className="font-bold text-sm text-[var(--yt-text-primary)] mb-1">{reminder.title}</h4>
                                                 <div className="flex items-center gap-2 text-[10px] text-gray-400">
                                                     <span className="capitalize px-2 py-0.5 rounded bg-yt-chip-bg text-yt-text-primary font-bold">
                                                         {reminder.type}
