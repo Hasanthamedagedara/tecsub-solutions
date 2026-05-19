@@ -128,7 +128,7 @@ export default function HomeLandingPage() {
                             Get Desktop Apps
                         </button>
                         <a
-                            href="https://www.youtube.com/@hasanthadilshanmedagedara"
+                            href="https://www.youtube.com/@tecsub.0"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-sm bg-red-600 text-white shadow-[0_4px_25px_rgba(220,38,38,0.3)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
