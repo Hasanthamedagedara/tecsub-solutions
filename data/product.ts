@@ -146,7 +146,7 @@ export const onlineTools = [
         category: "Document",
         icon: "📑",
         color: "#10b981",
-        href: "/pdf-aligner.html",
+        href: "/pdf-aligner",
         badge: "NEW"
     },
     {
@@ -508,6 +508,9 @@ export const socialLinks = [
     { name: "Facebook", url: "https://www.facebook.com/Hasanthamedagedara" },
     { name: "YouTube", url: "https://www.youtube.com/@tecsub.0" },
     { name: "WhatsApp", url: "https://whatsapp.com/channel/0029Vb6cPkODuMRkMeIaT31F" },
+    { name: "X", url: "https://x.com/tecsubsolutions" },
+    { name: "LinkedIn", url: "https://linkedin.com/company/tecsubsolutions" },
+    { name: "Instagram", url: "https://instagram.com/tecsubsolutions" },
 ];
 
 export const downloads = [

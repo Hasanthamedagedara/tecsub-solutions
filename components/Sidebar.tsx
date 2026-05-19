@@ -37,7 +37,7 @@ const sidebarTools = [
     { title: "Research Tool", href: "/research", icon: "🔬" },
     { title: "Envato Downloader", href: "/envato", icon: "🍃" },
     { title: "AI Prompts", href: "/prompts", icon: "🤖" },
-    { title: "PDF Magic Merge", href: "/pdf-aligner.html", icon: "📑" },
+    { title: "PDF Magic Merge", href: "/pdf-aligner", icon: "📑" },
     { title: "File Editor", href: "/editor", icon: "✏️" },
     { title: "Text Summarizer", href: "/ai-tools/summarizer", icon: "📝" },
     { title: "Paraphraser", href: "/ai-tools/paraphraser", icon: "🔄" },
@@ -184,7 +184,7 @@ export default function Sidebar() {
                         onClick={() => setCollapsed(!collapsed)}
                         aria-label={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
                     >
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: collapsed ? "rotate(180deg)" : "none", transition: "transform 0.3s ease" }}>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`kdj-sidebar-toggle-icon ${collapsed ? "collapsed" : ""}`}>
                             <rect x="3" y="3" width="18" height="18" rx="3" />
                             <line x1="9" y1="3" x2="9" y2="21" />
                             <path d="M16 15l-3-3 3-3" />
@@ -193,7 +193,7 @@ export default function Sidebar() {
                     {(!collapsed || mobileOpen) && (
                         <div className="kdj-sidebar-brand-simple">
                             <span className="kdj-sidebar-brand-name">
-                                TecSub<span style={{ color: "#dc2626" }}>.lk</span>
+                                TecSub<span className="text-red-600 font-bold">.lk</span>
                             </span>
                         </div>
                     )}

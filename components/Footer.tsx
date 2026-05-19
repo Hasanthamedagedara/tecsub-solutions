@@ -7,6 +7,7 @@ import { useAppContext } from "@/components/ThemeProvider";
 import { t } from "@/data/translations";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import EmailLink from "@/components/EmailLink";
 
 const footerLinks = {
     products: [
@@ -95,12 +96,15 @@ export default function Footer() {
                             <span>📍 Made with ❤️ in Sri Lanka</span>
                         </div>
                         <div className="kdj-footer-brand-contact">
+                            <span className="kdj-footer-contact-item text-xs opacity-75 select-all">
+                                📍 No. 45, Kandy Road, Kurunegala, Sri Lanka
+                            </span>
                             <a href="tel:+94726128749" className="kdj-footer-contact-item">
                                 📞 +94 72 612 8749
                             </a>
-                            <a href="mailto:tecsubsolutions@gmail.com" className="kdj-footer-contact-item">
+                            <EmailLink email="tecsubsolutions@gmail.com" className="kdj-footer-contact-item">
                                 ✉️ tecsubsolutions@gmail.com
-                            </a>
+                            </EmailLink>
                         </div>
 
                         {/* Social Icons */}

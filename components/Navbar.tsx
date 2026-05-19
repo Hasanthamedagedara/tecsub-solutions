@@ -8,6 +8,7 @@ import AuthButton from "@/components/AuthButton";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User, signOut } from "firebase/auth";
 import { onlineTools, downloads, pdfToolsMenu } from "@/data/product";
+import EmailLink from "@/components/EmailLink";
 
 /* ─── Detect if running inside Android WebView app ─── */
 function isAppWebView(): boolean {
@@ -260,7 +261,9 @@ export default function Navbar() {
                 <div className="kdj-topbar-left">
                     <span className="kdj-topbar-item">📞 +94 72 612 8749</span>
                     <span className="kdj-topbar-sep">·</span>
-                    <span className="kdj-topbar-item">✉️ tecsubsolutions@gmail.com</span>
+                    <EmailLink email="tecsubsolutions@gmail.com" className="kdj-topbar-item hover:underline">
+                        ✉️ tecsubsolutions@gmail.com
+                    </EmailLink>
                 </div>
                 <div className="kdj-topbar-right">
                     <span className="kdj-topbar-flag">🇱🇰 Made in Sri Lanka</span>

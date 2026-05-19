@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5257,3 +5255,35 @@ html.light .kdj-footer-col-links a { color: #777; }
 html.light .kdj-footer-col-links a:hover { color: #222; }
 html.light .kdj-footer-bottom { background: #f0f0f0; border-color: #e0e0e0; color: #888; }
 html.light .kdj-footer-bottom-sub { color: #aaa; }
+
+/* ═══ Antigravity SEO Cleanups ═══ */
+.kdj-sidebar-toggle-icon {
+  transition: transform 0.3s ease;
+}
+.kdj-sidebar-toggle-icon.collapsed {
+  transform: rotate(180deg);
+}
+.kdj-ad-placeholder {
+  width: var(--ad-w);
+  height: var(--ad-h);
+}
+.kdj-ad-wrapper {
+  max-width: var(--ad-w);
+  width: 100%;
+  overflow: hidden;
+}
+.kdj-ad-iframe {
+  border: none;
+  overflow: hidden;
+  display: block;
+  max-width: 100%;
+  background: transparent;
+}
+.kdj-category-glow {
+  background: var(--category-color);
+}
+.kdj-category-badge {
+  color: var(--category-color);
+  background: var(--category-color-bg);
+  border: 1px solid var(--category-color-border);
+}

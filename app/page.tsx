@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import AdPlacement from "@/components/AdPlacement";
 import { onlineTools } from "@/data/product";
 import PdfEditorTool from "@/components/PdfEditorTool";
+import { useAppContext } from "@/components/ThemeProvider";
+import { t } from "@/data/translations";
 
 /* ─── Inline Tool Components ─── */
 
@@ -52,7 +54,7 @@ function JsonFormatter() {
             {error && <p className="text-red-400 text-xs">❌ {error}</p>}
             {output && (
                 <>
-                    <pre className="tool-input font-mono text-xs overflow-x-auto whitespace-pre" style={{ maxHeight: "200px" }}>{output}</pre>
+                    <pre className="tool-input font-mono text-xs overflow-x-auto whitespace-pre max-h-[200px]">{output}</pre>
                     <button onClick={() => navigator.clipboard.writeText(output)} className="tool-btn">📋 Copy</button>
                 </>
             )}
@@ -78,12 +80,12 @@ function PasswordGenerator() {
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-3">
-                <label className="text-xs" style={{ color: "var(--text-secondary)" }}>Length: {length}</label>
+                <label className="text-xs text-gray-400">Length: {length}</label>
                 <input type="range" min={4} max={64} value={length} onChange={(e) => setLength(+e.target.value)} className="flex-1" />
             </div>
             <div className="flex flex-wrap gap-3">
                 {Object.entries(options).map(([key, val]) => (
-                    <label key={key} className="flex items-center gap-1.5 text-xs cursor-pointer" style={{ color: "var(--text-secondary)" }}>
+                    <label key={key} className="flex items-center gap-1.5 text-xs cursor-pointer text-gray-400">
                         <input type="checkbox" checked={val} onChange={(e) => setOptions({ ...options, [key]: e.target.checked })} />
                         {key.charAt(0).toUpperCase() + key.slice(1)}
                     </label>
@@ -91,8 +93,8 @@ function PasswordGenerator() {
             </div>
             <button onClick={generate} className="tool-btn-primary w-full">🔐 Generate Password</button>
             {pw && (
-                <div className="flex items-center gap-2 p-3 rounded-lg" style={{ background: "rgba(0,0,0,0.3)" }}>
-                    <code className="flex-1 text-sm font-mono break-all" style={{ color: "#4ADE80" }}>{pw}</code>
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-black/30">
+                    <code className="flex-1 text-sm font-mono break-all text-emerald-400">{pw}</code>
                     <button onClick={() => navigator.clipboard.writeText(pw)} className="tool-btn text-xs flex-shrink-0">📋</button>
                 </div>
             )}
@@ -108,7 +110,7 @@ function QRCodeGenerator() {
         <div className="space-y-4">
             <input type="text" value={text} onChange={(e) => setText(e.target.value)} placeholder="Enter text or URL..." className="tool-input" />
             <button onClick={generate} className="tool-btn-primary w-full">📱 Generate QR Code</button>
-            {qr && <div className="text-center p-4 rounded-lg bg-white"><img src={qr} alt="Generated QR Code for Tecsub Solutions" className="mx-auto" style={{ maxWidth: "200px" }} /></div>}
+            {qr && <div className="text-center p-4 rounded-lg bg-white"><img src={qr} alt="Generated QR Code for Tecsub Solutions" className="mx-auto max-w-[200px]" /></div>}
         </div>
     );
 }
@@ -133,9 +135,136 @@ function PlaceholderTool({ name }: { name: string }) {
     return (
         <div className="text-center py-8">
             <p className="text-3xl mb-3">🛠️</p>
-            <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{name}</p>
-            <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>Tool interface loading...</p>
+            <p className="text-sm font-medium text-white">{name}</p>
+            <p className="text-xs mt-1 text-gray-400">Tool interface loading...</p>
         </div>
+    );
+}
+
+/* ─── Step-by-Step User Guide Component ─── */
+function UserGuide() {
+    const { language, setLanguage } = useAppContext();
+
+    const steps = [
+        {
+            num: "01",
+            title: t(language, "guide_step1_title"),
+            desc: t(language, "guide_step1_desc"),
+            icon: "🖱️",
+            color: "#3B82F6", // blue
+        },
+        {
+            num: "02",
+            title: t(language, "guide_step2_title"),
+            desc: t(language, "guide_step2_desc"),
+            icon: "📝",
+            color: "#A855F7", // purple
+        },
+        {
+            num: "03",
+            title: t(language, "guide_step3_title"),
+            desc: t(language, "guide_step3_desc"),
+            icon: "⚡",
+            color: "#22C55E", // green
+        },
+        {
+            num: "04",
+            title: t(language, "guide_step4_title"),
+            desc: t(language, "guide_step4_desc"),
+            icon: "💾",
+            color: "#00E5FF", // cyan
+        },
+    ];
+
+    return (
+        <section className="glass-panel p-6 sm:p-8 rounded-2xl relative overflow-hidden mt-8 mb-8 border border-white/10">
+            {/* Ambient background glow */}
+            <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-tecsubCyan/5 rounded-full blur-[80px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[200px] h-[200px] bg-purple-500/5 rounded-full blur-[60px] pointer-events-none" />
+
+            {/* Header with Switcher */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/5">
+                <div>
+                    <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white via-slate-200 to-gray-400 bg-clip-text text-transparent">
+                        {t(language, "guide_title")}
+                    </h2>
+                    <p className="text-xs sm:text-sm text-gray-400 mt-1">
+                        {t(language, "guide_sub")}
+                    </p>
+                </div>
+                
+                {/* Instant Language Selector Pills */}
+                <div className="flex items-center bg-black/40 p-1.5 rounded-xl border border-white/5 self-start sm:self-center shrink-0">
+                    <button
+                        onClick={() => setLanguage("en")}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                            language === "en"
+                                ? "bg-tecsubCyan text-black font-bold shadow-md shadow-tecsubCyan/20"
+                                : "text-gray-400 hover:text-white"
+                        }`}
+                    >
+                        English
+                    </button>
+                    <button
+                        onClick={() => setLanguage("si")}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                            language === "si"
+                                ? "bg-tecsubCyan text-black font-bold shadow-md shadow-tecsubCyan/20"
+                                : "text-gray-400 hover:text-white"
+                        }`}
+                    >
+                        සිංහල
+                    </button>
+                    <button
+                        onClick={() => setLanguage("ta")}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                            language === "ta"
+                                ? "bg-tecsubCyan text-black font-bold shadow-md shadow-tecsubCyan/20"
+                                : "text-gray-400 hover:text-white"
+                        }`}
+                    >
+                        தமிழ்
+                    </button>
+                </div>
+            </div>
+
+            {/* Steps Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {steps.map((step) => (
+                    <div 
+                        key={step.num}
+                        className="group relative bg-white/[0.02] border border-white/5 hover:border-white/10 p-5 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                    >
+                        {/* Dynamic category color line on hover */}
+                        <div 
+                            className="absolute left-0 right-0 top-0 h-[2px] rounded-t-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                            style={{ background: step.color }}
+                        />
+                        
+                        <div className="flex items-center justify-between mb-4">
+                            <span 
+                                className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                style={{
+                                    color: step.color,
+                                    background: `${step.color}15`,
+                                    border: `1px solid ${step.color}30`,
+                                }}
+                            >
+                                STEP {step.num}
+                            </span>
+                            <span className="text-xl">{step.icon}</span>
+                        </div>
+
+                        <h3 className="font-semibold text-sm sm:text-base text-white group-hover:text-tecsubCyan transition-colors duration-300 mb-2">
+                            {step.title}
+                        </h3>
+                        <p className="text-xs text-gray-400 leading-relaxed">
+                            {step.desc}
+                        </p>
+                    </div>
+                ))}
+            </div>
+        </section>
     );
 }
 
@@ -290,16 +419,21 @@ export default function Home() {
 
                     {/* Main Content */}
                     <main className="kdj-tools-main">
-                        {/* SEO Header - Visually Hidden */}
-                        <h1 className="sr-only">Tecsub Solutions | Professional Software Development & AI Tools</h1>
+                        {/* Visible High-End SEO Header */}
+                        <header className="mb-8 relative overflow-hidden">
+                            <h1 className="text-3xl sm:text-4xl font-black italic tracking-tighter bg-gradient-to-r from-tecsubCyan via-white to-gray-500 bg-clip-text text-transparent uppercase flex flex-col">
+                                <span className="text-[10px] font-black text-gray-500 tracking-[0.4em] uppercase block mb-1">
+                                    TECSUB SOLUTIONS
+                                </span>
+                                ONLINE UTILITY TOOLS
+                            </h1>
+                            <p className="text-[10px] font-black text-gray-400 tracking-[0.3em] uppercase mt-1">
+                                Productivity & Development Workspace
+                            </p>
+                        </header>
                         
-                        <div className="mb-8">
-                            <h2 className="text-3xl font-black italic tracking-tighter gradient-text uppercase">Online Utility Tools</h2>
-                            <p className="text-[10px] font-black text-gray-500 tracking-[0.3em] uppercase">Productivity & Development Workspace</p>
-                        </div>
-
                         {/* Search Bar */}
-                        <div className="kdj-tools-search-wrap" style={{ marginBottom: "24px" }}>
+                        <div className="kdj-tools-search-wrap mb-6">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="kdj-tools-search-icon">
                                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                             </svg>
@@ -340,8 +474,7 @@ export default function Home() {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.3 }}
-                                    className="kdj-tool-panel"
-                                    style={{ marginBottom: "24px" }}
+                                    className="kdj-tool-panel mb-6"
                                 >
                                     <div className="kdj-tool-panel-header">
                                         <h2 className="kdj-tool-panel-title">{activeTool}</h2>
@@ -404,9 +537,11 @@ export default function Home() {
                         {filteredTools.length === 0 && (
                             <div className="text-center py-16">
                                 <p className="text-4xl mb-3">🔍</p>
-                                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>No tools found matching your search.</p>
+                                <p className="text-sm text-gray-400 font-medium">No tools found matching your search.</p>
                             </div>
                         )}
+
+                        <UserGuide />
 
                         <AdPlacement format="banner" />
                     </main>

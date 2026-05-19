@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -7,6 +7,35 @@ import ChatPanel from "@/components/ChatPanel";
 import PdfModal from "@/components/PdfModal";
 import AuthModal from "@/components/AuthModal";
 import Sidebar from "@/components/Sidebar";
+import { Roboto, Noto_Sans_Sinhala, Noto_Sans_Tamil } from "next/font/google";
+
+const roboto = Roboto({
+    subsets: ["latin"],
+    weight: ["300", "400", "500", "700", "900"],
+    variable: "--font-roboto",
+    display: "swap",
+});
+
+const notoSinhala = Noto_Sans_Sinhala({
+    subsets: ["sinhala"],
+    weight: ["400", "600"],
+    variable: "--font-noto-sinhala",
+    display: "swap",
+});
+
+const notoTamil = Noto_Sans_Tamil({
+    subsets: ["tamil"],
+    weight: ["400", "600"],
+    variable: "--font-noto-tamil",
+    display: "swap",
+});
+
+
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    themeColor: "#0A0A0B",
+};
 
 
 export const metadata: Metadata = {
@@ -16,7 +45,7 @@ export const metadata: Metadata = {
         template: "%s | Tecsub Solutions",
     },
     description:
-        "Tecsub Solutions provides high-performance software development, AI writing tools, and engineering solutions in Sri Lanka. Explore our next-gen applications.",
+        "Tecsub Solutions offers high-performance software and AI writing tools in Sri Lanka. Enhance your digital workspace today.",
     keywords: ["Tecsub Solutions", "Software Development Sri Lanka", "AI Tools", "Web Development", "Technology", "Engineering", "Online Tools", "Sri Lanka Tech"],
     authors: [{ name: "Tecsub Solutions", url: "https://tecsub.online" }],
     creator: "Tecsub Solutions",
@@ -46,6 +75,12 @@ export const metadata: Metadata = {
     },
     alternates: {
         canonical: "https://tecsub.online",
+        languages: {
+            "en": "https://tecsub.online/?lang=en",
+            "si-LK": "https://tecsub.online/?lang=si",
+            "ta-LK": "https://tecsub.online/?lang=ta",
+            "x-default": "https://tecsub.online",
+        },
     },
     icons: {
         icon: "/favicon.ico",
@@ -56,10 +91,40 @@ export const metadata: Metadata = {
 
 const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "LocalBusiness",
     "name": "Tecsub Solutions",
+    "image": "https://tecsub.online/logo/tecsub.jpg",
+    "@id": "https://tecsub.online/#localbusiness",
     "url": "https://tecsub.online",
-    "logo": "https://tecsub.online/logo/tecsub.jpg",
+    "telephone": "+94726128749",
+    "email": "tecsubsolutions@gmail.com",
+    "priceRange": "$$",
+    "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "No. 45, Kandy Road",
+        "addressLocality": "Kurunegala",
+        "postalCode": "60000",
+        "addressCountry": "LK"
+    },
+    "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 7.4817,
+        "longitude": 80.3609
+    },
+    "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+        ],
+        "opens": "00:00",
+        "closes": "23:59"
+    },
     "sameAs": [
         "https://www.facebook.com/Hasanthamedagedara",
         "https://www.youtube.com/@tecsub.0",
@@ -75,7 +140,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" className="dark" suppressHydrationWarning>
+        <html lang="en" className={`dark ${roboto.variable} ${notoSinhala.variable} ${notoTamil.variable}`} suppressHydrationWarning>
             <head>
                 {/* Instantly detect app WebView before paint — prevents header flash */}
                 <script dangerouslySetInnerHTML={{
@@ -95,12 +160,6 @@ export default function RootLayout({
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-                />
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link
-                    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Noto+Sans+Sinhala:wght@400;600&family=Noto+Sans+Tamil:wght@400;600&display=swap"
-                    rel="stylesheet"
                 />
             </head>
             <body className="font-roboto antialiased">

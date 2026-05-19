@@ -211,8 +211,8 @@ export default function RecentUpdates() {
 
                                 {/* Glow line on left */}
                                 <div
-                                    className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full opacity-60 group-hover:opacity-100 transition-opacity"
-                                    style={{ background: categoryColors[update.category] || "#00E5FF" }}
+                                    className="kdj-category-glow absolute left-0 top-0 bottom-0 w-[3px] rounded-full opacity-60 group-hover:opacity-100 transition-opacity"
+                                    style={{ "--category-color": categoryColors[update.category] || "#00E5FF" } as React.CSSProperties}
                                 />
 
                                 <div className="pl-4">
@@ -220,24 +220,23 @@ export default function RecentUpdates() {
                                     <div className="flex items-center gap-2 mb-3 flex-wrap">
                                         <span className="text-sm">{typeIcons[update.type] || "📌"}</span>
                                         <span
-                                            className="text-[10px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full"
+                                            className="kdj-category-badge text-[10px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full"
                                             style={{
-                                                color: categoryColors[update.category] || "#00E5FF",
-                                                background: `${categoryColors[update.category] || "#00E5FF"}15`,
-                                                border: `1px solid ${categoryColors[update.category] || "#00E5FF"}30`,
-                                            }}
+                                                "--category-color": categoryColors[update.category] || "#00E5FF",
+                                                "--category-color-bg": `${categoryColors[update.category] || "#00E5FF"}15`,
+                                                "--category-color-border": `${categoryColors[update.category] || "#00E5FF"}30`,
+                                            } as React.CSSProperties}
                                         >
                                             {update.category}
                                         </span>
-                                        <span className="text-[10px] ml-auto" style={{ color: "var(--text-secondary)" }}>
+                                        <span className="text-[10px] ml-auto text-gray-500">
                                             {update.date} • {update.time}
                                         </span>
                                     </div>
 
                                     {/* Title */}
                                     <h3
-                                        className="font-semibold text-sm sm:text-base mb-1.5 group-hover:text-tecsubCyan transition-colors duration-300 leading-snug"
-                                        style={{ color: "var(--text-primary)" }}
+                                        className="font-semibold text-sm sm:text-base mb-1.5 group-hover:text-tecsubCyan transition-colors duration-300 leading-snug text-white"
                                     >
                                         {update.title}
                                     </h3>

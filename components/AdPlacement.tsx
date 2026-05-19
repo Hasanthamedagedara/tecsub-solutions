@@ -55,7 +55,14 @@ export default function AdPlacement({ format, className = "", mobileOnly = false
         setMounted(true);
     }, []);
 
-    if (!mounted) return <div style={{ width: ADS[format].w, height: ADS[format].h }} className={`bg-gray-800/20 animate-pulse mx-auto ${className}`} />;
+    if (!mounted) {
+        return (
+            <div 
+                style={{ "--ad-w": `${ADS[format].w}px`, "--ad-h": `${ADS[format].h}px` } as React.CSSProperties} 
+                className={`kdj-ad-placeholder bg-gray-800/20 animate-pulse mx-auto ${className}`} 
+            />
+        );
+    }
 
     const adConfig = ADS[format];
 
@@ -67,21 +74,15 @@ export default function AdPlacement({ format, className = "", mobileOnly = false
     return (
         <div
             data-ad-format={format}
-            className={`flex items-center justify-center mx-auto ${visibilityClass} ${className}`}
-            style={{ maxWidth: `${adConfig.w}px`, width: "100%", overflow: "hidden" }}
+            className={`kdj-ad-wrapper flex items-center justify-center mx-auto ${visibilityClass} ${className}`}
+            style={{ "--ad-w": `${adConfig.w}px` } as React.CSSProperties}
         >
             <iframe
                 srcDoc={bannerHtml(adConfig)}
                 width={adConfig.w}
                 height={adConfig.h}
                 scrolling="no"
-                style={{
-                    border: "none",
-                    overflow: "hidden",
-                    display: "block",
-                    maxWidth: "100%",
-                    background: "transparent",
-                }}
+                className="kdj-ad-iframe"
                 sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
                 title={`ad-${format}`}
             />

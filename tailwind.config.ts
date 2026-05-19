@@ -31,7 +31,7 @@ const config: Config = {
                 techWhite: "#f1f1f1",
             },
             fontFamily: {
-                roboto: ['"Roboto"', '"Arial"', "sans-serif"],
+                roboto: ["var(--font-roboto)", '"Arial"', "sans-serif"],
                 inter: ['"Inter"', "sans-serif"],
                 bebas: ['"Bebas Neue"', "sans-serif"],
             },
