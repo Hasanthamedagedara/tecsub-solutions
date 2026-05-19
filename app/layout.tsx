@@ -129,7 +129,10 @@ const jsonLd = {
         "https://www.facebook.com/Hasanthamedagedara",
         "https://www.youtube.com/@tecsub.0",
         "https://whatsapp.com/channel/0029Vb6cPkODuMRkMeIaT31F",
-        "https://t.me/Hasanthamedagedra"
+        "https://t.me/Hasanthamedagedra",
+        "https://x.com/tecsubsolutions",
+        "https://linkedin.com/company/tecsubsolutions",
+        "https://instagram.com/tecsubsolutions"
     ],
     "description": "Tecsub Solutions is a leading software development provider in Sri Lanka, specializing in AI-driven tools and high-performance applications."
 };
