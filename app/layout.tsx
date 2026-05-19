@@ -107,9 +107,9 @@ const jsonLd = {
     "priceRange": "$$",
     "address": {
         "@type": "PostalAddress",
-        "streetAddress": "No. 45, Kandy Road",
-        "addressLocality": "Kurunegala",
-        "postalCode": "60000",
+        "streetAddress": "Colombo 01",
+        "addressLocality": "Colombo",
+        "postalCode": "00100",
         "addressCountry": "LK"
     },
     "geo": {

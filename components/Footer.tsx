@@ -97,7 +97,7 @@ export default function Footer() {
                         </div>
                         <div className="kdj-footer-brand-contact">
                             <span className="kdj-footer-contact-item text-xs opacity-75 select-all">
-                                📍 No. 45, Kandy Road, Kurunegala, Sri Lanka
+                                📍 Colombo 01, Sri Lanka
                             </span>
                             <a href="tel:+94726128749" className="kdj-footer-contact-item">
                                 📞 +94 72 612 8749
