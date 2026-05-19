@@ -16,7 +16,7 @@ const footerLinks = {
         { label: "TECSUB Singlish", href: "/translator" },
         { label: "TECSUB Audio", href: "/apps" },
         { label: "TECSUB Video", href: "/apps" },
-        { label: "Singlish.lk", href: "/apps" },
+        { label: "TECSUB Apps", href: "/apps" },
     ],
     resources: [
         { label: "Blog", href: "/news" },

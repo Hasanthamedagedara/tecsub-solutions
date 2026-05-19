@@ -95,13 +95,13 @@ export default function ArticlesClient() {
                 <h1 className="font-bebas text-5xl sm:text-7xl gradient-text leading-[0.95] mb-4 tracking-wider">
                     TECSUB ARTICLES
                 </h1>
-                <p className="text-gray-400 text-base sm:text-lg">
+                <p className="text-[var(--text-secondary)] text-base sm:text-lg" style={{ color: "var(--text-secondary)" }}>
                     Stay informed with technical insights, advanced software patterns, and modern coding guidelines curated by the Tecsub Solutions engineering team.
                 </p>
             </div>
 
             {/* Filter & Search Bar */}
-            <div className="mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-6 p-4 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-xl shadow-xl">
+            <div className="mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-6 p-4 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl shadow-xl">
                 {/* Category Selector */}
                 <div className="flex flex-wrap gap-2">
                     {CATEGORIES.map((cat) => (
@@ -110,9 +110,13 @@ export default function ArticlesClient() {
                             onClick={() => setSelectedCategory(cat)}
                             className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
                                 selectedCategory === cat
-                                    ? "bg-white text-black shadow-lg"
-                                    : "bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white"
+                                    ? "bg-[var(--text-primary)] text-[var(--navy)] shadow-lg"
+                                    : "bg-[var(--glass-bg)] text-[var(--text-secondary)] hover:bg-[var(--glass-bg)]/80 hover:text-[var(--text-primary)]"
                             }`}
+                            style={{
+                                backgroundColor: selectedCategory === cat ? "var(--text-primary)" : "var(--glass-bg)",
+                                color: selectedCategory === cat ? "var(--navy)" : "var(--text-secondary)",
+                            }}
                         >
                             {cat}
                         </button>
@@ -126,10 +130,12 @@ export default function ArticlesClient() {
                         placeholder="Search articles..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 rounded-xl text-sm border border-white/10 bg-white/5 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all duration-300"
+                        className="w-full pl-10 pr-4 py-2 rounded-xl text-sm border border-[var(--glass-border)] bg-[var(--glass-bg)] placeholder-[var(--text-secondary)] focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all duration-300"
+                        style={{ color: "var(--text-primary)", backgroundColor: "var(--glass-bg)" }}
                     />
                     <svg
-                        className="absolute left-3 top-2.5 text-gray-400"
+                        className="absolute left-3 top-2.5"
+                        style={{ color: "var(--text-secondary)" }}
                         width="16"
                         height="16"
                         viewBox="0 0 24 24"
@@ -149,7 +155,7 @@ export default function ArticlesClient() {
                     {filteredArticles.map((article) => (
                         <article
                             key={article.id}
-                            className="group flex flex-col rounded-2xl overflow-hidden border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/10 transition-all duration-500 shadow-lg hover:shadow-cyan-900/5 hover:-translate-y-1.5"
+                            className="group flex flex-col rounded-2xl overflow-hidden border border-[var(--glass-border)] bg-[var(--glass-bg)] hover:bg-[var(--glass-bg)]/80 hover:border-cyan-400/30 transition-all duration-500 shadow-lg hover:shadow-cyan-900/5 hover:-translate-y-1.5"
                         >
                             {/* Article Image container */}
                             <div className="relative aspect-[16/10] overflow-hidden bg-gray-900">
@@ -170,22 +176,22 @@ export default function ArticlesClient() {
 
                             {/* Content Container */}
                             <div className="flex-1 p-6 flex flex-col">
-                                <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
+                                <div className="flex items-center gap-3 text-xs mb-3" style={{ color: "var(--text-secondary)" }}>
                                     <span>{article.date}</span>
                                     <span>•</span>
                                     <span>{article.readTime}</span>
                                 </div>
 
-                                <h2 className="font-bebas text-2xl sm:text-3xl text-white group-hover:text-cyan-400 transition-colors duration-300 mb-3 tracking-wider leading-tight">
+                                <h2 className="font-bebas text-2xl sm:text-3xl group-hover:text-cyan-400 transition-colors duration-300 mb-3 tracking-wider leading-tight" style={{ color: "var(--text-primary)" }}>
                                     {article.title}
                                 </h2>
 
-                                <p className="text-gray-400 text-sm leading-relaxed mb-6 flex-1">
+                                <p className="text-sm leading-relaxed mb-6 flex-1" style={{ color: "var(--text-secondary)" }}>
                                     {article.excerpt}
                                 </p>
 
-                                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                                    <span className="text-xs font-medium text-gray-400">By {article.author}</span>
+                                <div className="pt-4 border-t border-[var(--glass-border)] flex items-center justify-between">
+                                    <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>By {article.author}</span>
                                     <span className="text-xs font-bold text-cyan-400 flex items-center gap-1 group-hover:gap-2 transition-all duration-300">
                                         Read Article 
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -198,10 +204,10 @@ export default function ArticlesClient() {
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-20 border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
+                <div className="text-center py-20 border border-dashed border-[var(--glass-border)] rounded-2xl bg-[var(--glass-bg)]">
                     <span className="text-4xl">🔍</span>
-                    <h3 className="text-white text-lg font-bold mt-4 mb-2">No articles found</h3>
-                    <p className="text-gray-400 max-w-xs mx-auto text-sm">
+                    <h3 className="text-lg font-bold mt-4 mb-2" style={{ color: "var(--text-primary)" }}>No articles found</h3>
+                    <p className="max-w-xs mx-auto text-sm" style={{ color: "var(--text-secondary)" }}>
                         Try refining your search query or switching to another category tab.
                     </p>
                 </div>

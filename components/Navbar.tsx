@@ -7,7 +7,7 @@ import { useRouter, usePathname } from "next/navigation";
 import AuthButton from "@/components/AuthButton";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User, signOut } from "firebase/auth";
-import { onlineTools, downloads, pdfToolsMenu } from "@/data/product";
+import { onlineTools, downloads, pdfToolsMenu, onlineToolsMenu } from "@/data/product";
 import EmailLink from "@/components/EmailLink";
 
 /* ─── Detect if running inside Android WebView app ─── */
@@ -93,6 +93,111 @@ export default function Navbar() {
     const navRef = useRef<HTMLElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
     const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Profile & Settings states
+    const [profileName, setProfileName] = useState("Hasantha Medagedara");
+    const [profileUsername, setProfileUsername] = useState("hasanthadilshanmedagedara");
+    const [profileEmail, setProfileEmail] = useState("hasanthadilshanmedagedara@gmail.com");
+    const [profilePhone, setProfilePhone] = useState("+94 77 123 4567");
+    const [profilePaymentCard, setProfilePaymentCard] = useState("Visa ending in 4242");
+
+    const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [settingsTab, setSettingsTab] = useState<"password" | "contact" | "payment">("password");
+
+    const [tempName, setTempName] = useState("");
+    const [tempUsername, setTempUsername] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [tempEmail, setTempEmail] = useState("");
+    const [tempPhone, setTempPhone] = useState("");
+    const [tempPayment, setTempPayment] = useState("");
+
+    const [settingsMessage, setSettingsMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
+    // Notification states
+    const [hasUnreadNotification, setHasUnreadNotification] = useState(true);
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
+    const [notificationsList, setNotificationsList] = useState([
+        { id: "feat-reminders", title: "⏰ Custom Date Payment Reminders", desc: "Never miss a due date! Schedule custom, daily, or specific date alerts easily.", date: "New Feature", href: "/features/payment-reminders", unread: true },
+        { id: "feat-lang-switch", title: "🗣️ Trilingual Language Switcher", desc: "Access the entire workspace in English, සිංහල, and தமிழ் seamlessly.", date: "New Feature", href: "/features/language-switch", unread: true },
+        { id: "feat-dark-mode", title: "🔆 Sleek HSL Light & Dark Modes", desc: "Adaptive fine-tuned HSL lighting modes for perfect ergo comfort across all features.", date: "New Feature", href: "/features/dark-mode", unread: true },
+    ]);
+
+    useEffect(() => {
+        const storedName = localStorage.getItem("tecsub-profile-name");
+        const storedUser = localStorage.getItem("tecsub-profile-username");
+        const storedEmail = localStorage.getItem("tecsub-profile-email");
+        const storedPhone = localStorage.getItem("tecsub-profile-phone");
+        const storedPayment = localStorage.getItem("tecsub-profile-payment");
+
+        if (storedName) setProfileName(storedName);
+        if (storedUser) setProfileUsername(storedUser);
+        if (storedEmail) {
+            setProfileEmail(storedEmail);
+            setTempEmail(storedEmail);
+        }
+        if (storedPhone) {
+            setProfilePhone(storedPhone);
+            setTempPhone(storedPhone);
+        }
+        if (storedPayment) {
+            setProfilePaymentCard(storedPayment);
+            setTempPayment(storedPayment);
+        }
+    }, []);
+
+    const openEditProfile = () => {
+        setTempName(profileName);
+        setTempUsername(profileUsername);
+        setIsEditProfileOpen(true);
+        setProfileOpen(false);
+    };
+
+    const openSettings = () => {
+        setTempEmail(profileEmail);
+        setTempPhone(profilePhone);
+        setTempPayment(profilePaymentCard);
+        setSettingsMessage(null);
+        setIsSettingsOpen(true);
+        setProfileOpen(false);
+    };
+
+    const handleSaveProfile = () => {
+        setProfileName(tempName);
+        setProfileUsername(tempUsername);
+        localStorage.setItem("tecsub-profile-name", tempName);
+        localStorage.setItem("tecsub-profile-username", tempUsername);
+        setIsEditProfileOpen(false);
+    };
+
+    const handleUpdatePassword = () => {
+        if (!newPassword || newPassword !== confirmPassword) {
+            setSettingsMessage({ text: "Passwords do not match or are empty!", type: "error" });
+            return;
+        }
+        setSettingsMessage({ text: "🔑 Password successfully updated!", type: "success" });
+        setNewPassword("");
+        setConfirmPassword("");
+    };
+
+    const handleSendResetEmail = () => {
+        setSettingsMessage({ text: `A secure reset link has been dispatched to ${profileEmail}.`, type: "success" });
+    };
+
+    const handleSaveContact = () => {
+        setProfileEmail(tempEmail);
+        setProfilePhone(tempPhone);
+        localStorage.setItem("tecsub-profile-email", tempEmail);
+        localStorage.setItem("tecsub-profile-phone", tempPhone);
+        setSettingsMessage({ text: "📞 Contact details successfully saved!", type: "success" });
+    };
+
+    const handleSavePayment = () => {
+        setProfilePaymentCard(tempPayment);
+        localStorage.setItem("tecsub-profile-payment", tempPayment);
+        setSettingsMessage({ text: "💳 Payment details successfully updated!", type: "success" });
+    };
 
     useEffect(() => {
         setIsApp(isAppWebView());
@@ -330,7 +435,7 @@ export default function Navbar() {
                                             animate={{ opacity: 1, x: 0 }}
                                             exit={{ opacity: 0, x: -10 }}
                                             transition={{ duration: 0.2 }}
-                                            className={activeMegaCategory === "pdf-tools" ? "w-full" : "kdj-mega-grid-inner"}
+                                            className={(activeMegaCategory === "pdf-tools" || activeMegaCategory === "online") ? "w-full" : "kdj-mega-grid-inner"}
                                         >
                                             {activeMegaCategory === "pdf-tools" ? (
                                                 <div className="flex flex-col gap-6 w-full pb-8 pr-2">
@@ -349,6 +454,31 @@ export default function Navbar() {
                                                                             icon: item.icon,
                                                                             href: item.href,
                                                                             color: "#10b981",
+                                                                            badge: (item as any).badge
+                                                                        }} 
+                                                                    />
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : activeMegaCategory === "online" ? (
+                                                <div className="flex flex-col gap-6 w-full pb-8 pr-2">
+                                                    {onlineToolsMenu.map((group) => (
+                                                        <div key={group.title} className="flex flex-col gap-2">
+                                                            <div className="text-[11px] font-black uppercase text-gray-500 tracking-[0.1em] pl-3 border-b border-white/5 pb-2">
+                                                                {group.title}
+                                                            </div>
+                                                            <div className="grid grid-cols-2 gap-2">
+                                                                {group.items.map((item) => (
+                                                                    <DropdownItem 
+                                                                        key={item.label} 
+                                                                        item={{
+                                                                            label: item.label,
+                                                                            desc: item.desc,
+                                                                            icon: item.icon,
+                                                                            href: item.href,
+                                                                            color: item.color,
                                                                             badge: (item as any).badge
                                                                         }} 
                                                                     />
@@ -458,11 +588,79 @@ export default function Navbar() {
                     </button>
 
                     {/* Notifications */}
-                    <button className="kdj-icon-btn" aria-label="Notifications">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                        </svg>
-                    </button>
+                    <div className="relative">
+                        <button
+                            onClick={() => {
+                                setNotificationsOpen(!notificationsOpen);
+                                setHasUnreadNotification(false);
+                            }}
+                            className="kdj-icon-btn relative"
+                            aria-label="Notifications"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                            </svg>
+                            {hasUnreadNotification && (
+                                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping" />
+                            )}
+                            {hasUnreadNotification && (
+                                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border border-black/25" />
+                            )}
+                        </button>
+
+                        <AnimatePresence>
+                            {notificationsOpen && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                    className="absolute right-0 mt-2 w-80 rounded-2xl overflow-hidden shadow-2xl p-4 z-[120]"
+                                    style={{
+                                        background: "var(--yt-bg-secondary, #1e1e1e)",
+                                        border: "1px solid var(--yt-border, #333)",
+                                        color: "var(--yt-text-primary, #fff)"
+                                    }}
+                                >
+                                    <div className="flex justify-between items-center pb-2 mb-3 border-b border-[var(--yt-border,rgba(255,255,255,0.08))]">
+                                        <span className="font-bold text-xs uppercase tracking-widest text-[#3ea6ff]">Updates & New Features</span>
+                                        <button
+                                            onClick={() => setNotificationsOpen(false)}
+                                            className="text-[10px] text-gray-500 hover:text-white uppercase font-black"
+                                            style={{ background: "none", border: "none", cursor: "pointer" }}
+                                        >
+                                            Close
+                                        </button>
+                                    </div>
+                                    <div className="space-y-3 max-h-64 overflow-y-auto scrollbar-thin">
+                                        {notificationsList.map((notif) => (
+                                            <div
+                                                key={notif.id}
+                                                onClick={() => {
+                                                    if (notif.href) {
+                                                        router.push(notif.href);
+                                                        setNotificationsOpen(false);
+                                                    }
+                                                }}
+                                                className="p-2.5 rounded-xl transition-all cursor-pointer hover:bg-white/5"
+                                                style={{
+                                                    background: notif.unread ? "rgba(0,229,255,0.05)" : "transparent",
+                                                    border: notif.unread ? "1px solid rgba(0,229,255,0.1)" : "1px solid transparent"
+                                                }}
+                                            >
+                                                <div className="flex justify-between items-start gap-2 mb-1">
+                                                    <h4 className="font-black text-xs leading-snug">{notif.title}</h4>
+                                                    <span className="text-[8px] font-black uppercase tracking-tighter px-1.5 py-0.5 rounded bg-cyan-500/25 text-cyan-400">
+                                                        {notif.date}
+                                                    </span>
+                                                </div>
+                                                <p className="text-[10px] leading-relaxed text-gray-400">{notif.desc}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
 
                     {/* User / Login */}
                     <div className="flex items-center">
@@ -489,24 +687,33 @@ export default function Navbar() {
                                                             className="kdj-profile-avatar"
                                                         />
                                                         <div className="kdj-profile-user-info">
-                                                            <p className="kdj-profile-name">{user.displayName || "User"}</p>
-                                                            <p className="kdj-profile-username">{user.email?.split('@')[0] || "user"}</p>
+                                                            <p className="kdj-profile-name">{profileName}</p>
+                                                            <p className="kdj-profile-username">@{profileUsername}</p>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 {/* Current Plan */}
                                                 <div className="kdj-profile-plan">
-                                                    <div className="kdj-profile-plan-row">
-                                                        <span className="kdj-profile-plan-icon">🎯</span>
-                                                        <span className="kdj-profile-plan-label">Current Plan</span>
-                                                        <span className="kdj-profile-plan-badge">Free</span>
+                                                    <div className="kdj-profile-plan-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                            <span className="kdj-profile-plan-icon">🎯</span>
+                                                            <span className="kdj-profile-plan-label">Plan</span>
+                                                            <span className="kdj-profile-plan-badge" style={{ backgroundColor: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>Free</span>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => { setProfileOpen(false); router.push('/pricing'); }}
+                                                            className="text-[10px] font-black uppercase px-2.5 py-1 rounded bg-[#3ea6ff] hover:bg-[#3ea6ff]/80 text-white transition-all shadow-md shadow-blue-500/20"
+                                                            style={{ border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+                                                        >
+                                                            Upgrade
+                                                        </button>
                                                     </div>
                                                 </div>
 
                                                 {/* Menu Items */}
                                                 <div className="kdj-profile-menu-items">
-                                                    <button onClick={() => { setProfileOpen(false); router.push('/admin'); }} className="kdj-profile-menu-item">
+                                                    <button onClick={openEditProfile} className="kdj-profile-menu-item">
                                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                                                         </svg>
@@ -520,14 +727,14 @@ export default function Navbar() {
                                                         <span>Favorites</span>
                                                         <svg className="kdj-profile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
                                                     </button>
-                                                    <button onClick={() => { setProfileOpen(false); }} className="kdj-profile-menu-item">
+                                                    <button onClick={openSettings} className="kdj-profile-menu-item">
                                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                                             <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1-2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                                                         </svg>
                                                         <span>Settings</span>
-                                                        <svg className="kdj-profile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
-                                                    </button>
-                                                </div>
+                                                         <svg className="kdj-profile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                                                     </button>
+                                                 </div>
 
                                                 {/* Sign Out */}
                                                 <div className="kdj-profile-signout-wrap">
@@ -637,6 +844,336 @@ export default function Navbar() {
                                     💰 Pricing
                                 </a>
                             </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* ═══ Edit Profile Modal ═══ */}
+            <AnimatePresence>
+                {isEditProfileOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+                        onClick={() => setIsEditProfileOpen(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.95, y: 20 }}
+                            className="w-full max-w-md rounded-3xl overflow-hidden shadow-2xl p-6 relative"
+                            style={{
+                                background: "var(--yt-bg-secondary, #1e1e1e)",
+                                border: "1px solid var(--yt-border, #333)",
+                                fontFamily: "'Inter', sans-serif"
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button
+                                onClick={() => setIsEditProfileOpen(false)}
+                                className="absolute top-4 right-4 text-gray-500 hover:text-white text-lg"
+                                style={{ background: "none", border: "none", cursor: "pointer" }}
+                            >
+                                ✕
+                            </button>
+                            <h2 className="text-xl font-black mb-1 flex items-center gap-2" style={{ color: "var(--yt-text-primary, #fff)" }}>
+                                ✏️ Edit Profile
+                            </h2>
+                            <p className="text-xs mb-6 text-gray-500">
+                                Update your profile information visible across the TECSUB ecosystem.
+                            </p>
+
+                            <div className="space-y-4 mb-6">
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest mb-1.5 text-gray-400">
+                                        Full Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={tempName}
+                                        onChange={(e) => setTempName(e.target.value)}
+                                        className="w-full px-4 py-2.5 rounded-xl text-sm border outline-none transition-all"
+                                        style={{
+                                            background: "rgba(0,0,0,0.25)",
+                                            borderColor: "var(--yt-border, #333)",
+                                            color: "var(--yt-text-primary, #fff)"
+                                        }}
+                                        placeholder="Enter full name"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest mb-1.5 text-gray-400">
+                                        Username
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={tempUsername}
+                                        onChange={(e) => setTempUsername(e.target.value)}
+                                        className="w-full px-4 py-2.5 rounded-xl text-sm border outline-none transition-all"
+                                        style={{
+                                            background: "rgba(0,0,0,0.25)",
+                                            borderColor: "var(--yt-border, #333)",
+                                            color: "var(--yt-text-primary, #fff)"
+                                        }}
+                                        placeholder="Enter username"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={handleSaveProfile}
+                                    className="flex-1 py-3 rounded-xl bg-[#3ea6ff] hover:brightness-110 text-white font-bold text-xs uppercase tracking-wider transition-all"
+                                    style={{ border: "none", cursor: "pointer" }}
+                                >
+                                    Save Changes
+                                </button>
+                                <button
+                                    onClick={() => setIsEditProfileOpen(false)}
+                                    className="px-5 py-3 rounded-xl border font-bold text-xs uppercase tracking-wider transition-all"
+                                    style={{
+                                        borderColor: "var(--yt-border, #333)",
+                                        color: "var(--yt-text-secondary, #888)",
+                                        background: "none",
+                                        cursor: "pointer"
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* ═══ Settings Modal ═══ */}
+            <AnimatePresence>
+                {isSettingsOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+                        onClick={() => setIsSettingsOpen(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.95, y: 20 }}
+                            className="w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl p-6 relative"
+                            style={{
+                                background: "var(--yt-bg-secondary, #1e1e1e)",
+                                border: "1px solid var(--yt-border, #333)",
+                                fontFamily: "'Inter', sans-serif"
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button
+                                onClick={() => setIsSettingsOpen(false)}
+                                className="absolute top-4 right-4 text-gray-500 hover:text-white text-lg"
+                                style={{ background: "none", border: "none", cursor: "pointer" }}
+                            >
+                                ✕
+                            </button>
+                            <h2 className="text-xl font-black mb-1 flex items-center gap-2" style={{ color: "var(--yt-text-primary, #fff)" }}>
+                                ⚙️ Account Settings
+                            </h2>
+                            <p className="text-xs mb-6 text-gray-500">
+                                Manage your password, email, mobile phone number, and subscription payment details.
+                            </p>
+
+                            {/* Alert messages */}
+                            {settingsMessage && (
+                                <div
+                                    className={`p-3 rounded-xl text-xs mb-4 font-bold border transition-all ${
+                                        settingsMessage.type === "success"
+                                            ? "bg-green-500/10 border-green-500/20 text-green-400"
+                                            : "bg-red-500/10 border-red-500/20 text-red-400"
+                                    }`}
+                                >
+                                    {settingsMessage.text}
+                                </div>
+                            )}
+
+                            {/* Tabs Header */}
+                            <div className="flex border-b mb-6" style={{ borderColor: "var(--yt-border, rgba(255,255,255,0.08))" }}>
+                                <button
+                                    onClick={() => { setSettingsTab("password"); setSettingsMessage(null); }}
+                                    className={`pb-3 px-4 font-bold text-xs uppercase tracking-widest transition-all ${
+                                        settingsTab === "password" ? "text-[#3ea6ff] border-b-2 border-[#3ea6ff]" : "text-gray-500 hover:text-gray-300"
+                                    }`}
+                                    style={{ background: "none", border: "none", cursor: "pointer" }}
+                                >
+                                    Password
+                                </button>
+                                <button
+                                    onClick={() => { setSettingsTab("contact"); setSettingsMessage(null); }}
+                                    className={`pb-3 px-4 font-bold text-xs uppercase tracking-widest transition-all ${
+                                        settingsTab === "contact" ? "text-[#3ea6ff] border-b-2 border-[#3ea6ff]" : "text-gray-500 hover:text-gray-300"
+                                    }`}
+                                    style={{ background: "none", border: "none", cursor: "pointer" }}
+                                >
+                                    Contact Info
+                                </button>
+                                <button
+                                    onClick={() => { setSettingsTab("payment"); setSettingsMessage(null); }}
+                                    className={`pb-3 px-4 font-bold text-xs uppercase tracking-widest transition-all ${
+                                        settingsTab === "payment" ? "text-[#3ea6ff] border-b-2 border-[#3ea6ff]" : "text-gray-500 hover:text-gray-300"
+                                    }`}
+                                    style={{ background: "none", border: "none", cursor: "pointer" }}
+                                >
+                                    Payment Details
+                                </button>
+                            </div>
+
+                            {/* Tab Content */}
+                            <div className="min-h-[160px] mb-6">
+                                {settingsTab === "password" && (
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center bg-blue-500/5 border border-blue-500/10 p-3 rounded-xl mb-2">
+                                            <span className="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Fast Authentication Reset</span>
+                                            <button
+                                                onClick={handleSendResetEmail}
+                                                className="text-[9px] font-black tracking-widest px-2.5 py-1.5 rounded bg-blue-500 text-white uppercase hover:brightness-110"
+                                                style={{ border: "none", cursor: "pointer" }}
+                                            >
+                                                Send Reset Link
+                                            </button>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-[10px] font-black uppercase tracking-widest mb-1.5 text-gray-400">
+                                                    New Password
+                                                </label>
+                                                <input
+                                                    type="password"
+                                                    value={newPassword}
+                                                    onChange={(e) => setNewPassword(e.target.value)}
+                                                    className="w-full px-4 py-2 rounded-xl text-sm border outline-none"
+                                                    style={{
+                                                        background: "rgba(0,0,0,0.25)",
+                                                        borderColor: "var(--yt-border, #333)",
+                                                        color: "var(--yt-text-primary, #fff)"
+                                                    }}
+                                                    placeholder="••••••••"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-black uppercase tracking-widest mb-1.5 text-gray-400">
+                                                    Confirm Password
+                                                </label>
+                                                <input
+                                                    type="password"
+                                                    value={confirmPassword}
+                                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                                    className="w-full px-4 py-2 rounded-xl text-sm border outline-none"
+                                                    style={{
+                                                        background: "rgba(0,0,0,0.25)",
+                                                        borderColor: "var(--yt-border, #333)",
+                                                        color: "var(--yt-text-primary, #fff)"
+                                                    }}
+                                                    placeholder="••••••••"
+                                                />
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={handleUpdatePassword}
+                                            className="w-full py-2.5 rounded-xl bg-cyan-500 text-white font-bold text-xs uppercase tracking-wider hover:brightness-110 transition-all mt-2"
+                                            style={{ border: "none", cursor: "pointer" }}
+                                        >
+                                            Update Password
+                                        </button>
+                                    </div>
+                                )}
+
+                                {settingsTab === "contact" && (
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-[10px] font-black uppercase tracking-widest mb-1.5 text-gray-400">
+                                                Email Address
+                                            </label>
+                                            <input
+                                                type="email"
+                                                value={tempEmail}
+                                                onChange={(e) => setTempEmail(e.target.value)}
+                                                className="w-full px-4 py-2 rounded-xl text-sm border outline-none"
+                                                style={{
+                                                    background: "rgba(0,0,0,0.25)",
+                                                    borderColor: "var(--yt-border, #333)",
+                                                    color: "var(--yt-text-primary, #fff)"
+                                                }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-black uppercase tracking-widest mb-1.5 text-gray-400">
+                                                Phone Number
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={tempPhone}
+                                                onChange={(e) => setTempPhone(e.target.value)}
+                                                className="w-full px-4 py-2 rounded-xl text-sm border outline-none"
+                                                style={{
+                                                    background: "rgba(0,0,0,0.25)",
+                                                    borderColor: "var(--yt-border, #333)",
+                                                    color: "var(--yt-text-primary, #fff)"
+                                                }}
+                                            />
+                                        </div>
+                                        <button
+                                            onClick={handleSaveContact}
+                                            className="w-full py-2.5 rounded-xl bg-cyan-500 text-white font-bold text-xs uppercase tracking-wider hover:brightness-110 transition-all mt-2"
+                                            style={{ border: "none", cursor: "pointer" }}
+                                        >
+                                            Save Contact Details
+                                        </button>
+                                    </div>
+                                )}
+
+                                {settingsTab === "payment" && (
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-[10px] font-black uppercase tracking-widest mb-1.5 text-gray-400">
+                                                Active Card / Billing Account
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={tempPayment}
+                                                onChange={(e) => setTempPayment(e.target.value)}
+                                                className="w-full px-4 py-2 rounded-xl text-sm border outline-none"
+                                                style={{
+                                                    background: "rgba(0,0,0,0.25)",
+                                                    borderColor: "var(--yt-border, #333)",
+                                                    color: "var(--yt-text-primary, #fff)"
+                                                }}
+                                            />
+                                        </div>
+                                        <button
+                                            onClick={handleSavePayment}
+                                            className="w-full py-2.5 rounded-xl bg-cyan-500 text-white font-bold text-xs uppercase tracking-wider hover:brightness-110 transition-all mt-2"
+                                            style={{ border: "none", cursor: "pointer" }}
+                                        >
+                                            Update Payment Details
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                onClick={() => setIsSettingsOpen(false)}
+                                className="w-full py-3 rounded-xl border font-bold text-xs uppercase tracking-wider transition-all"
+                                style={{
+                                    borderColor: "var(--yt-border, #333)",
+                                    color: "var(--yt-text-secondary, #888)",
+                                    background: "none",
+                                    cursor: "pointer"
+                                }}
+                            >
+                                Close Settings
+                            </button>
                         </motion.div>
                     </motion.div>
                 )}

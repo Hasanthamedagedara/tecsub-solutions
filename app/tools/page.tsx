@@ -48,25 +48,25 @@ export default function OnlineToolsPage() {
     ], []);
 
     return (
-        <div className="min-h-screen bg-[#0a0a0b] text-white font-sans selection:bg-red-500/30 overflow-hidden flex flex-col">
+        <div className="min-h-screen bg-[var(--navy)] text-[var(--text-primary)] font-sans selection:bg-red-500/30 overflow-hidden flex flex-col" style={{ color: "var(--text-primary)" }}>
             <Navbar />
             
             <main className="flex-1 pt-20 flex overflow-hidden">
                 {/* ═══ Left Sidebar: Browse ═══ */}
-                <aside className="w-72 border-r border-white/5 flex flex-col p-6 space-y-8">
+                <aside className="w-72 border-r border-[var(--glass-border)] flex flex-col p-6 space-y-8">
                     <div>
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-6">Browse</h2>
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-6" style={{ color: "var(--text-secondary)" }}>Browse</h2>
                         <div className="space-y-2">
                             {categories.map(cat => (
                                 <button 
                                     key={cat.id}
                                     onClick={() => setActiveCategory(cat.id)}
-                                    className={`w-full p-4 rounded-2xl flex items-center gap-4 transition-all border ${activeCategory === cat.id ? "bg-white/5 border-white/10 shadow-xl" : "border-transparent opacity-40 hover:opacity-100"}`}
+                                    className={`w-full p-4 rounded-2xl flex items-center gap-4 transition-all border ${activeCategory === cat.id ? "bg-[var(--glass-bg)] border-[var(--glass-border)] shadow-xl" : "border-transparent opacity-40 hover:opacity-100"}`}
                                 >
                                     <div className="text-xl">{cat.icon}</div>
                                     <div className="text-left">
-                                        <p className="text-xs font-black uppercase tracking-tight">{cat.label}</p>
-                                        <p className="text-[10px] font-bold opacity-60">{cat.sub}</p>
+                                        <p className="text-xs font-black uppercase tracking-tight" style={{ color: "var(--text-primary)" }}>{cat.label}</p>
+                                        <p className="text-[10px] font-bold opacity-60" style={{ color: "var(--text-secondary)" }}>{cat.sub}</p>
                                     </div>
                                     {activeCategory === cat.id && <div className="ml-auto text-red-500 text-[8px]">▶</div>}
                                 </button>
@@ -74,7 +74,7 @@ export default function OnlineToolsPage() {
                         </div>
                     </div>
 
-                    <div className="pt-8 mt-auto border-t border-white/5">
+                    <div className="pt-8 mt-auto border-t border-[var(--glass-border)]">
                         <button className="text-red-500 text-xs font-black uppercase tracking-widest hover:underline transition-all">Explore all products →</button>
                     </div>
                 </aside>
@@ -83,26 +83,27 @@ export default function OnlineToolsPage() {
                 <section className="flex-1 flex flex-col overflow-hidden">
                     <div className="px-10 pt-8 pb-4">
                         <h1 className="text-3xl font-black italic tracking-tighter gradient-text uppercase mb-1">Tecsub Online Tools</h1>
-                        <p className="text-[10px] font-black text-gray-500 tracking-[0.3em] uppercase">Professional Software & Engineering Solutions</p>
+                        <p className="text-[10px] font-black tracking-[0.3em] uppercase" style={{ color: "var(--text-secondary)" }}>Professional Software & Engineering Solutions</p>
                     </div>
                     
                     {/* Search Area */}
-                    <div className="px-10 py-6 border-b border-white/5 bg-[#0a0a0b]/80 backdrop-blur-xl z-10 flex items-center justify-between">
+                    <div className="px-10 py-6 border-b border-[var(--glass-border)] bg-[var(--navy)]/80 backdrop-blur-xl z-10 flex items-center justify-between">
                         <div className="relative flex-1 max-w-xl">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30 text-sm">🔍</span>
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 opacity-35 text-sm">🔍</span>
                             <input 
                                 type="text" 
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search products, tools, and services..." 
-                                className="w-full h-12 bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 text-sm font-medium outline-none focus:border-red-500/30 transition-all"
+                                className="w-full h-12 bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-xl pl-12 pr-4 text-sm font-medium outline-none focus:border-red-500/30 transition-all"
+                                style={{ color: "var(--text-primary)" }}
                             />
                         </div>
                         <div className="flex items-center gap-4 ml-8">
-                            <span className="text-[10px] font-black uppercase tracking-widest opacity-20">Filter by</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest opacity-35" style={{ color: "var(--text-secondary)" }}>Filter by</span>
                             <div className="flex gap-2">
                                 {["AI", "Media", "Dev"].map(f => (
-                                    <button key={f} className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold border border-white/5 hover:bg-white/10">{f}</button>
+                                    <button key={f} className="px-3 py-1 bg-[var(--glass-bg)] rounded-full text-[10px] font-bold border border-[var(--glass-border)] hover:bg-[var(--glass-bg)]/80">{f}</button>
                                 ))}
                             </div>
                         </div>
@@ -115,14 +116,15 @@ export default function OnlineToolsPage() {
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: "auto", opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
-                                className="bg-[#111] border-b border-white/5 overflow-x-auto scrollbar-none whitespace-nowrap px-10 flex items-center gap-6"
+                                className="bg-[var(--glass-bg)] border-b border-[var(--glass-border)] overflow-x-auto scrollbar-none whitespace-nowrap px-10 flex items-center gap-6"
                             >
                                 {pdfSubNav.map((item, i) => (
                                     <a 
                                         key={i}
                                         href={item.href}
                                         onClick={(e) => { e.preventDefault(); router.push(item.href); }}
-                                        className="py-4 text-xs font-bold text-gray-400 hover:text-white transition-colors relative group"
+                                        className="py-4 text-xs font-bold hover:text-white transition-colors relative group"
+                                        style={{ color: "var(--text-secondary)" }}
                                     >
                                         {item.label}
                                         <div className="absolute bottom-0 left-0 w-full h-[2px] bg-red-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
@@ -142,18 +144,18 @@ export default function OnlineToolsPage() {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.05 }}
                                     onClick={() => tool.href && router.push(tool.href)}
-                                    className="group p-6 bg-[#111] border border-white/5 rounded-[2rem] flex items-center gap-5 cursor-pointer hover:bg-white/5 hover:border-red-500/20 transition-all relative overflow-hidden"
+                                    className="group p-6 bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-[2rem] flex items-center gap-5 cursor-pointer hover:bg-[var(--glass-bg)]/80 hover:border-red-500/20 transition-all relative overflow-hidden"
                                 >
-                                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-3xl group-hover:scale-110 transition-all border border-white/5 shadow-2xl">
+                                    <div className="w-16 h-16 rounded-2xl bg-[var(--glass-bg)] flex items-center justify-center text-3xl group-hover:scale-110 transition-all border border-[var(--glass-border)] shadow-2xl">
                                         {tool.icon}
                                     </div>
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <h3 className="text-sm font-black uppercase tracking-tight group-hover:text-red-500 transition-all">{tool.title}</h3>
+                                            <h3 className="text-sm font-black uppercase tracking-tight group-hover:text-red-500 transition-all" style={{ color: "var(--text-primary)" }}>{tool.title}</h3>
                                             {(i % 5 === 0) && <span className="px-1.5 py-0.5 bg-red-600 text-[7px] font-black rounded text-white tracking-widest">HOT</span>}
                                             {(i % 7 === 0) && <span className="px-1.5 py-0.5 bg-blue-600 text-[7px] font-black rounded text-white tracking-widest">NEW</span>}
                                         </div>
-                                        <p className="text-[11px] font-medium opacity-40 leading-relaxed line-clamp-2">{tool.description}</p>
+                                        <p className="text-[11px] font-medium opacity-60 leading-relaxed line-clamp-2" style={{ color: "var(--text-secondary)" }}>{tool.description}</p>
                                     </div>
                                     <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-all">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
@@ -163,11 +165,11 @@ export default function OnlineToolsPage() {
                         </div>
 
                         {/* Pagination / More info */}
-                        <div className="mt-20 pt-10 border-t border-white/5 flex items-center justify-between opacity-30">
-                            <p className="text-[10px] font-black uppercase tracking-widest">Showing all {filteredTools.length} results</p>
+                        <div className="mt-20 pt-10 border-t border-[var(--glass-border)] flex items-center justify-between opacity-50">
+                            <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "var(--text-secondary)" }}>Showing all {filteredTools.length} results</p>
                             <div className="flex gap-4">
-                                <button className="text-[10px] font-black uppercase hover:text-white transition-all">Terms of Service</button>
-                                <button className="text-[10px] font-black uppercase hover:text-white transition-all">Privacy Policy</button>
+                                <button className="text-[10px] font-black uppercase hover:text-white transition-all" style={{ color: "var(--text-secondary)" }}>Terms of Service</button>
+                                <button className="text-[10px] font-black uppercase hover:text-white transition-all" style={{ color: "var(--text-secondary)" }}>Privacy Policy</button>
                             </div>
                         </div>
                     </div>

@@ -26,6 +26,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { path: "/privacy%20policy", priority: 0.3, freq: "yearly" as const },
         { path: "/Terms", priority: 0.3, freq: "yearly" as const },
         { path: "/Refund", priority: 0.3, freq: "yearly" as const },
+        { path: "/features/language-switch", priority: 0.8, freq: "monthly" as const },
+        { path: "/features/dark-mode", priority: 0.8, freq: "monthly" as const },
+        { path: "/features/payment-reminders", priority: 0.8, freq: "monthly" as const },
     ];
 
     /* ── Dynamic: Course pages (expand /course/[id] for IDs 0-9) ── */

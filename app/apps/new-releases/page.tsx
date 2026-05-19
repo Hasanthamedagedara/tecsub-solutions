@@ -102,8 +102,8 @@ export default function NewReleasesPage() {
                                 transition={{ delay: i * 0.08, duration: 0.4 }}
                                 className="flex items-start gap-4 p-5 rounded-2xl group transition-all duration-300 hover:scale-[1.01]"
                                 style={{
-                                    background: "rgba(0,0,0,0.3)",
-                                    border: `1px solid rgba(255,255,255,0.06)`,
+                                    background: "var(--card-bg)",
+                                    border: "1px solid var(--glass-border)",
                                 }}
                             >
                                 <div

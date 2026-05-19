@@ -89,7 +89,7 @@ export default function BooksPage() {
                                 type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search books by title or author..."
                                 className="w-full px-5 py-3 pl-12 rounded-2xl text-sm outline-none"
-                                style={{ background: "rgba(0,0,0,0.4)", border: "1px solid var(--yt-border)", color: "var(--yt-text-primary)" }}
+                                style={{ background: "var(--yt-bg-secondary)", border: "1px solid var(--yt-border)", color: "var(--yt-text-primary)" }}
                             />
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg">🔍</span>
                         </div>
@@ -131,7 +131,7 @@ export default function BooksPage() {
                                     </div>
                                     <p className="text-[11px] mb-3" style={{ color: "var(--yt-text-secondary)" }}>by {book.author}</p>
                                     <div className="mt-auto flex items-center justify-between text-[10px]" style={{ color: "var(--yt-text-secondary)" }}>
-                                        <span className="px-2 py-1 rounded bg-black/20">{book.format}</span>
+                                        <span className="px-2 py-1 rounded bg-yt-chip-bg" style={{ border: "1px solid var(--yt-border)" }}>{book.format}</span>
                                         <span style={{ color: "var(--yt-accent)" }}>⭐ {book.rating}</span>
                                     </div>
                                 </div>
@@ -169,15 +169,15 @@ export default function BooksPage() {
                                     <p className="text-sm leading-relaxed mb-6" style={{ color: "var(--yt-text-secondary)" }}>{selectedBook.description}</p>
                                     
                                     <div className="grid grid-cols-3 gap-3 mb-8 text-center">
-                                        <div className="p-3 rounded-xl bg-black/20 border border-white/5">
+                                        <div className="p-3 rounded-xl bg-yt-chip-bg border border-yt-border">
                                             <p className="text-[10px] text-yt-text-secondary uppercase mb-1">Rating</p>
                                             <p className="font-bold text-xs">⭐ {selectedBook.rating}</p>
                                         </div>
-                                        <div className="p-3 rounded-xl bg-black/20 border border-white/5">
+                                        <div className="p-3 rounded-xl bg-yt-chip-bg border border-yt-border">
                                             <p className="text-[10px] text-yt-text-secondary uppercase mb-1">Pages</p>
                                             <p className="font-bold text-xs">{selectedBook.pages}</p>
                                         </div>
-                                        <div className="p-3 rounded-xl bg-black/20 border border-white/5">
+                                        <div className="p-3 rounded-xl bg-yt-chip-bg border border-yt-border">
                                             <p className="text-[10px] text-yt-text-secondary uppercase mb-1">Format</p>
                                             <p className="font-bold text-xs">{selectedBook.format}</p>
                                         </div>
@@ -187,7 +187,7 @@ export default function BooksPage() {
                                         <button className="flex-1 py-4 rounded-xl bg-yt-accent text-white font-bold hover:brightness-110 transition-all flex items-center justify-center gap-2">
                                             📥 Download Book
                                         </button>
-                                        <button onClick={() => setSelectedBook(null)} className="px-6 py-4 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-all">
+                                        <button onClick={() => setSelectedBook(null)} className="px-6 py-4 rounded-xl border border-yt-border font-bold hover:bg-yt-bg-hover transition-all" style={{ color: "var(--yt-text-primary)" }}>
                                             Close
                                         </button>
                                     </div>

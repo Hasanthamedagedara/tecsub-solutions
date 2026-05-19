@@ -150,8 +150,8 @@ export default function AboutPage() {
                         <div
                             className="rounded-2xl p-6"
                             style={{
-                                background: "rgba(0,0,0,0.3)",
-                                border: "1px solid rgba(255,255,255,0.08)",
+                                background: "var(--card-bg)",
+                                border: "1px solid var(--glass-border)",
                             }}
                         >
                             <h3 className="font-bebas text-xl tracking-wide mb-4" style={{ color: "var(--text-primary)" }}>
@@ -180,7 +180,7 @@ export default function AboutPage() {
                         {...fadeUp(0.2)}
                         className="mb-16 rounded-3xl p-6 sm:p-10"
                         style={{
-                            background: "rgba(0,0,0,0.3)",
+                            background: "var(--card-bg)",
                             border: "1px solid rgba(0,229,255,0.15)",
                         }}
                     >
@@ -201,8 +201,8 @@ export default function AboutPage() {
                                     key={card.title}
                                     className="p-4 rounded-xl"
                                     style={{
-                                        background: "rgba(0,0,0,0.4)",
-                                        border: `1px solid ${card.color}20`,
+                                        background: "var(--yt-bg)",
+                                        border: `1px solid ${card.color}35`,
                                     }}
                                 >
                                     <h4 className="font-semibold text-sm mb-2" style={{ color: card.color }}>
@@ -234,8 +234,8 @@ export default function AboutPage() {
                                     key={feat.title}
                                     className="flex items-start gap-4 p-5 rounded-xl"
                                     style={{
-                                        background: "rgba(0,0,0,0.25)",
-                                        border: "1px solid rgba(255,255,255,0.06)",
+                                        background: "var(--card-bg)",
+                                        border: "1px solid var(--glass-border)",
                                     }}
                                 >
                                     <div
@@ -280,15 +280,15 @@ export default function AboutPage() {
                                     key={app.name}
                                     className="rounded-2xl p-4 transition-all duration-300 hover:scale-[1.03] group"
                                     style={{
-                                        background: "rgba(0,0,0,0.3)",
-                                        border: "1px solid rgba(255,255,255,0.06)",
+                                        background: "var(--card-bg)",
+                                        border: "1px solid var(--glass-border)",
                                     }}
                                     onMouseEnter={(e) => {
-                                        (e.currentTarget as HTMLElement).style.borderColor = `${app.color}30`;
-                                        (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 30px ${app.color}10`;
+                                        (e.currentTarget as HTMLElement).style.borderColor = `${app.color}50`;
+                                        (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 30px ${app.color}15`;
                                     }}
                                     onMouseLeave={(e) => {
-                                        (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)";
+                                        (e.currentTarget as HTMLElement).style.borderColor = "var(--glass-border)";
                                         (e.currentTarget as HTMLElement).style.boxShadow = "none";
                                     }}
                                 >
@@ -317,7 +317,7 @@ export default function AboutPage() {
                     <motion.div
                         {...fadeUp(0.4)}
                         className="text-center pt-10"
-                        style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+                        style={{ borderTop: "1px solid var(--glass-border)" }}
                     >
                         <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
                             © 2026 TECSUB SOLUTIONS | Developed by Hasantha Medagedara

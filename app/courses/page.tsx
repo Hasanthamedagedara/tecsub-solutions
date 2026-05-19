@@ -259,7 +259,7 @@ export default function CoursesPage() {
                                     onClick={() => setCurrency(c.key)}
                                     className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${currency === c.key
                                         ? "border-2"
-                                        : "border border-white/10 hover:border-white/20"
+                                        : "border border-yt-border hover:bg-yt-bg-hover"
                                         }`}
                                     style={{
                                         color: currency === c.key ? c.color : "var(--text-secondary)",
@@ -284,15 +284,15 @@ export default function CoursesPage() {
                                 onClick={() => setSelectedCourse(course)}
                                 className="group rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] flex flex-col"
                                 style={{
-                                    background: "rgba(0,0,0,0.3)",
-                                    border: "1px solid rgba(255,255,255,0.06)",
+                                    background: "var(--card-bg)",
+                                    border: "1px solid var(--glass-border)",
                                 }}
                                 onMouseEnter={(e) => {
-                                    (e.currentTarget as HTMLElement).style.borderColor = `${course.color}30`;
-                                    (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 30px ${course.color}10`;
+                                    (e.currentTarget as HTMLElement).style.borderColor = `${course.color}50`;
+                                    (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 30px ${course.color}15`;
                                 }}
                                 onMouseLeave={(e) => {
-                                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)";
+                                    (e.currentTarget as HTMLElement).style.borderColor = "var(--glass-border)";
                                     (e.currentTarget as HTMLElement).style.boxShadow = "none";
                                 }}
                             >
@@ -359,7 +359,7 @@ export default function CoursesPage() {
                                 animate={{ scale: 1, opacity: 1 }}
                                 exit={{ scale: 0.9, opacity: 0 }}
                                 className="w-full max-w-lg rounded-3xl overflow-hidden max-h-[85vh] overflow-y-auto"
-                                style={{ background: "rgba(12,12,14,0.98)", border: `1px solid ${selectedCourse.color}20` }}
+                                style={{ background: "var(--yt-bg-secondary)", border: `1px solid ${selectedCourse.color}35` }}
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <div className="h-2" style={{ background: `linear-gradient(90deg, transparent, ${selectedCourse.color}, transparent)` }} />
@@ -394,7 +394,7 @@ export default function CoursesPage() {
                                     </div>
 
                                     {/* Pricing */}
-                                    <div className="p-4 rounded-xl mb-4" style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                                    <div className="p-4 rounded-xl mb-4" style={{ background: "var(--yt-bg)", border: "1px solid var(--yt-border)" }}>
                                         <div className="flex items-center justify-between mb-3">
                                             <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-primary)" }}>Choose Currency</span>
                                         </div>
@@ -407,7 +407,7 @@ export default function CoursesPage() {
                                                 <button
                                                     key={c.key}
                                                     onClick={() => setCurrency(c.key)}
-                                                    className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${currency === c.key ? "" : "border border-white/10"}`}
+                                                    className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${currency === c.key ? "" : "border border-yt-border"}`}
                                                     style={{
                                                         color: currency === c.key ? selectedCourse.color : "var(--text-secondary)",
                                                         outline: currency === c.key ? `2px solid ${selectedCourse.color}` : "none",
@@ -435,8 +435,8 @@ export default function CoursesPage() {
                                         </button>
                                         <button
                                             onClick={() => setSelectedCourse(null)}
-                                            className="px-5 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-all"
-                                            style={{ border: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)" }}
+                                            className="px-5 py-3 rounded-xl text-sm font-medium hover:bg-yt-bg-hover transition-all"
+                                            style={{ border: "1px solid var(--yt-border)", color: "var(--text-secondary)" }}
                                         >
                                             Close
                                         </button>

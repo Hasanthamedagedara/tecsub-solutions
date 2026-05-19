@@ -670,3 +670,33 @@ export const pdfSubNav = [
     { label: "Page numbers", href: "/pdf-tools/page-numbers" },
 ];
 
+export const onlineToolsMenu = [
+    {
+        title: "LANGUAGE SUITE",
+        items: [
+            { label: "Sinhala Typing", icon: "⌨️", href: "/singlish", desc: "Type phonetically & get Unicode", color: "#A855F7" },
+            { label: "Voice Typing", icon: "🎙️", href: "/singlish", desc: "Local browser speech-to-text", color: "#3B82F6" },
+            { label: "OCR Scanner", icon: "🖼️", href: "/ocr", desc: "Extract text from local images", color: "#10B981" },
+            { label: "Subtitles Captioner", icon: "🎫", href: "/captions", desc: "Auto Sinhala video captions", color: "#ec4899" }
+        ]
+    },
+    {
+        title: "CREATIVE & DESIGN",
+        items: [
+            { label: "Tecsub Designer", icon: "🎨", href: "/designer", desc: "Canvas-based design tools suite", color: "#EF4444" },
+            { label: "Color Palette", icon: "🎨", href: "/tools", desc: "Generate premium palettes", color: "#F59E0B" },
+            { label: "Image Resizer", icon: "📏", href: "/resizer", desc: "Social media standards scaling", color: "#06B6D4" },
+            { label: "Image Compressor", icon: "🖼️", href: "/tools", desc: "Optimize images in browser", color: "#F43F5E" }
+        ]
+    },
+    {
+        title: "UTILITIES & SECURE DEVELOPER",
+        items: [
+            { label: "JSON Formatter", icon: "⚙️", href: "/tools", desc: "Format, lint and validate JSON", color: "#EC4899" },
+            { label: "Base64 Tool", icon: "🔐", href: "/tools", desc: "Encode or decode raw strings", color: "#3B82F6" },
+            { label: "Password Generator", icon: "🔑", href: "/tools", desc: "Get strong random passwords", color: "#6366F1" },
+            { label: "Unit Converter", icon: "📏", href: "/tools", desc: "Quick measurements calculator", color: "#F59E0B" }
+        ]
+    }
+];
+
