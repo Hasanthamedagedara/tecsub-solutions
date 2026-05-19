@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
@@ -9,6 +10,18 @@ import { useAppContext } from "@/components/ThemeProvider";
 export default function HomeLandingPage() {
     const router = useRouter();
     const { language } = useAppContext();
+
+    // YouTube Live Stats Simulation
+    const [subs, setSubs] = useState(12450);
+    const [views, setViews] = useState(1250400);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setViews(v => v + Math.floor(Math.random() * 5) + 1);
+            if (Math.random() > 0.7) setSubs(s => s + 1);
+        }, 2500);
+        return () => clearInterval(interval);
+    }, []);
 
     const featuredStats = [
         { value: "50K+", label: "Monthly Active Users" },
@@ -114,7 +127,49 @@ export default function HomeLandingPage() {
                         >
                             Get Desktop Apps
                         </button>
+                        <a
+                            href="https://www.youtube.com/@hasanthadilshanmedagedara"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-sm bg-red-600 text-white shadow-[0_4px_25px_rgba(220,38,38,0.3)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                            Subscribe on YouTube
+                        </a>
                     </div>
+
+                    {/* Live YouTube Stats Badge */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4, duration: 0.6 }}
+                        className="mt-12 inline-flex flex-col sm:flex-row items-center gap-6 px-8 py-4 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md shadow-2xl relative overflow-hidden group"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-r from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className="flex items-center gap-4 relative z-10">
+                            <div className="relative flex items-center justify-center">
+                                <span className="absolute w-3 h-3 rounded-full bg-red-500 animate-ping opacity-75" />
+                                <span className="relative w-2 h-2 rounded-full bg-red-500" />
+                            </div>
+                            <div className="flex flex-col text-left">
+                                <span className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Live Subscribers</span>
+                                <span className="text-2xl font-bebas text-white tracking-wider tabular-nums">{subs.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <div className="hidden sm:block w-px h-10 bg-white/10 relative z-10" />
+                        <div className="flex items-center gap-4 relative z-10">
+                            <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            <div className="flex flex-col text-left">
+                                <span className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Total Channel Views</span>
+                                <span className="text-2xl font-bebas text-white tracking-wider tabular-nums">{views.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </motion.div>
                 </motion.div>
             </header>
 

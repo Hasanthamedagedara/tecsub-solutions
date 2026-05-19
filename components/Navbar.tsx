@@ -81,6 +81,7 @@ export default function Navbar() {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [hasMembership, setHasMembership] = useState(false);
+    const [planType, setPlanType] = useState("FREE");
     const { theme, toggleTheme } = useAppContext();
     const router = useRouter();
     const pathname = usePathname();
@@ -247,6 +248,9 @@ export default function Navbar() {
             const isPro = localStorage.getItem("tecsub_sub_pro_paid") === "true";
             const isUltra = localStorage.getItem("tecsub_sub_ultra_paid") === "true";
             setHasMembership(isPro || isUltra);
+            if (isUltra) setPlanType("ULTRA");
+            else if (isPro) setPlanType("PRO");
+            else setPlanType("FREE");
         };
         checkMembership();
         window.addEventListener("storage", checkMembership);
@@ -731,7 +735,11 @@ export default function Navbar() {
                             user ? (
                                 <div className="relative" ref={profileRef}>
                                     <button onClick={() => setProfileOpen(!profileOpen)} className="kdj-avatar-btn">
-                                        <img src={user.photoURL || "/logo/tecsub.jpg"} alt={user.displayName || "User"} />
+                                        <img 
+                                            src={user.photoURL || "/logo/tecsub.jpg"} 
+                                            alt={user.displayName || "User"} 
+                                            style={planType === 'ULTRA' ? { borderRadius: '50%', border: '2px solid #a855f7', boxShadow: '0 0 15px #a855f7', transition: 'all 0.3s ease' } : {}}
+                                        />
                                     </button>
                                     <AnimatePresence>
                                         {profileOpen && (
@@ -762,15 +770,17 @@ export default function Navbar() {
                                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                             <span className="kdj-profile-plan-icon">🎯</span>
                                                             <span className="kdj-profile-plan-label">Plan</span>
-                                                            <span className="kdj-profile-plan-badge" style={{ backgroundColor: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>Free</span>
+                                                            <span className="kdj-profile-plan-badge" style={{ backgroundColor: planType === 'ULTRA' ? 'rgba(168,85,247,0.15)' : planType === 'PRO' ? 'rgba(59,130,246,0.15)' : 'rgba(34,197,94,0.15)', color: planType === 'ULTRA' ? '#a855f7' : planType === 'PRO' ? '#3b82f6' : '#22c55e', textTransform: 'uppercase' }}>{planType}</span>
                                                         </div>
-                                                        <button
-                                                            onClick={() => { setProfileOpen(false); router.push('/pricing'); }}
-                                                            className="text-[10px] font-black uppercase px-2.5 py-1 rounded bg-[#3ea6ff] hover:bg-[#3ea6ff]/80 text-white transition-all shadow-md shadow-blue-500/20"
-                                                            style={{ border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
-                                                        >
-                                                            Upgrade
-                                                        </button>
+                                                        {planType === 'FREE' && (
+                                                            <button
+                                                                onClick={() => { setProfileOpen(false); router.push('/pricing'); }}
+                                                                className="text-[10px] font-black uppercase px-2.5 py-1 rounded bg-[#3ea6ff] hover:bg-[#3ea6ff]/80 text-white transition-all shadow-md shadow-blue-500/20"
+                                                                style={{ border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+                                                            >
+                                                                Upgrade
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
 
