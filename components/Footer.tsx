@@ -109,7 +109,7 @@ export default function Footer() {
 
                         {/* Social Icons */}
                         <div className="kdj-footer-socials">
-                            {socialLinks.slice(0, 5).map((link) => (
+                            {socialLinks.map((link) => (
                                 <a
                                     key={link.name}
                                     href={link.url}
