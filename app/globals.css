@@ -232,6 +232,8 @@ html.light ::-webkit-scrollbar-thumb:hover {
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -368,6 +370,7 @@ body {
 @media (min-width: 900px) { .kdj-nav { display: flex; } }
 
 .kdj-nav-item-wrap { position: relative; }
+.kdj-nav-item-wrap-mega { position: static; }
 
 .kdj-nav-link {
   display: inline-flex; align-items: center; gap: 4px;
@@ -403,6 +406,11 @@ body {
   border-radius: 12px; padding: 12px;
   box-shadow: 0 16px 48px rgba(0,0,0,0.5);
   z-index: 100;
+}
+.kdj-dropdown.kdj-mega-dropdown {
+  left: 20px;
+  right: 20px;
+  min-width: 0;
 }
 .kdj-dropdown-section-title {
   font-size: 11px; font-weight: 700;
@@ -4436,6 +4444,7 @@ html.light .news-ticker-container {
 /* ─── Scrolling track ─── */
 .news-ticker-track {
   flex: 1;
+  flex-shrink: 0;
   overflow: hidden;
   height: 100%;
   display: flex;
@@ -4533,6 +4542,8 @@ html.light .news-ticker-item {
   max-width: 340px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* ─── Separator between items ─── */

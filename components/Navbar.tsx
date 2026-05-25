@@ -417,7 +417,7 @@ export default function Navbar() {
     /* ─── Nav Link with Dropdown ─── */
     const NavDropdown = ({ id, label, badge, children }: { id: string; label: string; badge?: string; children: React.ReactNode }) => (
         <div
-            className="kdj-nav-item-wrap"
+            className={id === "products" ? "kdj-nav-item-wrap-mega" : "kdj-nav-item-wrap"}
             onMouseEnter={() => handleDropdownEnter(id)}
             onMouseLeave={handleDropdownLeave}
         >
@@ -438,7 +438,7 @@ export default function Navbar() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 8 }}
                         transition={{ duration: 0.18 }}
-                        className="kdj-dropdown"
+                        className={`kdj-dropdown ${id === "products" ? "kdj-mega-dropdown" : ""}`}
                         onMouseEnter={() => handleDropdownEnter(id)}
                         onMouseLeave={handleDropdownLeave}
                     >
