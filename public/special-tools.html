@@ -181,7 +181,7 @@
     <div class="absolute top-[60%] right-[-10%] w-[500px] h-[500px] rounded-full glow-sphere-2 pointer-events-none -z-10"></div>
 
     <!-- 1. Navigation Bar -->
-    <nav class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur-md border-b border-gray-800 px-6 py-4 flex justify-between items-center transition-all">
+    <nav id="main-nav" class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur-md border-b border-gray-800 px-6 py-4 flex justify-between items-center transition-all">
         <div class="flex items-center space-x-3">
             <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-gray-950 font-bold shadow-md shadow-emerald-500/20">
                 T
@@ -1963,6 +1963,10 @@
             const tabParam = urlParams.get('tab');
             if (tabParam && ['ascii', 'card', 'meme', 'products', 'vesak', 'seasonal'].includes(tabParam)) {
                 switchTab(tabParam);
+            }
+            if (urlParams.get('embed') === 'true') {
+                const nav = document.getElementById('main-nav');
+                if (nav) nav.style.display = 'none';
             }
         } catch (e) {
             console.error("Tab parsing error:", e);

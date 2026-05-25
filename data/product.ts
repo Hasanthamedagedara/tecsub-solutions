@@ -436,7 +436,7 @@ export const onlineTools = [
         category: "Design",
         icon: "🪪",
         color: "#10b981",
-        href: "/special-tools.html?tab=card",
+        href: "/special-tools?tab=card",
         badge: "NEW"
     },
     {
@@ -445,7 +445,7 @@ export const onlineTools = [
         category: "Design",
         icon: "🤡",
         color: "#a855f7",
-        href: "/special-tools.html?tab=meme",
+        href: "/special-tools?tab=meme",
         badge: "NEW"
     },
     {
@@ -454,7 +454,7 @@ export const onlineTools = [
         category: "Utility",
         icon: "🔠",
         color: "#00E5FF",
-        href: "/special-tools.html?tab=ascii",
+        href: "/special-tools?tab=ascii",
         badge: "NEW"
     },
     {
@@ -463,7 +463,7 @@ export const onlineTools = [
         category: "Design",
         icon: "🪔",
         color: "#f97316",
-        href: "/special-tools.html?tab=vesak",
+        href: "/special-tools?tab=vesak",
         badge: "NEW"
     },
     {
@@ -832,9 +832,9 @@ export const onlineToolsMenu = [
             { label: "Image Resizer", icon: "📏", href: "/resizer", desc: "Social media standards scaling", color: "#06B6D4" },
             { label: "Image Compressor", icon: "🖼️", href: "/tools", desc: "Optimize images in browser", color: "#F43F5E" },
             { label: "Seasonal Creatives", icon: "🎉", href: "/tools/seasonal", desc: "Festival & milestone postcard utilities", color: "#F59E0B", badge: "NEW" },
-            { label: "Wasi Smart Card", icon: "🪪", href: "/special-tools.html?tab=card", desc: "Interactive digital business profile pass", color: "#10B981", badge: "NEW" },
-            { label: "Meme Generator", icon: "🤡", href: "/special-tools.html?tab=meme", desc: "Quick canvas-based meme creator", color: "#A855F7", badge: "NEW" },
-            { label: "Vesak Card Gen", icon: "🪔", href: "/special-tools.html?tab=vesak", desc: "Postcards with Sinhala blessing verses", color: "#F97316", badge: "NEW" }
+            { label: "Wasi Smart Card", icon: "🪪", href: "/special-tools?tab=card", desc: "Interactive digital business profile pass", color: "#10B981", badge: "NEW" },
+            { label: "Meme Generator", icon: "🤡", href: "/special-tools?tab=meme", desc: "Quick canvas-based meme creator", color: "#A855F7", badge: "NEW" },
+            { label: "Vesak Card Gen", icon: "🪔", href: "/special-tools?tab=vesak", desc: "Postcards with Sinhala blessing verses", color: "#F97316", badge: "NEW" }
         ]
     },
     {
@@ -845,7 +845,7 @@ export const onlineToolsMenu = [
             { label: "Password Generator", icon: "🔑", href: "/tools", desc: "Get strong random passwords", color: "#6366F1" },
             { label: "Unit Converter", icon: "📏", href: "/tools", desc: "Quick measurements calculator", color: "#F59E0B" },
             { label: "Advanced Search", icon: "🔍", href: "/tools/google-search", desc: "Boolean search code generator", color: "#3B82F6", badge: "NEW" },
-            { label: "ASCII Art Gen", icon: "🔠", href: "/special-tools.html?tab=ascii", desc: "Interactive text-to-ASCII generator", color: "#00E5FF", badge: "NEW" }
+            { label: "ASCII Art Gen", icon: "🔠", href: "/special-tools?tab=ascii", desc: "Interactive text-to-ASCII generator", color: "#00E5FF", badge: "NEW" }
         ]
     }
 ];

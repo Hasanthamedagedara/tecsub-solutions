@@ -238,7 +238,7 @@ export default function SeasonalToolContainer({ toolSlug }: { toolSlug: string }
                         )}
 
                         <iframe
-                            src={tool.path}
+                            src={`${tool.path}?embed=true`}
                             className="w-full border-0 min-h-[750px] md:min-h-[850px] h-[80vh] block relative z-10"
                             onLoad={() => setIsLoading(false)}
                             title={tool.title}

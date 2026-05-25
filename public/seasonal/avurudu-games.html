@@ -38,7 +38,7 @@
 
     <!-- Header / Navigation -->
     <header class="border-b border-red-500/20 bg-black/40 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-        <a href="../special-tools.html" class="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm">
+        <a href="/special-tools" class="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm">
             <i class="fa-solid fa-arrow-left"></i> back to Labs
         </a>
         <div class="flex items-center space-x-2">
@@ -441,5 +441,17 @@
             switchGame('muttia');
         });
     </script>
+    <script>
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get("embed") === "true") {
+                const header = document.querySelector("header");
+                if (header) header.style.display = "none";
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    </script>
 </body>
 </html>
+

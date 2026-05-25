@@ -47,10 +47,10 @@ const sidebarTools = [
     { title: "YT Special", href: "/yt-special", icon: "🎬" },
     { title: "Advanced Search", href: "/tools/google-search", icon: "🔍" },
     { title: "Seasonal Suite", href: "/tools/seasonal", icon: "🎉" },
-    { title: "Wasi Smart Card", href: "/special-tools.html?tab=card", icon: "🪪" },
-    { title: "Meme Generator", href: "/special-tools.html?tab=meme", icon: "🤡" },
-    { title: "ASCII Art Gen", href: "/special-tools.html?tab=ascii", icon: "🔠" },
-    { title: "Vesak Card Gen", href: "/special-tools.html?tab=vesak", icon: "🪔" },
+    { title: "Wasi Smart Card", href: "/special-tools?tab=card", icon: "🪪" },
+    { title: "Meme Generator", href: "/special-tools?tab=meme", icon: "🤡" },
+    { title: "ASCII Art Gen", href: "/special-tools?tab=ascii", icon: "🔠" },
+    { title: "Vesak Card Gen", href: "/special-tools?tab=vesak", icon: "🪔" },
 ];
 
 

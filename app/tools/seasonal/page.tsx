@@ -159,6 +159,17 @@ export default function SeasonalToolsDashboard() {
 
             <div className="pt-32 pb-20 px-4">
                 <div className="max-w-6xl mx-auto">
+                    {/* Back button */}
+                    <button
+                        onClick={() => router.push("/tools")}
+                        className="group inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white/50 hover:text-white mb-8 transition-colors"
+                    >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="group-hover:-translate-x-1 transition-transform">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                        Back to Tools
+                    </button>
+
                     {/* Header */}
                     <div className="text-center mb-16">
                         <motion.div
