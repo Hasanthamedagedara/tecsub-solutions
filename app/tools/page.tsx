@@ -29,8 +29,10 @@ export default function OnlineToolsPage() {
                 href: item.href,
                 badge: (item as any).badge
             }))) as any[];
+        } else if (activeCategory === "seasonal-tools") {
+            tools = tools.filter(t => t.category === "Seasonal");
         } else if (activeCategory === "online") {
-            tools = tools.filter(t => t.category !== "Games");
+            tools = tools.filter(t => t.category !== "Games" && t.category !== "Seasonal");
         }
 
         return tools.filter(tool => 
@@ -40,11 +42,12 @@ export default function OnlineToolsPage() {
     }, [searchQuery, activeCategory]);
 
     const categories = useMemo(() => [
-        { id: "online", label: "Online Products", sub: `${onlineTools.filter(t => t.category !== "Games").length} web apps`, icon: "🌐" },
+        { id: "online", label: "Online Products", sub: `${onlineTools.filter(t => t.category !== "Games" && t.category !== "Seasonal").length} web apps`, icon: "🌐" },
         { id: "pdf-tools", label: "PDF Tools", sub: `${pdfToolsMenu.reduce((acc, group) => acc + group.items.length, 0)} pdf utilities`, icon: "📄" },
         { id: "desktop", label: "Desktop Apps", sub: "2 desktop apps", icon: "💻" },
         { id: "games", label: "Games", sub: `${onlineTools.filter(t => t.category === "Games").length} mini games`, icon: "🎮" },
         { id: "ai-writing", label: "AI & Writing Tools", sub: `${onlineTools.filter(t => t.category === "AI").length} AI tools`, icon: "✨" },
+        { id: "seasonal-tools", label: "Seasonal Tools", sub: `${onlineTools.filter(t => t.category === "Seasonal").length} festival apps`, icon: "🎉" },
     ], []);
 
     return (

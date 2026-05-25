@@ -27,6 +27,7 @@ const MEGA_CATEGORIES = [
     { id: "desktop", label: "Desktop Apps", desc: "Native software", icon: "💻" },
     { id: "games", label: "Games", desc: "Retro & modern arcade", icon: "🎮" },
     { id: "ai-writing", label: "AI & Writing Tools", desc: "Next-gen writing assistants", icon: "✨" },
+    { id: "seasonal-tools", label: "Seasonal Tools", desc: "Festival & holiday postcard utilities", icon: "🎉" },
 ];
 
 const productsMenu = {
@@ -329,7 +330,7 @@ export default function Navbar() {
 
     const getFilteredItems = useCallback(() => {
         if (activeMegaCategory === "online") {
-            return onlineTools.filter(t => t.category !== "Games" && t.category !== "AI").map(t => ({
+            return onlineTools.filter(t => t.category !== "Games" && t.category !== "AI" && t.category !== "Seasonal").map(t => ({
                 label: t.title,
                 desc: t.description,
                 icon: t.icon,
@@ -362,6 +363,16 @@ export default function Navbar() {
                 desc: t.description,
                 icon: t.icon,
                 href: t.href || "/ai-tools",
+                color: t.color,
+                badge: (t as any).badge
+            }));
+        }
+        if (activeMegaCategory === "seasonal-tools") {
+            return onlineTools.filter(t => t.category === "Seasonal").map(t => ({
+                label: t.title,
+                desc: t.description,
+                icon: t.icon,
+                href: t.href || "/tools/seasonal",
                 color: t.color,
                 badge: (t as any).badge
             }));

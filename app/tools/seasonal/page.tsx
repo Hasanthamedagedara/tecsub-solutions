@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AdPlacement from "@/components/AdPlacement";
+import { useRouter } from "next/navigation";
 
 interface ToolItem {
     title: string;
@@ -36,7 +37,7 @@ const CATEGORIES: CategoryGroup[] = [
             {
                 title: "Digital Pandal Builder",
                 description: "Build a live 2D digital Vesak/Poson Thorana with custom lighting patterns, devotional loop music, and sponsor banners.",
-                href: "/seasonal/digital-pandal.html",
+                href: "/tools/seasonal/digital-pandal",
                 icon: "☸️",
                 type: "widget",
                 badge: "INTERACTIVE"
@@ -44,7 +45,7 @@ const CATEGORIES: CategoryGroup[] = [
             {
                 title: "Digital Dansala Creator",
                 description: "Generate and download a fun digital Dansala poster (Ice Cream, Rice, Chickpeas) with your custom name and photo.",
-                href: "/seasonal/digital-dansala.html",
+                href: "/tools/seasonal/digital-dansala",
                 icon: "🍧",
                 type: "poster",
                 badge: "FUN POSTER"
@@ -52,7 +53,7 @@ const CATEGORIES: CategoryGroup[] = [
             {
                 title: "Digital Verse Book",
                 description: "Design beautiful typography cards containing old Sinhala poems and Buddhist verses with serene temple backgrounds.",
-                href: "/seasonal/verse-book.html",
+                href: "/tools/seasonal/verse-book",
                 icon: "📜",
                 type: "card"
             }
@@ -69,7 +70,7 @@ const CATEGORIES: CategoryGroup[] = [
             {
                 title: "Avurudu Nakath Timers",
                 description: "Real-time countdown clocks for Avurudu rituals (cooking, meals, work commencement) with traditional Rabana audio cues.",
-                href: "/seasonal/avurudu-nakath.html",
+                href: "/tools/seasonal/avurudu-nakath",
                 icon: "⏰",
                 type: "utility",
                 badge: "AUDIO TIMERS"
@@ -77,14 +78,14 @@ const CATEGORIES: CategoryGroup[] = [
             {
                 title: "Avurudu Ritual Greetings",
                 description: "Create funny 'work commencement' cards (e.g. coding, sleeping, gaming) styled as traditional New Year greeting cards.",
-                href: "/seasonal/avurudu-greetings.html",
+                href: "/tools/seasonal/avurudu-greetings",
                 icon: "🧧",
                 type: "card"
             },
             {
                 title: "Traditional Mini Games",
                 description: "Play interactive Sri Lankan village sports online, including Kana Muttiya (Strike the Pot) and Blindfold Elephant Eye.",
-                href: "/seasonal/avurudu-games.html",
+                href: "/tools/seasonal/avurudu-games",
                 icon: "🎮",
                 type: "game",
                 badge: "PLAY ONLINE"
@@ -102,21 +103,21 @@ const CATEGORIES: CategoryGroup[] = [
             {
                 title: "Santa's Personalized Letter",
                 description: "Surprise children with a customized letter from the North Pole featuring dynamic names, nice checks, and seal layouts.",
-                href: "/seasonal/santa-letter.html",
+                href: "/tools/seasonal/santa-letter",
                 icon: "🎅",
                 type: "poster"
             },
             {
                 title: "Secret Santa Generator",
                 description: "Organize gift exchanges easily. Match participants randomly and get private WhatsApp sharing strings.",
-                href: "/seasonal/secret-santa.html",
+                href: "/tools/seasonal/secret-santa",
                 icon: "🎁",
                 type: "utility"
             },
             {
                 title: "Valentine Love Notes",
                 description: "Share a private link to receive anonymous love notes from friends, and export gorgeous glassmorphic image cards.",
-                href: "/seasonal/valentine-notes.html",
+                href: "/tools/seasonal/valentine-notes",
                 icon: "💖",
                 type: "card",
                 badge: "ANONYMOUS"
@@ -134,7 +135,7 @@ const CATEGORIES: CategoryGroup[] = [
             {
                 title: "Exam Result Fun Poster",
                 description: "Create congratulations templates for O/L or A/L results with customizable names, school tags, and custom scores.",
-                href: "/seasonal/exam-wishers.html",
+                href: "/tools/seasonal/exam-wishers",
                 icon: "🎓",
                 type: "poster",
                 badge: "AL/OL SEASON"
@@ -142,7 +143,7 @@ const CATEGORIES: CategoryGroup[] = [
             {
                 title: "New Year Resolution Card",
                 description: "Draft 5 key goals for the upcoming year and export a gorgeous portrait card optimized for sharing on Instagram or Facebook Stories.",
-                href: "/seasonal/resolution-card.html",
+                href: "/tools/seasonal/resolution-card",
                 icon: "🎯",
                 type: "card"
             }
@@ -151,6 +152,7 @@ const CATEGORIES: CategoryGroup[] = [
 ];
 
 export default function SeasonalToolsDashboard() {
+    const router = useRouter();
     return (
         <div className="min-h-screen text-[#f1f1f1]" style={{ background: "#0a0a0b" }}>
             <Navbar />
@@ -192,7 +194,7 @@ export default function SeasonalToolsDashboard() {
                                     {section.tools.map((tool, tIdx) => (
                                         <div
                                             key={tIdx}
-                                            onClick={() => window.open(tool.href, "_blank")}
+                                            onClick={() => router.push(tool.href)}
                                             className={`group p-6 border rounded-[2rem] flex flex-col justify-between cursor-pointer transition-all relative overflow-hidden h-64 ${section.accentColor}`}
                                         >
                                             {/* Glow sphere effect */}

@@ -332,12 +332,102 @@ export const onlineTools = [
         badge: "NEW"
     },
     {
-        title: "Seasonal Creatives",
-        description: "Interactive tools and generators for Vesak, Poson, Aluth Avurudu, Christmas, Valentine's Day, and milestone achievements.",
-        category: "Utility",
-        icon: "🎉",
+        title: "Digital Pandal Builder",
+        description: "Build a live 2D digital Vesak/Poson Thorana with custom lighting patterns, devotional loop music, and sponsor banners.",
+        category: "Seasonal",
+        icon: "☸️",
+        color: "#fbbf24",
+        href: "/tools/seasonal/digital-pandal",
+        badge: "NEW"
+    },
+    {
+        title: "Digital Dansala Creator",
+        description: "Generate and download a fun digital Dansala poster (Ice Cream, Rice, Chickpeas) with your custom name and photo.",
+        category: "Seasonal",
+        icon: "🍧",
         color: "#f59e0b",
-        href: "/tools/seasonal",
+        href: "/tools/seasonal/digital-dansala",
+        badge: "NEW"
+    },
+    {
+        title: "Digital Verse Book",
+        description: "Design beautiful typography cards containing old Sinhala poems and Buddhist verses with serene temple backgrounds.",
+        category: "Seasonal",
+        icon: "📜",
+        color: "#d97706",
+        href: "/tools/seasonal/verse-book",
+        badge: "NEW"
+    },
+    {
+        title: "Avurudu Nakath Timers",
+        description: "Real-time countdown clocks for Avurudu rituals (cooking, meals, work commencement) with traditional Rabana audio cues.",
+        category: "Seasonal",
+        icon: "⏰",
+        color: "#10b981",
+        href: "/tools/seasonal/avurudu-nakath",
+        badge: "NEW"
+    },
+    {
+        title: "Avurudu Ritual Greetings",
+        description: "Create funny 'work commencement' cards styled as traditional New Year greeting cards.",
+        category: "Seasonal",
+        icon: "🧧",
+        color: "#059669",
+        href: "/tools/seasonal/avurudu-greetings",
+        badge: "NEW"
+    },
+    {
+        title: "Traditional Mini Games",
+        description: "Play interactive Sri Lankan village sports online, including Kana Muttiya (Strike the Pot) and Blindfold Elephant Eye.",
+        category: "Seasonal",
+        icon: "🎮",
+        color: "#047857",
+        href: "/tools/seasonal/avurudu-games",
+        badge: "NEW"
+    },
+    {
+        title: "Santa's Personalized Letter",
+        description: "Surprise children with a customized letter from the North Pole featuring dynamic names, nice checks, and seal layouts.",
+        category: "Seasonal",
+        icon: "🎅",
+        color: "#ef4444",
+        href: "/tools/seasonal/santa-letter",
+        badge: "NEW"
+    },
+    {
+        title: "Secret Santa Generator",
+        description: "Organize gift exchanges easily. Match participants randomly and get private WhatsApp sharing strings.",
+        category: "Seasonal",
+        icon: "🎁",
+        color: "#dc2626",
+        href: "/tools/seasonal/secret-santa",
+        badge: "NEW"
+    },
+    {
+        title: "Valentine Love Notes",
+        description: "Share a private link to receive anonymous love notes from friends, and export gorgeous glassmorphic image cards.",
+        category: "Seasonal",
+        icon: "💖",
+        color: "#ec4899",
+        href: "/tools/seasonal/valentine-notes",
+        badge: "NEW"
+    },
+    {
+        title: "Exam Result Fun Poster",
+        description: "Create congratulations templates for O/L or A/L results with customizable names, school tags, and custom scores.",
+        category: "Seasonal",
+        icon: "🎓",
+        color: "#6366f1",
+        href: "/tools/seasonal/exam-wishers",
+        badge: "NEW"
+    },
+    {
+        title: "New Year Resolution Card",
+        description: "Draft 5 key goals for the upcoming year and export a gorgeous portrait card optimized for sharing on Instagram or Facebook Stories.",
+        category: "Seasonal",
+        icon: "🎯",
+        color: "#4f46e5",
+        href: "/tools/seasonal/resolution-card",
         badge: "NEW"
     },
     {
