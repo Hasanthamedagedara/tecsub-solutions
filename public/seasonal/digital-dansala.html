@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Dansala Widget - TECSUB Seasonal</title>
+    <meta name="description" content="Generate a fun digital Dansala poster (Ice Cream, Rice, Chickpeas) with your custom name and photo to share.">
+    <!-- Tailwind CSS v4 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts: Space Grotesk, Outfit, and Abhaya Libre for Sinhala text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas for card downloads -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            background-color: #020205;
+            color: #f3f4f6;
+            font-family: 'Outfit', sans-serif;
+            background-image: 
+                radial-gradient(at 50% 0%, rgba(245, 158, 11, 0.08) 0px, transparent 60%),
+                radial-gradient(at 0% 100%, rgba(239, 68, 68, 0.05) 0px, transparent 50%);
+        }
+        .sinhala-font {
+            font-family: 'Abhaya Libre', serif;
+        }
+        .heading-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .dansala-bg {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fde68a 100%);
+            box-shadow: 0 25px 60px -15px rgba(245, 158, 11, 0.25);
+        }
+        .text-glow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-8">
+
+    <!-- Header / Navigation -->
+    <header class="border-b border-amber-500/20 bg-black/40 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <a href="../special-tools.html" class="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm">
+            <i class="fa-solid fa-arrow-left"></i> back to Labs
+        </a>
+        <div class="flex items-center space-x-2">
+            <span class="text-amber-500 text-lg"><i class="fa-solid fa-dharmachakra animate-spin-slow"></i></span>
+            <span class="font-bold tracking-wider text-sm heading-font">TECSUB <span class="text-amber-500">SEASONAL</span></span>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full flex-1 items-center">
+        
+        <!-- Left Column: Poster Creator Controls -->
+        <section class="lg:col-span-5 bg-gray-950 p-6 rounded-3xl border border-gray-800/80 space-y-4">
+            <h2 class="text-lg font-bold text-white heading-font border-b border-gray-800 pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-utensils text-amber-500"></i> Dansala Customizer
+            </h2>
+
+            <div class="space-y-4 text-sm">
+                <!-- 1. Select Food Item -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Select Food / Drink Item</label>
+                    <select id="dansalaItem" onchange="updateDansala()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-amber-500 transition-colors">
+                        <option value="icecream">🍦 Ice Cream (අයිස්ක්‍රීම්)</option>
+                        <option value="rice">🍚 Rice & Curry (බත් දන්සල)</option>
+                        <option value="chickpea">🍲 Chickpeas (තම්බපු කඩල)</option>
+                        <option value="herbal">🍵 Herbal Gruel (කොළ කැඳ)</option>
+                        <option value="soup">🍜 Vegetable Soup (එළවළු සුප්)</option>
+                        <option value="sago">🍨 Sago Dessert (සව් කඳ)</option>
+                    </select>
+                </div>
+
+                <!-- 2. Sponsor Name -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Sponsor Name (දායකයාගේ නම)</label>
+                    <input id="sponsorName" type="text" oninput="updateDansala()" value="හිතවත් සාමාජිකයන්" placeholder="දායකත්වය සපයන්නන්ගේ නම..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-amber-500 transition-colors">
+                </div>
+
+                <!-- 3. Upload Profile / Group Photo -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Upload Profile Photo</label>
+                    <input id="dansalaAvatar" type="file" accept="image/*" onchange="handleImageUpload(event)" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-400 file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-500/10 file:text-amber-400 hover:file:bg-amber-500/20 cursor-pointer">
+                </div>
+
+                <!-- 4. Location of Dansala -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Location / Platform</label>
+                    <input id="dansalaLocation" type="text" oninput="updateDansala()" value="ඩිජිටල් අවකාශයේදී" placeholder="දන්සල පැවැත්වෙන ස්ථානය..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-amber-500 transition-colors">
+                </div>
+
+                <!-- Actions -->
+                <div class="grid grid-cols-2 gap-4 pt-2">
+                    <button onclick="downloadPoster()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs cursor-pointer shadow-lg shadow-amber-500/10 active:scale-[0.98]">
+                        <i class="fa-solid fa-download"></i> Get Poster (PNG)
+                    </button>
+                    <button onclick="resetPoster()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-xl border border-gray-750 transition flex items-center justify-center gap-2 text-xs cursor-pointer active:scale-[0.98]">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Live Poster Rendering Preview -->
+        <section class="lg:col-span-7 flex flex-col items-center justify-center p-2">
+            
+            <!-- Poster Border & Design System -->
+            <div id="dansalaPoster" class="w-[500px] h-[500px] min-w-[500px] dansala-bg border-8 border-amber-400 rounded-2xl p-6 flex flex-col justify-between items-center text-gray-900 relative select-none">
+                <!-- Traditional Floral Corner Decorations -->
+                <div class="absolute top-2 left-2 text-amber-500/80 text-xl font-bold">❀</div>
+                <div class="absolute top-2 right-2 text-amber-500/80 text-xl font-bold">❀</div>
+                <div class="absolute bottom-2 left-2 text-amber-500/80 text-xl font-bold">❀</div>
+                <div class="absolute bottom-2 right-2 text-amber-500/80 text-xl font-bold">❀</div>
+
+                <!-- Top Header Banner -->
+                <div class="text-center w-full space-y-1 mt-2">
+                    <div class="flex items-center justify-center space-x-2 text-amber-800 font-bold text-xs uppercase tracking-wider">
+                        <span>卍</span>
+                        <span>පින්බර වෙසක් උත්සවය</span>
+                        <span>卍</span>
+                    </div>
+                    <h1 class="text-3xl font-black text-amber-900 sinhala-font text-glow tracking-wide">මහා ඩිජිටල් දන්සල</h1>
+                    <div class="h-0.5 w-1/3 bg-amber-400 mx-auto rounded"></div>
+                </div>
+
+                <!-- Central graphic: Selected Food and custom Avatar overlay -->
+                <div class="flex items-center justify-center gap-6 my-auto w-full px-4">
+                    <!-- Photo avatar in golden ring -->
+                    <div class="relative w-28 h-28 rounded-full border-4 border-amber-500 bg-amber-100 flex-shrink-0 overflow-hidden shadow-md">
+                        <img id="avatarPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120" alt="Avatar" class="w-full h-full object-cover">
+                    </div>
+
+                    <!-- Hearty Welcome Text -->
+                    <div class="space-y-1.5 flex-1 text-left">
+                        <span id="badgeFood" class="inline-block bg-amber-800 text-amber-50 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">අයිස්ක්‍රීම් දන්සල</span>
+                        <p class="text-sm font-semibold text-amber-900 sinhala-font">අද අපගේ ඩිජිටල් දන්සලෙන් රසවත් ආහාර වැළඳීමට සැමට කාරුණිකව ඇරයුම් කරමු!</p>
+                    </div>
+                </div>
+
+                <!-- Item specific large graphic display -->
+                <div class="flex items-center justify-center bg-white/70 border border-amber-200 rounded-2xl py-3 px-6 w-full gap-4 shadow-inner">
+                    <span id="itemIcon" class="text-4xl">🍦</span>
+                    <div class="text-left">
+                        <div class="text-[10px] font-bold text-amber-800 uppercase tracking-widest">Main Offering / ප්‍රධාන සංග්‍රහය</div>
+                        <div id="itemText" class="text-lg font-bold text-amber-950 sinhala-font">නොමිලේ බෙදා දෙන රසවත් අයිස්ක්‍රීම්</div>
+                    </div>
+                </div>
+
+                <!-- Footer details (Sponsors & Location) -->
+                <div class="w-full text-center border-t border-amber-300/60 pt-4 pb-2 mt-4 space-y-1">
+                    <p class="text-[11px] font-bold text-amber-800/80">ප්‍රධාන දායකත්වය</p>
+                    <p id="previewSponsor" class="text-base font-extrabold text-amber-950 sinhala-font leading-tight">හිතවත් සාමාජිකයන්</p>
+                    <p class="text-[9px] text-gray-500 font-medium">පැවැත්වෙන ස්ථානය: <span id="previewLocation" class="font-bold text-gray-700">ඩිජිටල් අවකාශයේදී</span></p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-gray-500 border-t border-gray-900 pt-6 max-w-5xl mx-auto w-full">
+        <p>&copy; 2026 TECSUB Labs. All rights reserved. Created for digital Vesak/Poson celebrations.</p>
+    </footer>
+
+    <!-- JavaScript Controllers -->
+    <script>
+        const itemSpecs = {
+            icecream: {
+                badge: "අයිස්ක්‍රීම් දන්සල",
+                icon: "🍦",
+                text: "නොමිලේ බෙදා දෙන රසවත් අයිස්ක්‍රීම්"
+            },
+            rice: {
+                badge: "බත් දන්සල",
+                icon: "🍚",
+                text: "සුවඳැල් හාලේ රසවත් බත් සහ වෑංජන"
+            },
+            chickpea: {
+                badge: "කඩල දන්සල",
+                icon: "🍲",
+                text: "පොල් කෑලි සමඟ උණුසුම් තම්බපු කඩල"
+            },
+            herbal: {
+                badge: "කොළ කැඳ දන්සල",
+                icon: "🍵",
+                text: "කිතුල් හකුරු සමඟ පෝෂ්‍යදායී කොළ කැඳ"
+            },
+            soup: {
+                badge: "එළවළු සුප් දන්සල",
+                icon: "🍜",
+                text: "උණුසුම් ගුණදායක එළවළු සුප් කෝප්පයක්"
+            },
+            sago: {
+                badge: "සව් කඳ දන්සල",
+                icon: "🍨",
+                text: "කජු හා මුද්දරප්පලම් එක් කල රසවත් සව් කඳ"
+            }
+        };
+
+        function updateDansala() {
+            const itemKey = document.getElementById('dansalaItem').value;
+            const spec = itemSpecs[itemKey] || itemSpecs.icecream;
+
+            // Update badge, icon, and offering text
+            document.getElementById('badgeFood').innerText = spec.badge;
+            document.getElementById('itemIcon').innerText = spec.icon;
+            document.getElementById('itemText').innerText = spec.text;
+
+            // Update Sponsor and Location
+            const sponsorInput = document.getElementById('sponsorName').value.trim() || "හිතවත් සාමාජිකයන්";
+            const locationInput = document.getElementById('dansalaLocation').value.trim() || "ඩිජිටල් අවකාශයේදී";
+
+            document.getElementById('previewSponsor').innerText = sponsorInput;
+            document.getElementById('previewLocation').innerText = locationInput;
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarPreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function downloadPoster() {
+            const targetElement = document.getElementById('dansalaPoster');
+            html2canvas(targetElement, { 
+                scale: 3, 
+                backgroundColor: null,
+                useCORS: true,
+                logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `TECSUB_Digital_Dansala_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function resetPoster() {
+            document.getElementById('dansalaItem').value = 'icecream';
+            document.getElementById('sponsorName').value = 'හිතවත් සාමාජිකයන්';
+            document.getElementById('dansalaLocation').value = 'ඩිජිටල් අවකාශයේදී';
+            document.getElementById('avatarPreview').src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120";
+            updateDansala();
+        }
+
+        // Initialize state
+        updateDansala();
+    </script>
+</body>
+</html>

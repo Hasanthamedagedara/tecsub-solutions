@@ -323,6 +323,60 @@ export const onlineTools = [
         badge: "NEW"
     },
     {
+        title: "Google Advanced Search",
+        description: "Generate powerful Boolean search queries to uncover new app ideas, bugs, alternatives, and user pain points from Reddit and the web.",
+        category: "Utility",
+        icon: "🔍",
+        color: "#3b82f6",
+        href: "/tools/google-search",
+        badge: "NEW"
+    },
+    {
+        title: "Seasonal Creatives",
+        description: "Interactive tools and generators for Vesak, Poson, Aluth Avurudu, Christmas, Valentine's Day, and milestone achievements.",
+        category: "Utility",
+        icon: "🎉",
+        color: "#f59e0b",
+        href: "/tools/seasonal",
+        badge: "NEW"
+    },
+    {
+        title: "Wasi Smart Card",
+        description: "Design 3D-interactive luxury digital profiles and download print-ready PNG files.",
+        category: "Design",
+        icon: "🪪",
+        color: "#10b981",
+        href: "/special-tools.html?tab=card",
+        badge: "NEW"
+    },
+    {
+        title: "Meme Generator",
+        description: "Easily overlay customized texts on popular templates or upload your own files.",
+        category: "Design",
+        icon: "🤡",
+        color: "#a855f7",
+        href: "/special-tools.html?tab=meme",
+        badge: "NEW"
+    },
+    {
+        title: "ASCII Art Gen",
+        description: "Design advanced ASCII typography and graphic text models instantly.",
+        category: "Utility",
+        icon: "🔠",
+        color: "#00E5FF",
+        href: "/special-tools.html?tab=ascii",
+        badge: "NEW"
+    },
+    {
+        title: "Vesak Card Gen",
+        description: "Create traditional Sri Lankan Vesak greeting cards with Sinhala blessings and custom stamps.",
+        category: "Design",
+        icon: "🪔",
+        color: "#f97316",
+        href: "/special-tools.html?tab=vesak",
+        badge: "NEW"
+    },
+    {
         title: "Tecsub Text Summarizer",
         description: "Summarize long articles, essays, and documents instantly with multiple output modes.",
         category: "AI",
@@ -686,7 +740,11 @@ export const onlineToolsMenu = [
             { label: "Tecsub Designer", icon: "🎨", href: "/designer", desc: "Canvas-based design tools suite", color: "#EF4444" },
             { label: "Color Palette", icon: "🎨", href: "/tools", desc: "Generate premium palettes", color: "#F59E0B" },
             { label: "Image Resizer", icon: "📏", href: "/resizer", desc: "Social media standards scaling", color: "#06B6D4" },
-            { label: "Image Compressor", icon: "🖼️", href: "/tools", desc: "Optimize images in browser", color: "#F43F5E" }
+            { label: "Image Compressor", icon: "🖼️", href: "/tools", desc: "Optimize images in browser", color: "#F43F5E" },
+            { label: "Seasonal Creatives", icon: "🎉", href: "/tools/seasonal", desc: "Festival & milestone postcard utilities", color: "#F59E0B", badge: "NEW" },
+            { label: "Wasi Smart Card", icon: "🪪", href: "/special-tools.html?tab=card", desc: "Interactive digital business profile pass", color: "#10B981", badge: "NEW" },
+            { label: "Meme Generator", icon: "🤡", href: "/special-tools.html?tab=meme", desc: "Quick canvas-based meme creator", color: "#A855F7", badge: "NEW" },
+            { label: "Vesak Card Gen", icon: "🪔", href: "/special-tools.html?tab=vesak", desc: "Postcards with Sinhala blessing verses", color: "#F97316", badge: "NEW" }
         ]
     },
     {
@@ -695,7 +753,9 @@ export const onlineToolsMenu = [
             { label: "JSON Formatter", icon: "⚙️", href: "/tools", desc: "Format, lint and validate JSON", color: "#EC4899" },
             { label: "Base64 Tool", icon: "🔐", href: "/tools", desc: "Encode or decode raw strings", color: "#3B82F6" },
             { label: "Password Generator", icon: "🔑", href: "/tools", desc: "Get strong random passwords", color: "#6366F1" },
-            { label: "Unit Converter", icon: "📏", href: "/tools", desc: "Quick measurements calculator", color: "#F59E0B" }
+            { label: "Unit Converter", icon: "📏", href: "/tools", desc: "Quick measurements calculator", color: "#F59E0B" },
+            { label: "Advanced Search", icon: "🔍", href: "/tools/google-search", desc: "Boolean search code generator", color: "#3B82F6", badge: "NEW" },
+            { label: "ASCII Art Gen", icon: "🔠", href: "/special-tools.html?tab=ascii", desc: "Interactive text-to-ASCII generator", color: "#00E5FF", badge: "NEW" }
         ]
     }
 ];

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Verse Book - TECSUB Seasonal</title>
+    <meta name="description" content="Design beautiful typography cards containing old Sinhala poems, Buddhist verses, and blessings with stupa and oil lamp backgrounds.">
+    <!-- Tailwind CSS v4 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts: Space Grotesk, Outfit, and Abhaya Libre for Sinhala text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas for downloads -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            background-color: #020205;
+            color: #f3f4f6;
+            font-family: 'Outfit', sans-serif;
+            background-image: 
+                radial-gradient(at 50% 0%, rgba(245, 158, 11, 0.08) 0px, transparent 60%),
+                radial-gradient(at 0% 100%, rgba(239, 68, 68, 0.05) 0px, transparent 50%);
+        }
+        .sinhala-font {
+            font-family: 'Abhaya Libre', serif;
+        }
+        .heading-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Themes styles */
+        .theme-gold-border {
+            background: linear-gradient(135deg, #09090b 0%, #18181b 100%);
+            border: 4px solid #d4af37;
+            color: #fef08a;
+        }
+        .theme-gold-border blockquote {
+            color: #fef08a;
+            text-shadow: 0 2px 4px rgba(212, 175, 55, 0.2);
+        }
+        
+        .theme-parchment {
+            background: linear-gradient(135deg, #fefae0 0%, #faedcd 100%);
+            border: 4px solid #d4a373;
+            color: #4a3e3d;
+        }
+        .theme-parchment blockquote {
+            color: #4a3e3d;
+            text-shadow: none;
+        }
+
+        .theme-stupa {
+            background: linear-gradient(180deg, #090d16 0%, #111827 100%);
+            border: 4px solid #3b82f6;
+            color: #e0f2fe;
+            position: relative;
+        }
+        .theme-stupa blockquote {
+            color: #e0f2fe;
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-8">
+
+    <!-- Header / Navigation -->
+    <header class="border-b border-amber-500/20 bg-black/40 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <a href="../special-tools.html" class="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm">
+            <i class="fa-solid fa-arrow-left"></i> back to Labs
+        </a>
+        <div class="flex items-center space-x-2">
+            <span class="text-amber-500 text-lg"><i class="fa-solid fa-dharmachakra animate-spin-slow"></i></span>
+            <span class="font-bold tracking-wider text-sm heading-font">TECSUB <span class="text-amber-500">SEASONAL</span></span>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full flex-1 items-center">
+        
+        <!-- Left Column: Controls & Presets -->
+        <section class="lg:col-span-5 bg-gray-950 p-6 rounded-3xl border border-gray-800/80 space-y-4">
+            <h2 class="text-lg font-bold text-white heading-font border-b border-gray-800 pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-book-open text-amber-500"></i> Verse Book Editor
+            </h2>
+
+            <div class="space-y-4 text-sm">
+                <!-- 1. Theme Selector -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Background Theme</label>
+                    <div class="grid grid-cols-3 gap-2 bg-gray-900 p-1.5 rounded-xl border border-gray-800">
+                        <button onclick="setTheme('gold')" id="themeBtn-gold" class="py-2 rounded-lg font-semibold text-xs transition bg-amber-500 text-gray-950 shadow-md">
+                            Gold Border
+                        </button>
+                        <button onclick="setTheme('parchment')" id="themeBtn-parchment" class="py-2 rounded-lg font-semibold text-xs text-gray-400 hover:text-white transition">
+                            Parchment
+                        </button>
+                        <button onclick="setTheme('stupa')" id="themeBtn-stupa" class="py-2 rounded-lg font-semibold text-xs text-gray-400 hover:text-white transition">
+                            Night Stupa
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Predefined Verses -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Preset Verse / Poem</label>
+                    <select id="versePreset" onchange="changePreset()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-amber-500 transition-colors">
+                        <option value="preset1">Poem 1: වෛරී සිතක ගිනි ජාලා</option>
+                        <option value="preset2">Poem 2: සිත් තුල ඇතිවන ක්‍රෝධය</option>
+                        <option value="preset3">Poem 3: සම්බුදු තෙමඟුල සිහිපත්</option>
+                        <option value="preset4">Poem 4: ලෝ සතු සැමට නිවන් පතමි</option>
+                        <option value="custom">-- Custom Message / Edit --</option>
+                    </select>
+                </div>
+
+                <!-- 3. Text area for editing -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Verse Content (සිංහල)</label>
+                    <textarea id="verseContent" oninput="updatePreviewText()" rows="4" class="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 resize-none font-sans" placeholder="Type or paste your verses here..."></textarea>
+                </div>
+
+                <!-- 4. Signature / Sender Name -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Sender Name (ප්‍රකාශකයා)</label>
+                    <input id="senderName" type="text" oninput="updatePreviewText()" value="TECSUB Labs" placeholder="විසින්..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-amber-500 transition-colors">
+                </div>
+
+                <!-- Actions -->
+                <div class="grid grid-cols-2 gap-4 pt-2">
+                    <button onclick="downloadVerseCard()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs cursor-pointer shadow-lg shadow-amber-500/10 active:scale-[0.98]">
+                        <i class="fa-solid fa-download"></i> Download Card (PNG)
+                    </button>
+                    <button onclick="resetEditor()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-xl border border-gray-750 transition flex items-center justify-center gap-2 text-xs cursor-pointer active:scale-[0.98]">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Card Layout Preview -->
+        <section class="lg:col-span-7 flex flex-col items-center justify-center p-2">
+            
+            <!-- Poster Wrapper to Capture -->
+            <div id="verseCard" class="w-[450px] h-[550px] min-h-[550px] theme-gold-border rounded-2xl p-8 flex flex-col justify-between items-center text-center relative select-none">
+                
+                <!-- Background Layer for Stupa option (only visible when theme is Stupa) -->
+                <div id="stupaBackground" class="absolute inset-0 opacity-0 pointer-events-none transition-opacity duration-300 overflow-hidden rounded-xl">
+                    <!-- Full moon graphic -->
+                    <circle cx="360" cy="90" r="30" fill="#fef08a" style="filter: blur(1px) drop-shadow(0 0 15px rgba(254, 240, 138, 0.4));" />
+                    <!-- Tiny stars -->
+                    <div class="absolute top-10 left-12 w-1 h-1 bg-white rounded-full"></div>
+                    <div class="absolute top-24 left-36 w-1 h-1 bg-white rounded-full"></div>
+                    <div class="absolute top-16 left-60 w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <div class="absolute top-36 left-20 w-1.5 h-1.5 bg-white/60 rounded-full"></div>
+                    <!-- Stupa drawing silhouette at the bottom -->
+                    <svg viewBox="0 0 200 200" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-48 opacity-25 text-white" fill="currentColor">
+                        <path d="M 100,10 L 102,40 L 98,40 Z" />
+                        <path d="M 85,40 L 115,40 L 110,60 L 90,60 Z" />
+                        <path d="M 60,110 C 60,70 140,70 140,110 Z" />
+                        <path d="M 30,110 L 170,110 L 160,130 L 40,130 Z" />
+                    </svg>
+                </div>
+
+                <!-- Top Emblem / Icon -->
+                <div class="z-10 mt-2">
+                    <span id="emblemIcon" class="text-3xl text-amber-500"><i class="fa-solid fa-dharmachakra"></i></span>
+                    <h3 id="cardHeader" class="text-[10px] font-mono tracking-widest text-amber-400 uppercase mt-2 font-bold">Dharma Verse & Blessing</h3>
+                </div>
+
+                <!-- Typography Central Verse -->
+                <div class="z-10 w-full px-4 flex flex-col justify-center flex-1 py-6">
+                    <blockquote id="previewVerse" class="text-lg font-bold sinhala-font leading-loose whitespace-pre-line tracking-wide">
+                        වෛරී සිතක ගිනි ජාලා නිවෙන්නයි
+                        මෙත් සිතකින් ලෝකය දෙස බලන්නයි
+                        අමා දහම් සිසිලස් බව දැනෙන්නයි
+                        මේ අරුමෝත් මෙත් පුරයට වඩින්නයි
+                    </blockquote>
+                </div>
+
+                <!-- Signature at bottom -->
+                <div class="z-10 w-full border-t border-amber-500/20 pt-4 pb-2 text-xs">
+                    <div class="text-[9px] font-mono opacity-50 uppercase mb-1">Dharma Publication / ධර්ම දානය</div>
+                    <div id="previewSender" class="font-bold tracking-wide">TECSUB Labs</div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-gray-500 border-t border-gray-900 pt-6 max-w-5xl mx-auto w-full">
+        <p>&copy; 2026 TECSUB Labs. All rights reserved. Created for digital Vesak/Poson celebrations.</p>
+    </footer>
+
+    <!-- JavaScript Controllers -->
+    <script>
+        const verses = {
+            preset1: `වෛරී සිතක ගිනි ජාලා නිවෙන්නයි\nමෙත් සිතකින් ලෝකය දෙස බලන්නයි\nඅමා දහම් සිසිලස් බව දැනෙන්නයි\nමේ අරුමෝත් මෙත් පුරයට වඩින්නයි`,
+            preset2: `සිත් තුල ඇතිවන ක්‍රෝධය සිඳිලා\nමෙත් සිත ලොව තුල සැමටම බෙදිලා\nඅමා නිවන් මග සැමටම පෑදී\nවෙසක් මංගල්‍යය සාර්ථක වේවා!`,
+            preset3: `සම්බුදු තෙමඟුල සිහිපත් කරමින්\nමෙත් සිසිලස සැම හදවත පිබිදේ\nපින්බර වෙසක් උත්සවයක්\nඔබ සැමටම වේවා!`,
+            preset4: `රාග ද්වේශ මෝහ ගින්න නිවීලා\nලෝ සතු සැම හද මෙත් සිසිලෙන් සැනසේවා\nදුක් කම්කටොලු මැද සැපත ළඟාවේවා\nමේ පින්බර පොහෝ දින සාමය උදාවේවා!`
+        };
+
+        let currentTheme = 'gold';
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            const card = document.getElementById('verseCard');
+            const stupaBg = document.getElementById('stupaBackground');
+            const emblem = document.getElementById('emblemIcon');
+
+            // Reset buttons
+            document.querySelectorAll('[id^="themeBtn-"]').forEach(btn => {
+                btn.className = "py-2 rounded-lg font-semibold text-xs text-gray-400 hover:text-white transition";
+            });
+            document.getElementById(`themeBtn-${theme}`).className = "py-2 rounded-lg font-semibold text-xs transition bg-amber-500 text-gray-950 shadow-md";
+
+            // Apply theme classes
+            card.className = "w-[450px] h-[550px] min-h-[550px] rounded-2xl p-8 flex flex-col justify-between items-center text-center relative select-none ";
+            
+            if (theme === 'gold') {
+                card.classList.add('theme-gold-border');
+                stupaBg.style.opacity = '0';
+                emblem.innerHTML = '<i class="fa-solid fa-dharmachakra"></i>';
+                emblem.className = "text-3xl text-amber-500";
+            } else if (theme === 'parchment') {
+                card.classList.add('theme-parchment');
+                stupaBg.style.opacity = '0';
+                emblem.innerHTML = '<i class="fa-solid fa-seedling"></i>';
+                emblem.className = "text-3xl text-amber-800";
+            } else {
+                card.classList.add('theme-stupa');
+                stupaBg.style.opacity = '1';
+                emblem.innerHTML = '<i class="fa-solid fa-circle-nodes"></i>';
+                emblem.className = "text-3xl text-sky-400";
+            }
+        }
+
+        function changePreset() {
+            const val = document.getElementById('versePreset').value;
+            const textarea = document.getElementById('verseContent');
+
+            if (val === 'custom') {
+                textarea.disabled = false;
+            } else {
+                textarea.value = verses[val] || '';
+                textarea.disabled = true;
+            }
+            updatePreviewText();
+        }
+
+        function updatePreviewText() {
+            const textVal = document.getElementById('verseContent').value;
+            const senderVal = document.getElementById('senderName').value.trim() || "TECSUB Labs";
+
+            document.getElementById('previewVerse').innerText = textVal;
+            document.getElementById('previewSender').innerText = senderVal;
+        }
+
+        function downloadVerseCard() {
+            const targetElement = document.getElementById('verseCard');
+            html2canvas(targetElement, { 
+                scale: 3, 
+                backgroundColor: null,
+                useCORS: true,
+                logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `TECSUB_Dharma_Verse_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function resetEditor() {
+            document.getElementById('versePreset').value = 'preset1';
+            document.getElementById('senderName').value = 'TECSUB Labs';
+            setTheme('gold');
+            changePreset();
+        }
+
+        // Initialize state
+        document.getElementById('verseContent').value = verses.preset1;
+        document.getElementById('verseContent').disabled = true;
+        updatePreviewText();
+    </script>
+</body>
+</html>

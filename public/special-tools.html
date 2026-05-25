@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECSUB Labs - Creative Suite</title>
+    <!-- Tailwind CSS v4 for modern look -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts: Outfit & Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas for Wasi Card Downloading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        body {
+            background-color: #030712;
+            color: #f3f4f6;
+            font-family: 'Outfit', sans-serif;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.05) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+        }
+
+        .heading-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .ascii-output {
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre;
+            line-height: 1.15;
+            letter-spacing: 0px;
+        }
+
+        /* 3D Card Animation Styles */
+        .card-container {
+            perspective: 1500px;
+            width: 450px;
+            height: 260px;
+            max-width: 100%;
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .card-container.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 450px;
+            height: 260px;
+            backface-visibility: hidden;
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card-front {
+            z-index: 2;
+            transform: rotateY(0deg);
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Themes CSS Definitions */
+        /* 1. Midnight Cyber Theme */
+        .theme-cyber {
+            background: linear-gradient(135deg, #0b1329 0%, #111e3b 60%, #1a365d 100%);
+            border: 2px solid rgba(6, 182, 212, 0.35);
+            box-shadow: 0 20px 40px rgba(6, 182, 212, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        .theme-cyber .text-accent { color: #22d3ee; }
+        .theme-cyber .bg-accent-glow { background: radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 60%); }
+        .theme-cyber .border-accent-glow { border-color: rgba(6, 182, 212, 0.5); }
+        .theme-cyber .badge-accent { background-color: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
+
+        /* 2. Gold Luxury Theme */
+        .theme-gold {
+            background: linear-gradient(135deg, #111111 0%, #1f1f1f 60%, #2d2613 100%);
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        .theme-gold .text-accent { color: #f59e0b; }
+        .theme-gold .bg-accent-glow { background: radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 60%); }
+        .theme-gold .border-accent-glow { border-color: rgba(212, 175, 55, 0.5); }
+        .theme-gold .badge-accent { background-color: rgba(212, 175, 55, 0.12); color: #f59e0b; border: 1px solid rgba(212, 175, 55, 0.3); }
+
+        /* 3. Emerald Executive Theme */
+        .theme-emerald {
+            background: linear-gradient(135deg, #022c22 0%, #064e3b 60%, #065f46 100%);
+            border: 2px solid rgba(16, 185, 129, 0.35);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .theme-emerald .text-accent { color: #34d399; }
+        .theme-emerald .bg-accent-glow { background: radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 60%); }
+        .theme-emerald .border-accent-glow { border-color: rgba(16, 185, 129, 0.5); }
+        .theme-emerald .badge-accent { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        /* 4. Neon Royal Theme */
+        .theme-royal {
+            background: linear-gradient(135deg, #1e1b4b 0%, #311042 60%, #4c1d95 100%);
+            border: 2px solid rgba(167, 139, 250, 0.35);
+            box-shadow: 0 20px 40px rgba(167, 139, 250, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .theme-royal .text-accent { color: #c084fc; }
+        .theme-royal .bg-accent-glow { background: radial-gradient(circle at 80% 20%, rgba(167, 139, 250, 0.15) 0%, transparent 60%); }
+        .theme-royal .border-accent-glow { border-color: rgba(167, 139, 250, 0.5); }
+        .theme-royal .badge-accent { background-color: rgba(167, 139, 250, 0.15); color: #c084fc; border: 1px solid rgba(167, 139, 250, 0.3); }
+
+        /* 5. Glassmorphic Aurora Theme */
+        .theme-aurora {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.8) 100%);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 45px rgba(99, 102, 241, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        .theme-aurora .text-accent { color: #f472b6; }
+        .theme-aurora .bg-accent-glow { background: radial-gradient(circle at 80% 20%, rgba(244, 114, 182, 0.12) 0%, transparent 60%); }
+        .theme-aurora .border-accent-glow { border-color: rgba(244, 114, 182, 0.4); }
+        .theme-aurora .badge-accent { background-color: rgba(244, 114, 182, 0.12); color: #f472b6; border: 1px solid rgba(244, 114, 182, 0.25); }
+
+        /* Card background pattern */
+        .card-grid-pattern {
+            background-size: 1.25rem 1.25rem;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        /* Subtle glowing dots behind the page content */
+        .glow-sphere-1 {
+            filter: blur(120px);
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+        }
+        .glow-sphere-2 {
+            filter: blur(120px);
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+        }
+
+        /* Custom scrollbar for preview */
+        .custom-scroll::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="relative min-h-screen overflow-x-hidden pb-16">
+
+    <!-- Glowing Spheres Background -->
+    <div class="absolute top-[20%] left-[-10%] w-[500px] h-[500px] rounded-full glow-sphere-1 pointer-events-none -z-10"></div>
+    <div class="absolute top-[60%] right-[-10%] w-[500px] h-[500px] rounded-full glow-sphere-2 pointer-events-none -z-10"></div>
+
+    <!-- 1. Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur-md border-b border-gray-800 px-6 py-4 flex justify-between items-center transition-all">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-gray-950 font-bold shadow-md shadow-emerald-500/20">
+                T
+            </div>
+            <span class="text-2xl font-bold text-white tracking-wider heading-font">TECSUB<span class="text-cyan-400">LABS</span></span>
+        </div>
+        <div class="hidden md:flex space-x-8 items-center font-medium">
+            <a href="#" class="text-gray-400 hover:text-white transition">Home</a>
+            <a href="#" class="text-gray-400 hover:text-white transition">Apps</a>
+            <a href="#" class="text-gray-400 hover:text-white transition">Services</a>
+            <!-- Special Tab -->
+            <a href="#" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/25 px-4 py-2 rounded-xl font-medium shadow-lg shadow-cyan-500/10 flex items-center gap-2 transition hover:bg-cyan-500/20">
+                <i class="fa-solid fa-wand-magic-sparkles text-sm"></i> Creative Tools
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content Wrapper -->
+    <main class="max-w-7xl mx-auto p-6 space-y-8">
+        
+        <!-- Header Section -->
+        <div class="text-center py-6 relative">
+            <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-semibold tracking-wider uppercase mb-3 inline-block">Labs Suite v2.5</span>
+            <h1 class="text-4xl font-extrabold text-white sm:text-5xl heading-font tracking-tight">
+                TECSUB Labs & Creative Suite
+            </h1>
+            <p class="mt-3 text-base text-gray-400 max-w-2xl mx-auto font-light">
+                Generate ASCII graphics, build premium smart cards, create customized memes, and browse TECSUB POS products seamlessly.
+            </p>
+        </div>
+
+        <!-- 2. Sliding Sub-navigation Tabs -->
+        <div class="flex flex-wrap justify-center gap-2 md:gap-3 max-w-4xl mx-auto mb-10 p-1.5 bg-gray-950 border border-gray-800/80 rounded-2xl">
+            <button onclick="switchTab('ascii')" id="tabBtn-ascii" class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 bg-cyan-500 text-gray-950 shadow-lg shadow-cyan-500/10 cursor-pointer">
+                <i class="fa-solid fa-font"></i> ASCII Art
+            </button>
+            <button onclick="switchTab('card')" id="tabBtn-card" class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 text-gray-400 hover:text-white cursor-pointer">
+                <i class="fa-solid fa-address-card"></i> Wasi Smart Card
+            </button>
+            <button onclick="switchTab('meme')" id="tabBtn-meme" class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 text-gray-400 hover:text-white cursor-pointer">
+                <i class="fa-solid fa-face-laugh-squint"></i> Meme Generator
+            </button>
+            <button onclick="switchTab('products')" id="tabBtn-products" class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 text-gray-400 hover:text-white cursor-pointer">
+                <i class="fa-solid fa-store"></i> TECSUB Products
+            </button>
+            <button onclick="switchTab('vesak')" id="tabBtn-vesak" class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 text-gray-400 hover:text-white cursor-pointer">
+                <i class="fa-solid fa-dharmachakra"></i> Vesak Card
+            </button>
+            <button onclick="switchTab('seasonal')" id="tabBtn-seasonal" class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 text-gray-400 hover:text-white cursor-pointer">
+                <i class="fa-solid fa-calendar-days"></i> Seasonal Suite
+            </button>
+        </div>
+
+        <!-- TAB CONTENT 1: ASCII Art Generator -->
+        <div id="tabContent-ascii" class="tab-pane">
+            <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-sm relative overflow-hidden">
+                <div class="flex items-center space-x-4 mb-8">
+                    <div class="p-3.5 bg-cyan-500/10 text-cyan-400 rounded-2xl border border-cyan-500/20 shadow-md">
+                        <i class="fa-solid fa-font text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold heading-font text-white">Plain-Text Art Generator</h2>
+                        <p class="text-gray-400 text-sm">Design advanced ASCII typography and graphic text models instantly.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Left Control Box -->
+                    <div class="bg-gray-950 p-6 rounded-2xl border border-gray-800/80 space-y-6">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Generation Mode</label>
+                            <div class="grid grid-cols-2 gap-2 bg-gray-900 p-1.5 rounded-xl border border-gray-800">
+                                <button id="modeTextBtn" onclick="setAsciiMode('text')" class="py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-cyan-500 text-gray-950 shadow-md">
+                                    <i class="fa-solid fa-keyboard mr-1.5"></i> Text Art
+                                </button>
+                                <button id="modeImgBtn" onclick="setAsciiMode('image')" class="py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-gray-400 hover:text-white">
+                                    <i class="fa-solid fa-image mr-1.5"></i> Image Art
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Input Elements (Text Mode) -->
+                        <div id="textControls" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ASCII Font Style</label>
+                                <select id="artFont" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors">
+                                    <option value="slant">Slant (Modern)</option>
+                                    <option value="block">Block (Cyberpunk)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Your Text</label>
+                                <input id="artInput" type="text" value="TECSUB" placeholder="Enter text..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500 transition-colors">
+                            </div>
+                        </div>
+
+                        <!-- Input Elements (Image Mode) -->
+                        <div id="imageControls" class="space-y-4 hidden">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Select Object</label>
+                                <select id="artImageKeyword" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors">
+                                    <option value="dog">🐕 Dog (Puppy)</option>
+                                    <option value="cat">🐈 Cat (Kitty)</option>
+                                    <option value="car">🚗 Cyber Car</option>
+                                    <option value="coffee">☕ Hot Coffee</option>
+                                    <option value="rocket">🚀 Spaceship Rocket</option>
+                                    <option value="heart">💖 Heart Symbol</option>
+                                    <option value="sword">⚔️ Legend Sword</option>
+                                    <option value="robot">🤖 Retro Robot</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <button onclick="generateArt()" class="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-gray-950 font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg shadow-cyan-500/10 flex items-center justify-center gap-2 cursor-pointer hover:shadow-cyan-500/25 active:scale-[0.98]">
+                            <i id="gearIcon" class="fa-solid fa-gear"></i> Generate Masterpiece
+                        </button>
+                    </div>
+
+                    <!-- Right Preview & Code Box -->
+                    <div class="lg:col-span-2 flex flex-col bg-gray-950 rounded-2xl border border-gray-800/80 overflow-hidden min-h-[340px] shadow-inner">
+                        <div class="bg-gray-900/60 px-5 py-3.5 border-b border-gray-800/85 flex justify-between items-center">
+                            <span class="text-xs font-mono text-gray-400 uppercase tracking-wider">Live Preview & Raw Plaintext</span>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="copyArtCode()" class="text-xs bg-gray-800 hover:bg-gray-700 text-cyan-400 font-semibold py-2 px-3.5 rounded-lg border border-gray-700/80 transition flex items-center gap-1.5 cursor-pointer">
+                                    <i class="fa-regular fa-copy"></i> <span id="copyBtnText">Copy Code</span>
+                                </button>
+                                <button onclick="downloadArtText()" class="text-xs bg-gray-800 hover:bg-gray-700 text-emerald-400 font-semibold py-2 px-3.5 rounded-lg border border-gray-700/80 transition flex items-center gap-1.5 cursor-pointer">
+                                    <i class="fa-solid fa-download"></i> Download .txt
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6 overflow-auto flex-1 flex items-center justify-center bg-[#02050e] custom-scroll">
+                            <pre id="artOutput" class="ascii-output text-emerald-400 text-xs md:text-sm text-center w-full select-all font-mono leading-tight">Choose options and click Generate...</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB CONTENT 2: Wasi Smart Card -->
+        <div id="tabContent-card" class="tab-pane hidden">
+            <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-sm relative overflow-hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3.5 bg-emerald-500/10 text-emerald-400 rounded-2xl border border-emerald-500/20 shadow-md">
+                            <i class="fa-solid fa-address-card text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold heading-font text-white">Wasi Smart Card Generator</h2>
+                            <p class="text-gray-400 text-sm">Design 3D-interactive luxury digital profiles and download print-ready PNG files.</p>
+                        </div>
+                    </div>
+                    <span class="self-start sm:self-auto px-4 py-1.5 bg-gray-800/80 text-gray-300 border border-gray-700/60 rounded-full text-xs font-medium flex items-center gap-2">
+                        <i class="fa-solid fa-arrows-rotate text-emerald-400 animate-spin-slow"></i> Tap card to flip it over
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Inputs Box -->
+                    <div class="lg:col-span-5 bg-gray-950 p-6 rounded-2xl border border-gray-800/80 space-y-4">
+                        <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider border-b border-gray-800 pb-2 mb-3">Card Customization</h3>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Company / Brand</label>
+                                <input id="cardCompany" type="text" oninput="updateCard()" value="TECSUB Solutions" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Serial ID</label>
+                                <input id="cardId" type="text" oninput="updateCard()" value="TS-9921" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Full Name</label>
+                                <input id="cardName" type="text" oninput="updateCard()" value="Hasantha Dilshan" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Job Title</label>
+                                <input id="cardRole" type="text" oninput="updateCard()" value="Software Developer & Creator" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Email Address</label>
+                                <input id="cardEmail" type="email" oninput="updateCard()" value="info@tecsub.online" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Phone Number</label>
+                                <input id="cardPhone" type="text" oninput="updateCard()" value="+94 77 123 4567" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Website URL</label>
+                                <input id="cardWebsite" type="text" oninput="updateCard()" value="www.tecsub.online" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Theme Palette</label>
+                                <select id="cardTheme" onchange="updateCardTheme()" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none">
+                                    <option value="theme-cyber">Midnight Cyber (Cyan)</option>
+                                    <option value="theme-gold">Gold Luxury (Gold)</option>
+                                    <option value="theme-emerald">Emerald Executive (Emerald)</option>
+                                    <option value="theme-royal">Neon Royal (Violet)</option>
+                                    <option value="theme-aurora">Aurora Glossmorphism</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">GitHub User</label>
+                                <input id="cardGithub" type="text" oninput="updateCard()" value="github.com/tecsub" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">LinkedIn User</label>
+                                <input id="cardLinkedin" type="text" oninput="updateCard()" value="linkedin.com/in/tecsub" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Profile Photo / Custom Logo</label>
+                            <input id="cardAvatarUpload" type="file" accept="image/*" onchange="handleAvatarUpload(event)" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-1.5 text-xs text-gray-400 file:mr-3 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/10 file:text-emerald-400 hover:file:bg-emerald-500/20 cursor-pointer">
+                        </div>
+                    </div>
+
+                    <!-- Live Digital Card Preview -->
+                    <div class="lg:col-span-7 bg-gray-950 rounded-2xl border border-gray-800/80 p-6 flex flex-col justify-between items-center gap-6 min-h-[350px]">
+                        <div class="w-full flex justify-between items-center">
+                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-widest">3D Realtime Render</span>
+                            <button onclick="toggleFlip()" class="text-xs bg-gray-900 hover:bg-gray-800 text-gray-300 font-semibold py-1.5 px-3 rounded-lg border border-gray-800 transition flex items-center gap-1.5 cursor-pointer">
+                                <i class="fa-solid fa-arrows-rotate"></i> Flip Face
+                            </button>
+                        </div>
+
+                        <!-- 3D Flippable Box -->
+                        <div id="wasiCardContainer" class="card-container">
+                            <div class="card-inner" onclick="toggleFlip()">
+                                
+                                <!-- Front Side -->
+                                <div id="wasiCardFront" class="card-face card-front theme-cyber card-grid-pattern relative">
+                                    <div class="bg-accent-glow absolute inset-0 pointer-events-none"></div>
+                                    
+                                    <div class="flex justify-between items-start z-10">
+                                        <div>
+                                            <h3 id="previewCompany" class="text-xs font-bold tracking-widest text-accent uppercase heading-font">TECSUB Solutions</h3>
+                                            <p class="text-[9px] text-gray-400/80 font-medium">VERIFIED PROFESSIONAL ASSET</p>
+                                        </div>
+                                        <div class="badge-accent px-2 py-0.5 rounded text-[9px] font-semibold flex items-center gap-1">
+                                            <i class="fa-solid fa-circle-check"></i> ACTIVE
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center space-x-4 my-auto z-10">
+                                        <div class="relative">
+                                            <img id="previewAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&h=120" alt="Avatar" class="w-16 h-16 rounded-xl border border-accent-glow object-cover glow-effect">
+                                            <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-gray-950 flex items-center justify-center text-[9px] text-white">
+                                                <i class="fa-solid fa-shield-halved"></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h2 id="previewName" class="text-2xl font-bold tracking-wide text-white heading-font leading-tight">Hasantha Dilshan</h2>
+                                            <p id="previewRole" class="text-xs text-gray-300 font-medium tracking-wide mt-1">Software Developer & Creator</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex justify-between items-center border-t border-gray-800/85 pt-3 z-10 text-[11px] text-gray-400">
+                                        <div class="flex items-center gap-1.5">
+                                            <i class="fa-regular fa-envelope text-accent"></i>
+                                            <span id="previewEmail">info@tecsub.online</span>
+                                        </div>
+                                        <div class="text-[9px] font-mono bg-gray-950/80 px-2.5 py-0.5 rounded-md border border-gray-800/80 text-accent font-semibold">
+                                            ID: <span id="previewId">TS-9921</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Back Side -->
+                                <div id="wasiCardBack" class="card-face card-back theme-cyber card-grid-pattern relative">
+                                    <div class="bg-accent-glow absolute inset-0 pointer-events-none"></div>
+
+                                    <div class="flex justify-between items-start z-10">
+                                        <div>
+                                            <h3 id="previewCompanyBack" class="text-xs font-bold tracking-widest text-accent uppercase heading-font">TECSUB Solutions</h3>
+                                            <p class="text-[9px] text-gray-400/80 font-medium text-accent">SECURITY & ACCESS PASS</p>
+                                        </div>
+                                        <div class="text-xl text-gray-400"><i class="fa-solid fa-id-card-clip text-accent"></i></div>
+                                    </div>
+
+                                    <div class="grid grid-cols-12 gap-3 my-auto z-10">
+                                        <div class="col-span-8 space-y-2.5 text-[11px] text-gray-300 font-medium">
+                                            <div class="flex items-center gap-2">
+                                                <i class="fa-solid fa-phone text-accent w-4"></i>
+                                                <span id="previewPhone">+94 77 123 4567</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <i class="fa-solid fa-globe text-accent w-4"></i>
+                                                <span id="previewWebsite">www.tecsub.online</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <i class="fa-brands fa-github text-accent w-4"></i>
+                                                <span id="previewGithub">github.com/tecsub</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <i class="fa-brands fa-linkedin text-accent w-4"></i>
+                                                <span id="previewLinkedin">linkedin.com/in/tecsub</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-4 flex justify-end items-center">
+                                            <div class="p-1.5 bg-white rounded-lg border-2 border-accent-glow/50 shadow-lg shadow-black/30 bg-white">
+                                                <svg class="w-16 h-16 text-gray-950" viewBox="0 0 100 100" fill="currentColor">
+                                                    <rect x="0" y="0" width="25" height="25" />
+                                                    <rect x="5" y="5" width="15" height="15" fill="white" />
+                                                    <rect x="10" y="10" width="5" height="5" />
+                                                    <rect x="75" y="0" width="25" height="25" />
+                                                    <rect x="80" y="5" width="15" height="15" fill="white" />
+                                                    <rect x="85" y="10" width="5" height="5" />
+                                                    <rect x="0" y="75" width="25" height="25" />
+                                                    <rect x="5" y="80" width="15" height="15" fill="white" />
+                                                    <rect x="10" y="85" width="5" height="5" />
+                                                    <rect x="35" y="10" width="10" height="15" />
+                                                    <rect x="55" y="5" width="15" height="10" />
+                                                    <rect x="40" y="35" width="20" height="20" />
+                                                    <rect x="15" y="45" width="10" height="10" />
+                                                    <rect x="45" y="45" width="10" height="10" fill="white" />
+                                                    <rect x="75" y="40" width="15" height="15" />
+                                                    <rect x="35" y="70" width="15" height="10" />
+                                                    <rect x="60" y="75" width="10" height="15" />
+                                                    <rect x="80" y="75" width="15" height="20" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex justify-between items-center border-t border-gray-800/85 pt-3 z-10 text-[11px] text-gray-400">
+                                        <div class="text-[9px] tracking-wide text-gray-500">
+                                            TECSUB SMART CARD SYSTEM
+                                        </div>
+                                        <div class="text-[9px] font-mono text-accent font-semibold">
+                                            ID: <span id="previewIdBack">TS-9921</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Downloader Panel -->
+                        <div class="w-full grid grid-cols-2 gap-4">
+                            <button onclick="downloadWasiCard('front')" class="bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10 cursor-pointer hover:shadow-emerald-500/25 active:scale-[0.98]">
+                                <i class="fa-solid fa-download"></i> Get Card Front (PNG)
+                            </button>
+                            <button onclick="downloadWasiCard('back')" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-xl border border-gray-750 transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/10 cursor-pointer active:scale-[0.98]">
+                                <i class="fa-solid fa-download"></i> Get Card Back (PNG)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB CONTENT 3: Meme Generator -->
+        <div id="tabContent-meme" class="tab-pane hidden">
+            <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-sm relative overflow-hidden">
+                <div class="flex items-center space-x-4 mb-8">
+                    <div class="p-3.5 bg-purple-500/10 text-purple-400 rounded-2xl border border-purple-500/20 shadow-md">
+                        <i class="fa-solid fa-face-laugh-squint text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold heading-font text-white">TECSUB Meme Generator</h2>
+                        <p class="text-gray-400 text-sm">Easily overlay customized texts on popular templates or upload your own files.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Left Control Box -->
+                    <div class="lg:col-span-5 bg-gray-950 p-6 rounded-2xl border border-gray-800/80 space-y-4">
+                        <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider border-b border-gray-800 pb-2 mb-3">Meme Customizer</h3>
+                        
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Meme Template</label>
+                            <select id="memeTemplate" onchange="changeMemeTemplate()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-purple-500 transition-colors">
+                                <option value="drake">Drake Hotline Bling</option>
+                                <option value="harold">Hide the Pain Harold</option>
+                                <option value="buttons">Two Buttons</option>
+                                <option value="success">Success Kid</option>
+                                <option value="custom">-- Custom Upload --</option>
+                            </select>
+                        </div>
+
+                        <!-- Custom Image File Upload -->
+                        <div id="memeCustomUploadContainer" class="hidden">
+                            <label class="block text-[11px] font-semibold text-purple-400 uppercase mb-1.5">Upload Custom Template</label>
+                            <input id="memeCustomUpload" type="file" accept="image/*" onchange="handleMemeCustomUpload(event)" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-1.5 text-xs text-gray-400 file:mr-3 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-purple-500/10 file:text-purple-400 hover:file:bg-purple-500/20 cursor-pointer">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Top Text</label>
+                            <input id="memeTopText" type="text" oninput="drawMeme()" placeholder="Type top caption..." value="PLAYING THE LOTTERY" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-purple-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Bottom Text</label>
+                            <input id="memeBottomText" type="text" oninput="drawMeme()" placeholder="Type bottom caption..." value="DRINKING TEQUILA" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-purple-500">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Font Size (px)</label>
+                                <input id="memeFontSize" type="range" min="15" max="65" value="38" oninput="drawMeme()" class="w-full accent-purple-500 mt-2">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Stroke Size (px)</label>
+                                <input id="memeStrokeSize" type="range" min="0" max="10" value="4" oninput="drawMeme()" class="w-full accent-purple-500 mt-2">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Font Style</label>
+                                <select id="memeFontFamily" onchange="drawMeme()" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none">
+                                    <option value="Impact">Impact (Classic)</option>
+                                    <option value="Arial">Arial</option>
+                                    <option value="Montserrat">Montserrat</option>
+                                    <option value="Comic Sans MS">Comic Sans</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Text Colors</label>
+                                <div class="flex items-center space-x-4 mt-1">
+                                    <div class="flex items-center space-x-1.5">
+                                        <input id="memeTextColor" type="color" value="#ffffff" oninput="drawMeme()" class="w-7 h-7 rounded border border-gray-800 cursor-pointer">
+                                        <span class="text-[10px] text-gray-400 font-mono">Fill</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input id="memeStrokeColor" type="color" value="#000000" oninput="drawMeme()" class="w-7 h-7 rounded border border-gray-800 cursor-pointer">
+                                        <span class="text-[10px] text-gray-400 font-mono">Stroke</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info alert box -->
+                        <div class="p-3.5 bg-purple-500/10 border border-purple-500/20 rounded-xl text-xs text-purple-300">
+                            <i class="fa-solid fa-circle-info mr-1.5"></i> Custom templates run entirely inside your browser cache. Zero server upload.
+                        </div>
+
+                        <!-- Action Button -->
+                        <button onclick="downloadMeme()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-gray-950 font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg shadow-purple-500/10 flex items-center justify-center gap-2 cursor-pointer hover:shadow-purple-500/25 active:scale-[0.98]">
+                            <i class="fa-solid fa-wand-magic-sparkles animate-pulse"></i> Generate & Download Meme
+                        </button>
+                    </div>
+
+                    <!-- Right Preview & Canvas Box -->
+                    <div class="lg:col-span-7 bg-gray-950 rounded-2xl border border-gray-800/80 p-6 flex flex-col justify-between items-center gap-6 min-h-[350px]">
+                        <div class="w-full flex justify-between items-center">
+                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Canvas Live Render</span>
+                            <span class="text-[10px] bg-purple-500/15 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded font-mono">HD RENDERER</span>
+                        </div>
+
+                        <!-- Centered Canvas Container -->
+                        <div class="w-full max-w-[450px] aspect-square bg-[#02050e] rounded-xl border border-gray-800/80 overflow-hidden flex items-center justify-center p-3 relative shadow-inner">
+                            <canvas id="memeCanvas" class="max-w-full max-h-full rounded-md shadow-2xl bg-gray-900 object-contain"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB CONTENT 4: TECSUB Products -->
+        <div id="tabContent-products" class="tab-pane hidden">
+            <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-sm relative overflow-hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3.5 bg-emerald-500/10 text-emerald-400 rounded-2xl border border-emerald-500/20 shadow-md">
+                            <i class="fa-solid fa-store text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold heading-font text-white">TECSUB Software Showroom</h2>
+                            <p class="text-gray-400 text-sm">Explore our enterprise applications, installers, and system tools built with premium frameworks.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Filters -->
+                    <div class="flex bg-gray-950 p-1 border border-gray-850 rounded-xl">
+                        <button onclick="filterProducts('all')" id="filter-all" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 text-gray-950 shadow-md transition-all cursor-pointer">All</button>
+                        <button onclick="filterProducts('pos')" id="filter-pos" class="px-4 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all cursor-pointer">POS Software</button>
+                        <button onclick="filterProducts('web')" id="filter-web" class="px-4 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all cursor-pointer">Web Apps</button>
+                        <button onclick="filterProducts('installer')" id="filter-installer" class="px-4 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all cursor-pointer">Installer Tools</button>
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Card 1: Universal POS -->
+                    <div class="product-card bg-gray-950 border border-gray-800/80 rounded-2xl p-6 flex flex-col justify-between hover:border-emerald-500/40 transition-all duration-300 hover:translate-y-[-4px] shadow-lg" data-category="pos">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] font-mono tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-md uppercase font-semibold">POS SOFTWARE</span>
+                                <span class="text-sm font-semibold text-emerald-400 font-mono">$299</span>
+                            </div>
+                            <h3 class="text-xl font-bold heading-font text-white">Universal POS</h3>
+                            <p class="text-xs text-gray-400 leading-relaxed font-light">
+                                High-performance client-server point of sale software featuring an advanced Go backend, SQLite storage, and active WebSocket connection protocols.
+                            </p>
+                            <div class="flex flex-wrap gap-1.5 pt-2">
+                                <span class="text-[9px] font-mono bg-gray-900 border border-gray-800 text-gray-300 px-2 py-0.5 rounded">Go (Golang)</span>
+                                <span class="text-[9px] font-mono bg-gray-900 border border-gray-800 text-gray-300 px-2 py-0.5 rounded">SQLite</span>
+                                <span class="text-[9px] font-mono bg-gray-900 border border-gray-800 text-gray-300 px-2 py-0.5 rounded">WebSockets</span>
+                            </div>
+                        </div>
+                        <button onclick="openProductModal('pos')" class="w-full mt-6 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500 hover:text-gray-950 text-emerald-400 font-semibold py-2.5 px-4 rounded-xl transition-all text-xs cursor-pointer active:scale-[0.98]">
+                            Technical Specifications
+                        </button>
+                    </div>
+
+                    <!-- Card 2: Auto Post Utility -->
+                    <div class="product-card bg-gray-950 border border-gray-800/80 rounded-2xl p-6 flex flex-col justify-between hover:border-emerald-500/40 transition-all duration-300 hover:translate-y-[-4px] shadow-lg" data-category="installer">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] font-mono tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-md uppercase font-semibold">INSTALLER TOOLS</span>
+                                <span class="text-sm font-semibold text-emerald-400 font-mono">$149</span>
+                            </div>
+                            <h3 class="text-xl font-bold heading-font text-white">Auto Post Utility</h3>
+                            <p class="text-xs text-gray-400 leading-relaxed font-light">
+                                Professional deployment scripting tools including Inno Setup (ISS) compilers, Node.js Puppeteer modules, and Windows startup services.
+                            </p>
+                            <div class="flex flex-wrap gap-1.5 pt-2">
+                                <span class="text-[9px] font-mono bg-gray-900 border border-gray-800 text-gray-300 px-2 py-0.5 rounded">Puppeteer</span>
+                                <span class="text-[9px] font-mono bg-gray-900 border border-gray-800 text-gray-300 px-2 py-0.5 rounded">Inno Setup</span>
+                                <span class="text-[9px] font-mono bg-gray-900 border border-gray-800 text-gray-300 px-2 py-0.5 rounded">Windows Script</span>
+                            </div>
+                        </div>
+                        <button onclick="openProductModal('autopost')" class="w-full mt-6 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500 hover:text-gray-950 text-emerald-400 font-semibold py-2.5 px-4 rounded-xl transition-all text-xs cursor-pointer active:scale-[0.98]">
+                            Technical Specifications
+                        </button>
+                    </div>
+
+                    <!-- Card 3: Custom Web Services -->
+                    <div class="product-card bg-gray-950 border border-gray-800/80 rounded-2xl p-6 flex flex-col justify-between hover:border-emerald-500/40 transition-all duration-300 hover:translate-y-[-4px] shadow-lg" data-category="web">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] font-mono tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-md uppercase font-semibold">WEB APPS</span>
+                                <span class="text-sm font-semibold text-emerald-400 font-mono">$499/proj</span>
+                            </div>
+                            <h3 class="text-xl font-bold heading-font text-white">Custom Web Services</h3>
+                            <p class="text-xs text-gray-400 leading-relaxed font-light">
+                                Tailored web architectures built using Next.js or Vite React interfaces, coupled with robust server REST/GraphQL backends and secure authentication.
+                            </p>
+                            <div class="flex flex-wrap gap-1.5 pt-2">
+                                <span class="text-[9px] font-mono bg-gray-900 border border-gray-800 text-gray-300 px-2 py-0.5 rounded">React / Next.js</span>
+                                <span class="text-[9px] font-mono bg-gray-900 border border-gray-800 text-gray-300 px-2 py-0.5 rounded">Node.js</span>
+                                <span class="text-[9px] font-mono bg-gray-900 border border-gray-800 text-gray-300 px-2 py-0.5 rounded">PostgreSQL</span>
+                            </div>
+                        </div>
+                        <button onclick="openProductModal('webservices')" class="w-full mt-6 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500 hover:text-gray-950 text-emerald-400 font-semibold py-2.5 px-4 rounded-xl transition-all text-xs cursor-pointer active:scale-[0.98]">
+                            Technical Specifications
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB CONTENT 5: Vesak Card Generator -->
+        <div id="tabContent-vesak" class="tab-pane hidden">
+            <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-sm relative overflow-hidden">
+                <div class="flex items-center space-x-4 mb-8">
+                    <div class="p-3.5 bg-orange-500/10 text-orange-400 rounded-2xl border border-orange-500/20 shadow-md">
+                        <i class="fa-solid fa-dharmachakra text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold heading-font text-white">Vesak Blessing Card Creator</h2>
+                        <p class="text-gray-400 text-sm">Create traditional Sri Lankan Vesak greeting cards with Sinhala blessings and custom stamps.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Control box on the left/inputs -->
+                    <div class="lg:col-span-5 bg-gray-950 p-6 rounded-2xl border border-gray-800/80 space-y-4">
+                        <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider border-b border-gray-800 pb-2 mb-3">Card Customization</h3>
+
+                        <!-- 1. Background Template selector -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Vesak Card Image</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="changeVesakTemplate('buddha')" class="h-14 rounded-lg bg-cover bg-center border border-gray-850 hover:border-orange-500 transition-all cursor-pointer relative overflow-hidden group" style="background-image: url('https://images.unsplash.com/photo-1609137144814-7d52af609d6f?w=150')">
+                                    <span class="absolute inset-0 bg-black/40 group-hover:bg-black/20 flex items-center justify-center text-[10px] text-white font-semibold">Buddha</span>
+                                </button>
+                                <button onclick="changeVesakTemplate('lanterns')" class="h-14 rounded-lg bg-cover bg-center border border-gray-850 hover:border-orange-500 transition-all cursor-pointer relative overflow-hidden group" style="background-image: url('https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=150')">
+                                    <span class="absolute inset-0 bg-black/40 group-hover:bg-black/20 flex items-center justify-center text-[10px] text-white font-semibold">Lanterns</span>
+                                </button>
+                                <button onclick="changeVesakTemplate('lotus')" class="h-14 rounded-lg bg-cover bg-center border border-gray-850 hover:border-orange-500 transition-all cursor-pointer relative overflow-hidden group" style="background-image: url('https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?w=150')">
+                                    <span class="absolute inset-0 bg-black/40 group-hover:bg-black/20 flex items-center justify-center text-[10px] text-white font-semibold">Lotus</span>
+                                </button>
+                                <button onclick="changeVesakTemplate('temple')" class="h-14 rounded-lg bg-cover bg-center border border-gray-850 hover:border-orange-500 transition-all cursor-pointer relative overflow-hidden group" style="background-image: url('https://images.unsplash.com/photo-1546484475-7f7bd55792da?w=150')">
+                                    <span class="absolute inset-0 bg-black/40 group-hover:bg-black/20 flex items-center justify-center text-[10px] text-white font-semibold">Temple</span>
+                                </button>
+                                <button onclick="changeVesakTemplate('moon')" class="h-14 rounded-lg bg-cover bg-center border border-gray-850 hover:border-orange-500 transition-all cursor-pointer relative overflow-hidden group" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=150')">
+                                    <span class="absolute inset-0 bg-black/40 group-hover:bg-black/20 flex items-center justify-center text-[10px] text-white font-semibold">Serene</span>
+                                </button>
+                                <label class="h-14 rounded-lg border border-dashed border-gray-700 hover:border-orange-500 bg-gray-900/60 flex flex-col items-center justify-center cursor-pointer transition">
+                                    <i class="fa-solid fa-cloud-arrow-up text-gray-400 text-xs"></i>
+                                    <span class="text-[9px] text-gray-400 font-semibold mt-1">Upload</span>
+                                    <input type="file" accept="image/*" onchange="handleVesakUpload(event)" class="hidden">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 2. Stamp Selector -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Stamp Design</label>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button onclick="changeVesakStamp('lotus-stamp')" class="h-12 rounded-lg border border-gray-850 bg-gray-900 hover:border-orange-500 flex items-center justify-center cursor-pointer overflow-hidden p-1">
+                                    <img src="https://img.icons8.com/color/96/lotus.png" alt="Lotus Stamp" class="h-full object-contain">
+                                </button>
+                                <button onclick="changeVesakStamp('stupa-stamp')" class="h-12 rounded-lg border border-gray-850 bg-gray-900 hover:border-orange-500 flex items-center justify-center cursor-pointer overflow-hidden p-1">
+                                    <img src="https://img.icons8.com/color/96/buddhist-stupa.png" alt="Stupa Stamp" class="h-full object-contain" onerror="this.src='https://img.icons8.com/color/96/pagoda.png'">
+                                </button>
+                                <button onclick="changeVesakStamp('lion-stamp')" class="h-12 rounded-lg border border-gray-850 bg-gray-900 hover:border-orange-500 flex items-center justify-center cursor-pointer overflow-hidden p-1">
+                                    <img src="https://img.icons8.com/color/96/sri-lanka-flag.png" alt="Lion Stamp" class="h-full object-contain">
+                                </button>
+                                <label class="h-12 rounded-lg border border-dashed border-gray-700 hover:border-orange-500 bg-gray-900/60 flex flex-col items-center justify-center cursor-pointer transition">
+                                    <i class="fa-solid fa-upload text-gray-400 text-xs"></i>
+                                    <span class="text-[8px] text-gray-400 font-semibold">Upload</span>
+                                    <input type="file" accept="image/*" onchange="handleVesakStampUpload(event)" class="hidden">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 3. Predefined Poems / Blessings in Sinhala -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Poem / Blessing (Sinhala)</label>
+                            <select id="vesakPoemSelect" onchange="changeVesakPoem()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500 transition-colors">
+                                <option value="preset1">Poem 1: වෛරී සිතක ගිනි ජාලා</option>
+                                <option value="preset2">Poem 2: සිත් තුල ඇතිවන ක්‍රෝධය</option>
+                                <option value="preset3">Poem 3: සම්බුදු තෙමඟුල සිහිපත්</option>
+                                <option value="custom">-- Custom Message --</option>
+                            </select>
+                            <textarea id="vesakPoemText" oninput="updateVesakText()" rows="3" class="w-full mt-2 bg-gray-900 border border-gray-800 rounded-xl p-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-orange-500 resize-none" placeholder="Enter your card text..."></textarea>
+                        </div>
+
+                        <!-- 4. Sender & Recipient fields -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Sender (විසින්)</label>
+                                <input id="vesakSender" type="text" oninput="updateVesakText()" value="හිතවත් සජන" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Recipient (වෙත)</label>
+                                <input id="vesakRecipient" type="text" oninput="updateVesakText()" value="හිතමිතුරන් සැමට" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right preview card display -->
+                    <div class="lg:col-span-7 bg-gray-950 rounded-2xl border border-gray-800/80 p-6 flex flex-col justify-between items-center gap-6 min-h-[350px]">
+                        <div class="w-full flex justify-between items-center">
+                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-widest">E-Vesak Postcard Render</span>
+                            <span class="text-[10px] bg-orange-500/15 text-orange-400 border border-orange-500/20 px-2 py-0.5 rounded font-mono uppercase font-semibold">Blessing Card</span>
+                        </div>
+
+                        <!-- Vesak Landscape Card Container (To download) -->
+                        <div class="w-full overflow-auto flex items-center justify-center p-2 custom-scroll">
+                            <div id="vesakCardRender" class="w-[620px] h-[360px] min-w-[620px] bg-amber-50/95 border-2 border-amber-200/60 rounded-xl overflow-hidden shadow-2xl flex text-gray-800 select-none">
+                                <!-- Left half (Buddha background template) -->
+                                <div id="vesakCardLeft" class="w-1/2 h-full bg-cover bg-center relative flex flex-col justify-end p-4 text-white" style="background-image: url('https://images.unsplash.com/photo-1609137144814-7d52af609d6f?w=600')">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/20 z-0"></div>
+                                    <div class="z-10 text-center w-full">
+                                        <h3 class="text-xl font-bold tracking-wide text-amber-200" style="font-family: 'Space Grotesk', sans-serif;">පින්බර වෙසක්</h3>
+                                        <p class="text-xs font-medium text-amber-100/90 mt-1">මංගල්‍යයක් වේවා!</p>
+                                    </div>
+                                    <div class="absolute top-2 left-2 w-7 h-7 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-[10px] text-amber-300 font-bold">
+                                        卍
+                                    </div>
+                                </div>
+
+                                <!-- Right half (Message panel) -->
+                                <div class="w-1/2 h-full p-5 flex flex-col justify-between relative bg-amber-50/95">
+                                    <!-- Stamp at top right -->
+                                    <div class="absolute top-4 right-4 w-16 h-16 border-2 border-dashed border-amber-300/80 p-1 bg-white rounded flex items-center justify-center rotate-3 shadow-sm">
+                                        <img id="vesakStampPreview" src="https://img.icons8.com/color/96/lotus.png" alt="Stamp" class="max-h-full max-w-full object-contain">
+                                    </div>
+
+                                    <!-- Blessing Poem text -->
+                                    <div class="my-auto pt-8 pr-16 pl-2">
+                                        <blockquote id="vesakPreviewPoem" class="text-xs italic text-gray-700 font-medium leading-relaxed whitespace-pre-line font-serif">
+                                            වෛරී සිතක ගිනි ජාලා නිවෙන්නයි
+                                            මෙන් සිතකින් ලෝකය දෙස බලන්නයි
+                                            අමා දහම් සිසිලස් බව දැනෙන්නයි
+                                            මේ අරුමෝත් මෙත් පුරයට වඩින්නයි
+                                        </blockquote>
+                                    </div>
+
+                                    <!-- Sender & Recipient lines -->
+                                    <div class="border-t border-amber-200/80 pt-3 flex justify-between items-end text-[10px] text-gray-600 font-semibold px-2">
+                                        <div class="space-y-1">
+                                            <div>ලබන්නා (To): <span id="vesakPreviewRecipient" class="text-gray-800 font-bold border-b border-amber-300 pb-0.5">හිතමිතුරන් සැමට</span></div>
+                                            <div>එවන්නා (By): <span id="vesakPreviewSender" class="text-gray-800 font-bold border-b border-amber-300 pb-0.5">හිතවත් සජන</span></div>
+                                        </div>
+                                        
+                                        <!-- QR code or brand tag -->
+                                        <div class="text-right flex flex-col items-end gap-1 select-none pointer-events-none">
+                                            <div class="p-0.5 bg-white border border-amber-200 rounded">
+                                                <svg class="w-8 h-8 text-gray-700" viewBox="0 0 100 100" fill="currentColor">
+                                                    <rect x="0" y="0" width="25" height="25" />
+                                                    <rect x="5" y="5" width="15" height="15" fill="white" />
+                                                    <rect x="10" y="10" width="5" height="5" />
+                                                    <rect x="75" y="0" width="25" height="25" />
+                                                    <rect x="80" y="5" width="15" height="15" fill="white" />
+                                                    <rect x="85" y="10" width="5" height="5" />
+                                                    <rect x="0" y="75" width="25" height="25" />
+                                                    <rect x="5" y="80" width="15" height="15" fill="white" />
+                                                    <rect x="10" y="85" width="5" height="5" />
+                                                    <rect x="40" y="40" width="20" height="20" />
+                                                    <rect x="45" y="45" width="10" height="10" fill="white" />
+                                                    <rect x="75" y="40" width="15" height="15" />
+                                                    <rect x="35" y="70" width="15" height="10" />
+                                                </svg>
+                                            </div>
+                                            <span class="text-[7px] text-gray-400 font-mono tracking-tighter">TECSUB GREETINGS</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Downloader buttons -->
+                        <div class="w-full grid grid-cols-2 gap-4">
+                            <button onclick="downloadVesakCard()" class="bg-orange-500 hover:bg-orange-400 text-gray-950 font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/10 cursor-pointer hover:shadow-orange-500/25 active:scale-[0.98]">
+                                <i class="fa-solid fa-download"></i> Export Blessing Card (PNG)
+                            </button>
+                            <button onclick="resetVesakCard()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-xl border border-gray-750 transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/10 cursor-pointer active:scale-[0.98]">
+                                <i class="fa-solid fa-arrows-rotate"></i> Reset Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB CONTENT 6: Seasonal Suite Dashboard -->
+        <div id="tabContent-seasonal" class="tab-pane hidden">
+            <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-sm relative overflow-hidden">
+                <div class="flex items-center space-x-4 mb-8">
+                    <div class="p-3.5 bg-orange-500/10 text-orange-400 rounded-2xl border border-orange-500/20 shadow-md">
+                        <i class="fa-solid fa-calendar-days text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold heading-font text-white">TECSUB Seasonal Tools & Widgets</h2>
+                        <p class="text-gray-400 text-sm">Interactive mini-apps, game widgets, and card generators designed for festivals and special occasions.</p>
+                    </div>
+                </div>
+
+                <!-- Category 1: Vesak & Poson Suite -->
+                <div class="space-y-4 mb-8">
+                    <h3 class="text-sm font-semibold text-amber-400 uppercase tracking-widest border-b border-gray-850 pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-dharmachakra animate-spin-slow"></i> Vesak & Poson Festival Tools
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Pandal Builder -->
+                        <div class="bg-gray-950/80 border border-gray-850 rounded-2xl p-5 flex flex-col justify-between hover:border-amber-500/35 transition shadow-md">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[9px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded uppercase font-semibold">Interactive Widget</span>
+                                </div>
+                                <h4 class="text-base font-bold text-white heading-font">Digital Pandal Builder</h4>
+                                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                                    Build a live 2D digital Vesak/Poson Thorana with custom lighting chaser patterns, devotional music loops, and sponsor banners.
+                                </p>
+                            </div>
+                            <a href="seasonal/digital-pandal.html" class="w-full mt-4 text-center bg-amber-500/10 hover:bg-amber-500 hover:text-gray-950 text-amber-400 font-semibold py-2 px-4 rounded-xl transition text-xs cursor-pointer">
+                                Launch Pandal Builder
+                            </a>
+                        </div>
+
+                        <!-- Digital Dansala -->
+                        <div class="bg-gray-950/80 border border-gray-850 rounded-2xl p-5 flex flex-col justify-between hover:border-amber-500/35 transition shadow-md">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[9px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded uppercase font-semibold">Poster Generator</span>
+                                </div>
+                                <h4 class="text-base font-bold text-white heading-font">Digital Dansala Widget</h4>
+                                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                                    Generate and download a fun digital Dansala poster (Ice Cream, Rice, Tea) with your custom name and photo to share.
+                                </p>
+                            </div>
+                            <a href="seasonal/digital-dansala.html" class="w-full mt-4 text-center bg-amber-500/10 hover:bg-amber-500 hover:text-gray-950 text-amber-400 font-semibold py-2 px-4 rounded-xl transition text-xs cursor-pointer">
+                                Launch Dansala Creator
+                            </a>
+                        </div>
+
+                        <!-- Verse Book -->
+                        <div class="bg-gray-950/80 border border-gray-850 rounded-2xl p-5 flex flex-col justify-between hover:border-amber-500/35 transition shadow-md">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[9px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded uppercase font-semibold">Typography Tool</span>
+                                </div>
+                                <h4 class="text-base font-bold text-white heading-font">Digital Verse Book</h4>
+                                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                                    Design beautiful typography cards containing old Sinhala poems, Buddhist verses, and blessings with stupa and oil lamp backgrounds.
+                                </p>
+                            </div>
+                            <a href="seasonal/verse-book.html" class="w-full mt-4 text-center bg-amber-500/10 hover:bg-amber-500 hover:text-gray-950 text-amber-400 font-semibold py-2 px-4 rounded-xl transition text-xs cursor-pointer">
+                                Launch Verse Creator
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 2: Sinhala & Tamil New Year Suite -->
+                <div class="space-y-4 mb-8">
+                    <h3 class="text-sm font-semibold text-emerald-400 uppercase tracking-widest border-b border-gray-850 pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-seedling"></i> Aluth Avurudu Suite
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Nakath Countdown -->
+                        <div class="bg-gray-950/80 border border-gray-850 rounded-2xl p-5 flex flex-col justify-between hover:border-emerald-500/35 transition shadow-md">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded uppercase font-semibold">Countdown & Alerts</span>
+                                </div>
+                                <h4 class="text-base font-bold text-white heading-font">Avurudu Nakath Timers</h4>
+                                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                                    Real-time countdown clock for cooking, meals, work commencement, and anointing rituals with traditional Rabana audio cues.
+                                </p>
+                            </div>
+                            <a href="seasonal/avurudu-nakath.html" class="w-full mt-4 text-center bg-emerald-500/10 hover:bg-emerald-500 hover:text-gray-950 text-emerald-400 font-semibold py-2 px-4 rounded-xl transition text-xs cursor-pointer">
+                                Open Nakath Timers
+                            </a>
+                        </div>
+
+                        <!-- Avurudu Ritual Cards -->
+                        <div class="bg-gray-950/80 border border-gray-850 rounded-2xl p-5 flex flex-col justify-between hover:border-emerald-500/35 transition shadow-md">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded uppercase font-semibold">Card Generator</span>
+                                </div>
+                                <h4 class="text-base font-bold text-white heading-font">Avurudu Ritual Greetings</h4>
+                                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                                    Create funny "work commencement" cards (e.g. coding, sleeping, gaming) styled as traditional Sri Lankan New Year greeting templates.
+                                </p>
+                            </div>
+                            <a href="seasonal/avurudu-greetings.html" class="w-full mt-4 text-center bg-emerald-500/10 hover:bg-emerald-500 hover:text-gray-950 text-emerald-400 font-semibold py-2 px-4 rounded-xl transition text-xs cursor-pointer">
+                                Launch Card Builder
+                            </a>
+                        </div>
+
+                        <!-- Avurudu Games -->
+                        <div class="bg-gray-950/80 border border-gray-850 rounded-2xl p-5 flex flex-col justify-between hover:border-emerald-500/35 transition shadow-md">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded uppercase font-semibold">Web Games</span>
+                                </div>
+                                <h4 class="text-base font-bold text-white heading-font">Traditional Mini Games</h4>
+                                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                                    Play interactive Sri Lankan village sports online, including Kana Muttiya (Strike the Pot) and Aliyata Asa Thabeema (Blindfold Elephant Eye).
+                                </p>
+                            </div>
+                            <a href="seasonal/avurudu-games.html" class="w-full mt-4 text-center bg-emerald-500/10 hover:bg-emerald-500 hover:text-gray-950 text-emerald-400 font-semibold py-2 px-4 rounded-xl transition text-xs cursor-pointer">
+                                Play Mini Games
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 3: Christmas & Valentine's Day Suite -->
+                <div class="space-y-4 mb-8">
+                    <h3 class="text-sm font-semibold text-red-400 uppercase tracking-widest border-b border-gray-850 pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-holly-berry"></i> Christmas & Valentine's Day
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Santa's Letter -->
+                        <div class="bg-gray-950/80 border border-gray-850 rounded-2xl p-5 flex flex-col justify-between hover:border-red-500/35 transition shadow-md">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[9px] font-mono bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded uppercase font-semibold">Letter Creator</span>
+                                </div>
+                                <h4 class="text-base font-bold text-white heading-font">Santa's Personalized Letter</h4>
+                                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                                    Surprise children with a customized letter from the North Pole featuring dynamic name fields, naughty/nice checks, and wax seal layouts.
+                                </p>
+                            </div>
+                            <a href="seasonal/santa-letter.html" class="w-full mt-4 text-center bg-red-500/10 hover:bg-red-500 hover:text-gray-950 text-red-400 font-semibold py-2 px-4 rounded-xl transition text-xs cursor-pointer">
+                                Write Letter
+                            </a>
+                        </div>
+
+                        <!-- Secret Santa -->
+                        <div class="bg-gray-950/80 border border-gray-850 rounded-2xl p-5 flex flex-col justify-between hover:border-red-500/35 transition shadow-md">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[9px] font-mono bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded uppercase font-semibold">Matchmaker Utility</span>
+                                </div>
+                                <h4 class="text-base font-bold text-white heading-font">Secret Santa Generator</h4>
+                                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                                    Organize gift exchanges easily. Input participant lists to shuffle matches randomly and generate private copyable WhatsApp sharing strings.
+                                </p>
+                            </div>
+                            <a href="seasonal/secret-santa.html" class="w-full mt-4 text-center bg-red-500/10 hover:bg-red-500 hover:text-gray-950 text-red-400 font-semibold py-2.5 px-4 rounded-xl transition text-xs cursor-pointer">
+                                Launch Secret Santa
+                            </a>
+                        </div>
+
+                        <!-- Valentine Notes -->
+                        <div class="bg-gray-950/80 border border-gray-850 rounded-2xl p-5 flex flex-col justify-between hover:border-red-500/35 transition shadow-md">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[9px] font-mono bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded uppercase font-semibold">Anonymous Link</span>
+                                </div>
+                                <h4 class="text-base font-bold text-white heading-font">Valentine Love Notes</h4>
+                                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                                    Share a personalized social media note link. Let friends submit anonymous love notes, and export gorgeous glassmorphic message layouts.
+                                </p>
+                            </div>
+                            <a href="seasonal/valentine-notes.html" class="w-full mt-4 text-center bg-red-500/10 hover:bg-red-500 hover:text-gray-950 text-red-400 font-semibold py-2 px-4 rounded-xl transition text-xs cursor-pointer">
+                                Create Love Link
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 4: Achievements & Resolution Cards -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-semibold text-indigo-400 uppercase tracking-widest border-b border-gray-850 pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-award"></i> Special Days & Achievements
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Exam Results Wish -->
+                        <div class="bg-gray-950/80 border border-gray-850 rounded-2xl p-5 flex flex-col justify-between hover:border-indigo-500/35 transition shadow-md">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[9px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded uppercase font-semibold">Wishes Poster</span>
+                                </div>
+                                <h4 class="text-base font-bold text-white heading-font">Exam Result Fun Poster</h4>
+                                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                                    Create viral congratulations templates for G.C.E. O/L or A/L results with customizable names, school tags, badges, and score grades.
+                                </p>
+                            </div>
+                            <a href="seasonal/exam-wishers.html" class="w-full mt-4 text-center bg-indigo-500/10 hover:bg-indigo-500 hover:text-gray-950 text-indigo-400 font-semibold py-2 px-4 rounded-xl transition text-xs cursor-pointer">
+                                Generate Exam Poster
+                            </a>
+                        </div>
+
+                        <!-- Resolution Card -->
+                        <div class="bg-gray-950/80 border border-gray-850 rounded-2xl p-5 flex flex-col justify-between hover:border-indigo-500/35 transition shadow-md">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[9px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded uppercase font-semibold">Story Template</span>
+                                </div>
+                                <h4 class="text-base font-bold text-white heading-font">New Year Resolution Card</h4>
+                                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                                    Draft 5 key goals for the upcoming year and export a gorgeous portrait card optimized for sharing on Instagram or Facebook Stories.
+                                </p>
+                            </div>
+                            <a href="seasonal/resolution-card.html" class="w-full mt-4 text-center bg-indigo-500/10 hover:bg-indigo-500 hover:text-gray-950 text-indigo-400 font-semibold py-2 px-4 rounded-xl transition text-xs cursor-pointer">
+                                Create Resolution Card
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Product Details Modal (Glassmorphic) -->
+    <div id="productDetailModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-gray-900 border border-gray-800 rounded-3xl w-full max-w-lg p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scroll">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            
+            <div id="modalContent" class="space-y-6">
+                <!-- Content gets updated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Controllers -->
+    <script>
+        let currentTab = 'ascii'; // Tracks active sub-navigation panel
+        let currentAsciiMode = 'text';
+
+        // 1. Tab Switcher Controller
+        function switchTab(tabId) {
+            currentTab = tabId;
+            
+            // Hide all tab panes
+            document.querySelectorAll('.tab-pane').forEach(el => {
+                el.classList.add('hidden');
+            });
+
+            // Remove active classes from all tab buttons
+            document.querySelectorAll('[id^="tabBtn-"]').forEach(btn => {
+                btn.className = "flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 text-gray-400 hover:text-white cursor-pointer";
+            });
+
+            // Show active pane
+            document.getElementById(`tabContent-${tabId}`).classList.remove('hidden');
+
+            // Style active button
+            const activeBtn = document.getElementById(`tabBtn-${tabId}`);
+            if (tabId === 'ascii') {
+                activeBtn.className = "flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 bg-cyan-500 text-gray-950 shadow-lg shadow-cyan-500/10 cursor-pointer";
+            } else if (tabId === 'card') {
+                activeBtn.className = "flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 bg-emerald-500 text-gray-950 shadow-lg shadow-emerald-500/10 cursor-pointer";
+            } else if (tabId === 'meme') {
+                activeBtn.className = "flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 bg-purple-500 text-gray-950 shadow-lg shadow-purple-500/10 cursor-pointer";
+                // Trigger canvas redraw once layout is shown
+                setTimeout(drawMeme, 50);
+            } else if (tabId === 'products') {
+                activeBtn.className = "flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 bg-emerald-500 text-gray-950 shadow-lg shadow-emerald-500/10 cursor-pointer";
+            } else if (tabId === 'vesak') {
+                activeBtn.className = "flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 bg-orange-500 text-gray-950 shadow-lg shadow-orange-500/10 cursor-pointer";
+                setTimeout(changeVesakPoem, 50);
+            } else if (tabId === 'seasonal') {
+                activeBtn.className = "flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 bg-orange-500 text-gray-950 shadow-lg shadow-orange-500/10 cursor-pointer";
+            }
+        }
+
+        // ============================================
+        // ASCII ART GENERATOR FUNCTIONS
+        // ============================================
+        function setAsciiMode(mode) {
+            currentAsciiMode = mode;
+            const textBtn = document.getElementById('modeTextBtn');
+            const imgBtn = document.getElementById('modeImgBtn');
+            const textControls = document.getElementById('textControls');
+            const imageControls = document.getElementById('imageControls');
+
+            if(mode === 'text') {
+                textBtn.className = "py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-cyan-500 text-gray-950 shadow-md";
+                imgBtn.className = "py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-gray-400 hover:text-white";
+                textControls.classList.remove('hidden');
+                imageControls.classList.add('hidden');
+            } else {
+                imgBtn.className = "py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-cyan-500 text-gray-950 shadow-md";
+                textBtn.className = "py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-gray-400 hover:text-white";
+                imageControls.classList.remove('hidden');
+                textControls.classList.add('hidden');
+            }
+        }
+
+        const ASCII_FONTS = {
+            slant: {
+                height: 5,
+                chars: {
+                    'A': ["    ___   ", "   /   |  ", "  / /| |  ", " / ___ |  ", "/_/  |_|  "],
+                    'B': ["    ____  ", "   / __ ) ", "  / __  | ", " / /_/ /  ", "/_____/   "],
+                    'C': ["   ______ ", "  / ____/ ", " / /      ", "/ /___    ", "\\____/    "],
+                    'D': ["    ____  ", "   / __ \\ ", "  / / / / ", " / /_/ /  ", "/_____/   "],
+                    'E': ["    ______", "   / ____/", "  / __/   ", " / /___   ", "/_____/   "],
+                    'F': ["    ______", "   / ____/", "  / __/   ", " / /      ", "/_/       "],
+                    'G': ["   ______ ", "  / ____/ ", " / / __   ", "/ /_/ /   ", "\\____/    "],
+                    'H': ["    __  __", "   / / / /", "  / /_/ / ", " / __  /  ", "/_/ /_/   "],
+                    'I': ["    ____", "   /  _/", "   / /  ", " _/ /   ", "/___/   "],
+                    'J': ["       __", "      / /", " __  / / ", "/ /_/ /  ", "\\____/   "],
+                    'K': ["    __ __", "   / //_/", "  / ,<   ", " / /| |  ", "/_/ |_|  "],
+                    'L': ["    __    ", "   / /    ", "  / /     ", " / /___   ", "/_____/   "],
+                    'M': ["    __  ___", "   /  |/  /", "  / /|_/ / ", " / /  / /  ", "/_/  /_/   "],
+                    'N': ["    _   __", "   / | / /", "  /  |/ / ", " / /|  /  ", "/_/ |_/   "],
+                    'O': ["   ____  ", "  / __ \\ ", " / / / / ", "/ /_/ /  ", "\\____/   "],
+                    'P': ["    ____  ", "   / __ \\ ", "  / /_/ / ", " / ____/  ", "/_/       "],
+                    'Q': ["   ____   ", "  / __ \\  ", " / / / /  ", "/ /_/ /__ ", "\\___\\_\\_\\ "],
+                    'R': ["    ____  ", "   / __ \\ ", "  / /_/ / ", " / _, _/  ", "/_/ |_|   "],
+                    'S': ["   _____", "  / ___/", "  \\__ \\ ", " ___/ / ", "/____/  "],
+                    'T': ["  ______", " /_  __/", "  / /   ", " / /    ", "/_/     "],
+                    'U': ["   __  __", "  / / / /", " / / / / ", "/ /_/ /  ", "\\____/   "],
+                    'V': ["   _    __", "  | |  / /", "  | | / / ", "  | |/ /  ", "  |___/   "],
+                    'W': ["   _      __", "  | | /| / /", "  | |/ |/ / ", "  |__/\`__/__", "  / /   \\  /"],
+                    'X': ["   _  __", "  | |/ /", "  |   / ", " /   |  ", "/_/|_|  "],
+                    'Y': ["  __  __", "  \\ \\/ /", "   \\  / ", "   / /  ", "  /_/   "],
+                    'Z': ["  ____  ", " /_  /  ", "  / /_  ", " /___/  ", "/____/  "],
+                    '0': ["   ____ ", "  / __ \\", " / / / /", "/ /_/ / ", "\\____/  "],
+                    '1': ["   __", "  / /", " / /", "/ / ", "/_/ "],
+                    '2': ["   ___ ", "  |__ \\", "  __/ /", " / __/ ", "/____/ "],
+                    '3': ["   _____", "  |__  /", "   /_ < ", " ___/ / ", "/____/  "],
+                    '4': ["   __ __", "  / // /", " / // /_", "/__  __/", "  /_/   "],
+                    '5': ["   _____", "  / ___/", "  \\__ \\ ", " ___/ / ", "/____/  "],
+                    '6': ["   _____", "  / ___/", " / __ \\ ", "/ /_/ / ", "\\____/  "],
+                    '7': ["  _____", " /__  /", "   / / ", "  / /  ", " /_/   "],
+                    '8': ["   ____ ", "  / __ \\", " / /_/ /", " \\__, / ", "/____/  "],
+                    '9': ["   ____ ", "  / __ \\", "  \\__  /", " ___/ / ", "/____/  "],
+                    ' ': ["      ", "      ", "      ", "      ", "      "],
+                    '-': ["      ", "      ", " ---- ", "      ", "      "],
+                    '+': ["      ", "  __  ", " -+-  ", "  ||  ", "      "],
+                    '=': ["      ", " ==== ", "      ", " ==== ", "      "],
+                    '!': ["  _ ", " | |", " | |", " |_|", " (_)"],
+                    '?': ["  ___ ", " /__ \\", "   / /", "  |_| ", "  (_)"],
+                    '/': ["    / ", "   /  ", "  /   ", " /    ", "/     "],
+                    '\\': [" \\    ", "  \\   ", "   \\  ", "    \\ ", "     \\"],
+                    '@': ["   ____  ", "  / __ \\ ", " / /_/ / ", "/ ____/  ", "\\____/   "],
+                    '.': ["   ", "   ", "   ", " _ ", "(_)"]
+                }
+            },
+            block: {
+                height: 5,
+                chars: {
+                    'A': [" ▄▀▀▄ ", "█▄▄▄█ ", "█   █ ", "█   █ ", "      "],
+                    'B': ["█▀▀▄  ", "█▄▄▀  ", "█  █  ", "▀▀▀   ", "      "],
+                    'C': [" ▄▀▀▄ ", "█     ", "█     ", " ▀▄▄▀ ", "      "],
+                    'D': ["█▀▀▄  ", "█  █  ", "█  █  ", "▀▀▀   ", "      "],
+                    'E': ["█▀▀▀  ", "█▀▀   ", "█▄▄▄  ", "      ", "      "],
+                    'F': ["█▀▀▀  ", "█▀▀   ", "█     ", "      ", "      "],
+                    'G': [" ▄▀▀▄ ", "█  ▀▄ ", "█   █ ", " ▀▀▀  ", "      "],
+                    'H': ["█   █ ", "█▄▄▄█ ", "█   █ ", "█   █ ", "      "],
+                    'I': ["█▀▀▀█ ", "  █   ", "  █   ", "█▄▄▄█ ", "      "],
+                    'J': ["  ▀▀█ ", "    █ ", "█   █ ", " ▀▀▀  ", "      "],
+                    'K': ["█  ▄▀ ", "█▀▀▄  ", "█  █  ", "█   █ ", "      "],
+                    'L': ["█     ", "█     ", "█     ", "█▄▄▄█ ", "      "],
+                    'M': ["█ █ █ ", "█ █ █ ", "█ █ █ ", "█ █ █ ", "      "],
+                    'N': ["█▀▀▄█ ", "█  ██ ", "█   █ ", "█   █ ", "      "],
+                    'O': [" ▄▀▀▄ ", "█    █", "█    █", " ▀▄▄▀ ", "      "],
+                    'P': ["█▀▀▄  ", "█▄▄▀  ", "█     ", "█     ", "      "],
+                    'Q': [" ▄▀▀▄ ", "█    █", "█  ▄ █", " ▀▀▀▀ ", "      "],
+                    'R': ["█▀▀▄  ", "█▄▄▀  ", "█  █  ", "█   █ ", "      "],
+                    'S': [" ▀▀▀▀ ", " ▀▀▀▄ ", "▄▄▄▀  ", "      ", "      "],
+                    'T': ["▀▀█▀▀ ", "  █   ", "  █   ", "  █   ", "      "],
+                    'U': ["█   █ ", "█   █ ", "█   █ ", " ▀▄▄▀ ", "      "],
+                    'V': ["█   █ ", "█   █ ", " █ █  ", "  █   ", "      "],
+                    'W': ["█   █ ", "█ █ █ ", "█ █ █ ", " ▀ ▀  ", "      "],
+                    'X': ["█   █ ", " █ █  ", " █ █  ", "█   █ ", "      "],
+                    'Y': ["█   █ ", " █ █  ", "  █   ", "  █   ", "      "],
+                    'Z': ["▀▀▀▀█ ", "  ▄▀  ", " █▄▄▄ ", "      ", "      "],
+                    '0': [" ▄▀▀▄ ", "█ █  █", "█  █ █", " ▀▄▄▀ ", "      "],
+                    '1': [" ▄▀█  ", "   █  ", "   █  ", " ▄▄█▄▄", "      "],
+                    '2': ["▀▀▀▄  ", " ▄▀   ", "█▄▄▄▄ ", "      ", "      "],
+                    '3': ["▀▀▀▄  ", "  ▄▀  ", "▄▄▄▀  ", "      ", "      "],
+                    '4': ["█  █  ", "█▄▄█  ", "   █  ", "   █  ", "      "],
+                    '5': ["█▀▀▀  ", "▀▀▀▄  ", "▄▄▄▀  ", "      ", "      "],
+                    '6': [" ▄▀▀▄ ", "█▄▄▄  ", "█   █ ", " ▀▄▄▀ ", "      "],
+                    '7': ["▀▀▀▀█ ", "   █  ", "  █   ", "  █   ", "      "],
+                    '8': [" ▄▀▀▄ ", " ▄▀▀▄ ", "█▄▄▄█ ", " ▀▄▄▀ ", "      "],
+                    '9': [" ▄▀▀▄ ", " ▀▄▄█ ", "▄▄▄▀  ", "      ", "      "],
+                    ' ': ["      ", "      ", "      ", "      ", "      "],
+                    '-': ["      ", " ▀▀▀▀ ", "      ", "      ", "      "],
+                    '+': ["  ▄   ", " ▄█▄  ", "  █   ", "      ", "      "],
+                    '=': [" ▀▀▀▀ ", " ▄▄▄▄ ", "      ", "      ", "      "],
+                    '!': ["  █   ", "  █   ", "      ", "  ▀   ", "      "],
+                    '?': ["▀▀▀▄  ", "  █   ", "      ", "  ▀   ", "      "],
+                    '/': ["   ▄  ", "  █   ", " █    ", "      ", "      "],
+                    '\\': [" █    ", "  █   ", "   ▄  ", "      ", "      "],
+                    '@': [" ▄▀▀▄ ", "█ ▀▄█ ", "█▄▄▄█ ", " ▀▀▀  ", "      "],
+                    '.': ["      ", "      ", "      ", "  ▀   ", "      "]
+                }
+            }
+        };
+
+        const asciiImageVault = {
+            "dog": `
+      |\\_/|                  
+      | @ @   Woof!          
+      |   <>  _              
+      |  _/\\//               
+     /~~~\\_/                 
+    / / \\|                   
+   /_/   \\_                  
+            `,
+            "cat": `
+   /\\_//\\                    
+  ( o.o )   Meow!            
+   > ^ <                     
+  /     \\                    
+ |   |   |                   
+(___|____)                   
+            `,
+            "car": `
+      ______                 
+   __/  |_|_\\_               
+  /  _   _    \\              
+ |  / \\ / \\    |             
+ |_( o )_( o )_|             
+   \\_____/                   
+            `,
+            "coffee": `
+     (  )   (  )             
+      ) (    ) (             
+     (  )   (  )             
+   .----------.              
+  /            \\---.         
+ /              \\   |        
+ \\              /---'        
+  \\            /             
+   \`----------'              
+            `,
+            "rocket": `
+      /\\                     
+     /  \\                    
+    /    \\                   
+   |  ||  |                  
+   |  ||  |                  
+  /|  ||  |\\                 
+ / |  ||  | \\                
+   |======|                  
+    / || \\                   
+   /  ||  \\                  
+      \\/                     
+            `,
+            "heart": `
+   ▄▄▄▄▄      ▄▄▄▄▄          
+ ▄█▀▀▀▀█▄   ▄█▀▀▀▀█▄         
+ █      ██ ██      █         
+ █       █ █       █         
+ ▀█▄     ▀ ▀     ▄█▀         
+   ▀█▄         ▄█▀           
+     ▀█▄     ▄█▀             
+       ▀█▄ ▄█▀               
+         ▀█▀                 
+            `,
+            "sword": `
+          /\\                 
+         /  \\                
+        /    \\               
+        |    |               
+        |    |               
+        |    |               
+        |    |               
+        |    |               
+      --|====|--             
+        |    |               
+        |    |               
+        \\____/               
+            `,
+            "robot": `
+     [| o o |]               
+      |  =  |                
+     .-'---'-.               
+    /|   x   |\\              
+   | |   x   | |             
+   | |=======| |             
+   | |  TECS | |             
+   | |=======| |             
+     |  |||  |               
+     |__|||__|               
+     (==)(==)                
+            `
+        };
+
+        function generateArt() {
+            const outputElement = document.getElementById('artOutput');
+            const gearIcon = document.getElementById('gearIcon');
+            
+            gearIcon.classList.add('animate-spin');
+
+            if (currentAsciiMode === 'text') {
+                const inputValue = document.getElementById('artInput').value.trim().toUpperCase();
+                const fontKey = document.getElementById('artFont').value;
+
+                if (!inputValue) {
+                    outputElement.innerText = "Please enter some text first!";
+                    gearIcon.classList.remove('animate-spin');
+                    return;
+                }
+
+                setTimeout(() => {
+                    const font = ASCII_FONTS[fontKey];
+                    let lines = Array(font.height).fill("");
+
+                    for (let i = 0; i < inputValue.length; i++) {
+                        const char = inputValue[i];
+                        const charRepresentation = font.chars[char] || font.chars[' '];
+                        for (let j = 0; j < font.height; j++) {
+                            lines[j] += charRepresentation[j];
+                        }
+                    }
+
+                    outputElement.innerText = lines.join("\n");
+                    gearIcon.classList.remove('animate-spin');
+                }, 400);
+
+            } else {
+                const keyword = document.getElementById('artImageKeyword').value;
+
+                setTimeout(() => {
+                    if (asciiImageVault[keyword]) {
+                        outputElement.innerText = asciiImageVault[keyword];
+                    } else {
+                        outputElement.innerText = "Error loading image vector!";
+                    }
+                    gearIcon.classList.remove('animate-spin');
+                }, 400);
+            }
+        }
+
+        function copyArtCode() {
+            const artOutput = document.getElementById('artOutput').innerText;
+            navigator.clipboard.writeText(artOutput).then(() => {
+                const copyBtnText = document.getElementById('copyBtnText');
+                copyBtnText.innerText = "Copied!";
+                setTimeout(() => { copyBtnText.innerText = "Copy Code"; }, 2000);
+            });
+        }
+
+        function downloadArtText() {
+            const artContent = document.getElementById('artOutput').innerText;
+            if(!artContent || artContent.startsWith("Choose")) {
+                alert("Nothing to download! Please generate some art first.");
+                return;
+            }
+            const blob = new Blob([artContent], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `TECSUB_ASCII_Art_${Date.now()}.txt`;
+            link.click();
+        }
+
+        // ============================================
+        // WASI SMART CARD FUNCTIONS
+        // ============================================
+        function updateCard() {
+            const nameVal = document.getElementById('cardName').value.trim() || "Your Name";
+            const roleVal = document.getElementById('cardRole').value.trim() || "Your Role";
+            const companyVal = document.getElementById('cardCompany').value.trim() || "Company Name";
+            const emailVal = document.getElementById('cardEmail').value.trim() || "email@domain.com";
+            const phoneVal = document.getElementById('cardPhone').value.trim() || "No phone";
+            const websiteVal = document.getElementById('cardWebsite').value.trim() || "Website";
+            const githubVal = document.getElementById('cardGithub').value.trim() || "github.com/username";
+            const linkedinVal = document.getElementById('cardLinkedin').value.trim() || "linkedin.com/in/username";
+            const idVal = document.getElementById('cardId').value.trim() || "TS-9921";
+
+            document.getElementById('previewName').innerText = nameVal;
+            document.getElementById('previewRole').innerText = roleVal;
+            document.getElementById('previewCompany').innerText = companyVal;
+            document.getElementById('previewCompanyBack').innerText = companyVal;
+
+            document.getElementById('previewEmail').innerText = emailVal;
+            document.getElementById('previewPhone').innerText = phoneVal;
+            document.getElementById('previewWebsite').innerText = websiteVal;
+            document.getElementById('previewGithub').innerText = githubVal;
+            document.getElementById('previewLinkedin').innerText = linkedinVal;
+
+            document.getElementById('previewId').innerText = idVal;
+            document.getElementById('previewIdBack').innerText = idVal;
+        }
+
+        function updateCardTheme() {
+            const theme = document.getElementById('cardTheme').value;
+            const frontCard = document.getElementById('wasiCardFront');
+            const backCard = document.getElementById('wasiCardBack');
+            const baseClasses = "card-face card-grid-pattern relative ";
+            
+            frontCard.className = baseClasses + "card-front " + theme;
+            backCard.className = baseClasses + "card-back " + theme;
+        }
+
+        function toggleFlip() {
+            const container = document.getElementById('wasiCardContainer');
+            container.classList.toggle('flipped');
+        }
+
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewAvatar').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function downloadWasiCard(face) {
+            let targetElement;
+            let filename = 'Wasi_Smart_Card';
+
+            if (face === 'front') {
+                targetElement = document.getElementById('wasiCardFront');
+                filename += '_Front.png';
+            } else {
+                targetElement = document.getElementById('wasiCardBack');
+                filename += '_Back.png';
+            }
+
+            html2canvas(targetElement, { 
+                scale: 3, 
+                backgroundColor: null,
+                useCORS: true,
+                logging: false,
+                onclone: (clonedDoc) => {
+                    const clonedTarget = clonedDoc.getElementById(targetElement.id);
+                    clonedTarget.style.transform = 'none';
+                    clonedTarget.style.position = 'static';
+                }
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        // ============================================
+        // MEME GENERATOR LOGIC (CANVAS POWERED)
+        // ============================================
+        const memeTemplates = {
+            drake: "https://api.memegen.link/images/drake.png",
+            harold: "https://api.memegen.link/images/harold.png",
+            buttons: "https://api.memegen.link/images/both.png",
+            success: "https://api.memegen.link/images/success.png"
+        };
+
+        let memeImageObj = new Image();
+        memeImageObj.crossOrigin = "anonymous";
+        
+        // Default meme initialization
+        memeImageObj.onload = function() {
+            drawMeme();
+        };
+        memeImageObj.src = memeTemplates.drake;
+
+        function changeMemeTemplate() {
+            const val = document.getElementById('memeTemplate').value;
+            const uploadContainer = document.getElementById('memeCustomUploadContainer');
+
+            if (val === 'custom') {
+                uploadContainer.classList.remove('hidden');
+            } else {
+                uploadContainer.classList.add('hidden');
+                memeImageObj.src = memeTemplates[val];
+            }
+        }
+
+        function handleMemeCustomUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    memeImageObj.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function drawMeme() {
+            const canvas = document.getElementById('memeCanvas');
+            const ctx = canvas.getContext('2d');
+
+            if (!memeImageObj.complete) return; // Wait until loaded
+
+            // Set canvas size matching the template resolution (or normalized size)
+            const maxDimension = 500;
+            let width = memeImageObj.width || maxDimension;
+            let height = memeImageObj.height || maxDimension;
+            
+            // Normalize dimensions keeping aspect ratio
+            if (width > maxDimension || height > maxDimension) {
+                const aspect = width / height;
+                if (width > height) {
+                    width = maxDimension;
+                    height = maxDimension / aspect;
+                } else {
+                    height = maxDimension;
+                    width = maxDimension * aspect;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            // Draw template
+            ctx.drawImage(memeImageObj, 0, 0, width, height);
+
+            // Fetch controllers
+            const topText = document.getElementById('memeTopText').value.toUpperCase();
+            const bottomText = document.getElementById('memeBottomText').value.toUpperCase();
+            const fontSize = document.getElementById('memeFontSize').value;
+            const strokeSize = document.getElementById('memeStrokeSize').value;
+            const fontFamily = document.getElementById('memeFontFamily').value;
+            const textColor = document.getElementById('memeTextColor').value;
+            const strokeColor = document.getElementById('memeStrokeColor').value;
+
+            // Draw Text Function
+            ctx.font = `bold ${fontSize}px ${fontFamily}`;
+            ctx.fillStyle = textColor;
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = parseInt(strokeSize);
+            ctx.textAlign = 'center';
+            ctx.lineJoin = 'miter';
+            ctx.miterLimit = 2;
+
+            // Render Top Text
+            if (topText) {
+                ctx.textBaseline = 'top';
+                wrapMemeText(ctx, topText, width / 2, 15, width - 30, fontSize);
+            }
+
+            // Render Bottom Text
+            if (bottomText) {
+                ctx.textBaseline = 'bottom';
+                wrapMemeText(ctx, bottomText, width / 2, height - 15, width - 30, fontSize, true);
+            }
+        }
+
+        // Wrap lines of text dynamically on canvas
+        function wrapMemeText(ctx, text, x, y, maxWidth, lineHeight, isBottom = false) {
+            const words = text.split(' ');
+            let lines = [];
+            let currentLine = words[0] || '';
+
+            for (let i = 1; i < words.length; i++) {
+                const word = words[i];
+                const width = ctx.measureText(currentLine + ' ' + word).width;
+                if (width < maxWidth) {
+                    currentLine += ' ' + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            }
+            lines.push(currentLine);
+
+            const lh = parseInt(lineHeight);
+            if (isBottom) {
+                // Draw bottom up
+                for (let i = lines.length - 1; i >= 0; i--) {
+                    const drawY = y - (lines.length - 1 - i) * lh;
+                    if (ctx.lineWidth > 0) {
+                        ctx.strokeText(lines[i], x, drawY);
+                    }
+                    ctx.fillText(lines[i], x, drawY);
+                }
+            } else {
+                // Draw top down
+                for (let i = 0; i < lines.length; i++) {
+                    const drawY = y + i * lh;
+                    if (ctx.lineWidth > 0) {
+                        ctx.strokeText(lines[i], x, drawY);
+                    }
+                    ctx.fillText(lines[i], x, drawY);
+                }
+            }
+        }
+
+        function downloadMeme() {
+            const canvas = document.getElementById('memeCanvas');
+            const link = document.createElement('a');
+            link.download = `TECSUB_Meme_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // ============================================
+        // PRODUCT SHOWROOM FUNCTIONS
+        // ============================================
+        const productsSpecs = {
+            pos: {
+                title: "TECSUB Universal POS",
+                badge: "Enterprise POS System",
+                price: "$299",
+                tech: ["Go (Golang)", "SQLite", "Vanilla JS", "Tailwind CSS", "WebSockets"],
+                desc: "A highly resilient client-server point of sale software engineered for modern retail operations. Operates seamlessly offline with automated synchronization protocols when networks reconnect.",
+                features: [
+                    "Ultra-fast local database queries with optimized SQLite engines",
+                    "Dual-mode operation (Standalone Client & Local network hub server)",
+                    "Real-time product barcode scanning via WebSocket protocol integration",
+                    "Intuitive billing screen layout with responsive drawer panels"
+                ],
+                downloadUrl: "https://github.com/tecsub/universal-pos/releases/latest"
+            },
+            autopost: {
+                title: "TECSUB Auto Post Utility",
+                badge: "Marketing Automation",
+                price: "$149",
+                tech: ["Node.js", "Puppeteer", "Cron Scheduler", "YAML Configs"],
+                desc: "A powerful headless automation manager targeting scheduled notifications, marketing campaigns, and outreach scripts for messaging channels.",
+                features: [
+                    "Headless browser emulation via Puppeteer for robust authentic posts",
+                    "Advanced rate-limiting structures preventing account lockouts",
+                    "Detailed YAML configuration files to scale target channel schedules",
+                    "Offline logging, reporting dashboard, and fallback fail-safes"
+                ],
+                downloadUrl: "https://github.com/tecsub/auto-post/releases/latest"
+            },
+            webservices: {
+                title: "TECSUB Custom Web Services",
+                badge: "Cloud & Web Apps",
+                price: "$499/project",
+                tech: ["React / Next.js", "Node.js", "PostgreSQL", "REST APIs", "Tailwind CSS"],
+                desc: "Tailored web applications and custom integration services built to scale. From headless CMS solutions to enterprise dashboard panels.",
+                features: [
+                    "Production-ready Next.js SSR architecture with maximized SEO indexing",
+                    "Secure JWT-based user authentication and RBAC permission models",
+                    "Comprehensive API integrations with third-party service gateways",
+                    "High-availability serverless deployments and cloud migrations"
+                ],
+                downloadUrl: "mailto:info@tecsub.online?subject=Project Inquiry"
+            }
+        };
+
+        function filterProducts(category) {
+            // Update active states
+            document.querySelectorAll('[id^="filter-"]').forEach(btn => {
+                btn.className = "px-4 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all cursor-pointer";
+            });
+            document.getElementById(`filter-${category}`).className = "px-4 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 text-gray-950 shadow-md transition-all cursor-pointer";
+
+            // Toggle cards
+            document.querySelectorAll('.product-card').forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function openProductModal(prodKey) {
+            const spec = productsSpecs[prodKey];
+            const modal = document.getElementById('productDetailModal');
+            const content = document.getElementById('modalContent');
+
+            // Render details
+            content.innerHTML = `
+                <div class="space-y-4">
+                    <span class="text-[10px] font-mono tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-md uppercase font-semibold">
+                        ${spec.badge}
+                    </span>
+                    <h2 class="text-3xl font-bold heading-font text-white">${spec.title}</h2>
+                    <p class="text-lg font-semibold text-emerald-400 font-mono">${spec.price}</p>
+                </div>
+                
+                <hr class="border-gray-800">
+
+                <div class="space-y-2">
+                    <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Description</h4>
+                    <p class="text-sm text-gray-300 leading-relaxed font-light">${spec.desc}</p>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Core Technical Stack</h4>
+                    <div class="flex flex-wrap gap-2">
+                        ${spec.tech.map(t => `<span class="text-xs font-mono bg-gray-950 border border-gray-850 text-emerald-400 px-3 py-1 rounded-lg">${t}</span>`).join('')}
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Key Features & Operations</h4>
+                    <ul class="space-y-2 text-sm text-gray-300 font-light">
+                        ${spec.features.map(f => `<li class="flex items-start gap-2.5"><i class="fa-solid fa-square-check text-emerald-400 mt-1"></i> <span>${f}</span></li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-gray-800 pt-5">
+                    <div class="text-xs text-gray-500 font-mono">CODE ID: #TS-${prodKey.toUpperCase()}</div>
+                    <div class="flex gap-3 w-full sm:w-auto">
+                        <a href="${spec.downloadUrl}" target="_blank" class="flex-1 sm:flex-initial bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2.5 px-5 rounded-xl text-xs border border-gray-750 transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-download"></i> Get Product / Link
+                        </a>
+                        <a href="mailto:info@tecsub.online?subject=Quotation request: ${spec.title}" class="flex-1 sm:flex-initial bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold py-2.5 px-5 rounded-xl text-xs transition-all text-center flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/10 cursor-pointer">
+                            <i class="fa-solid fa-paper-plane"></i> Request Quote
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productDetailModal').classList.add('hidden');
+        }
+
+        // ============================================
+        // VESAK BLESSING CARD GENERATOR FUNCTIONS
+        // ============================================
+        const vesakTemplates = {
+            buddha: "https://images.unsplash.com/photo-1609137144814-7d52af609d6f?w=600",
+            lanterns: "https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=600",
+            lotus: "https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?w=600",
+            temple: "https://images.unsplash.com/photo-1546484475-7f7bd55792da?w=600",
+            moon: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600"
+        };
+
+        const vesakStamps = {
+            'lotus-stamp': "https://img.icons8.com/color/96/lotus.png",
+            'stupa-stamp': "https://img.icons8.com/color/96/buddhist-stupa.png",
+            'lion-stamp': "https://img.icons8.com/color/96/sri-lanka-flag.png"
+        };
+
+        const vesakPoems = {
+            preset1: `වෛරී සිතක ගිනි ජාලා නිවෙන්නයි\nමෙන් සිතකින් ලෝකය දෙස බලන්නයි\nඅමා දහම් සිසිලස් බව දැනෙන්නයි\nමේ අරුමෝත් මෙත් පුරයට වඩින්නයි`,
+            preset2: `සිත් තුල ඇතිවන ක්‍රෝධය සිඳිලා\nමෙත් සිත ලොව තුල සැමටම බෙදිලා\nඅමා නිවන් මග සැමටම පෑදී\nවෙසක් මංගල්‍යය සාර්ථක වේවා!`,
+            preset3: `සම්බුදු තෙමඟුල සිහිපත් කරමින්\nමෙත් සිසිලස සැම හදවත පිබිදේ\nපින්බර වෙසක් උත්සවයක්\nඔබ සැමටම වේවා!`
+        };
+
+        function changeVesakTemplate(type) {
+            const cardLeft = document.getElementById('vesakCardLeft');
+            cardLeft.style.backgroundImage = `url('${vesakTemplates[type]}')`;
+        }
+
+        function changeVesakStamp(type) {
+            const stampPreview = document.getElementById('vesakStampPreview');
+            stampPreview.src = vesakStamps[type];
+        }
+
+        function changeVesakPoem() {
+            const select = document.getElementById('vesakPoemSelect');
+            const textarea = document.getElementById('vesakPoemText');
+            
+            if (select.value === 'custom') {
+                textarea.disabled = false;
+            } else {
+                textarea.value = vesakPoems[select.value] || "";
+                textarea.disabled = true;
+            }
+            updateVesakText();
+        }
+
+        function updateVesakText() {
+            const poemText = document.getElementById('vesakPoemText').value;
+            const sender = document.getElementById('vesakSender').value.trim() || "විසින්";
+            const recipient = document.getElementById('vesakRecipient').value.trim() || "වෙත";
+
+            document.getElementById('vesakPreviewPoem').innerText = poemText;
+            document.getElementById('vesakPreviewSender').innerText = sender;
+            document.getElementById('vesakPreviewRecipient').innerText = recipient;
+        }
+
+        function handleVesakUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const cardLeft = document.getElementById('vesakCardLeft');
+                    cardLeft.style.backgroundImage = `url('${e.target.result}')`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleVesakStampUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const stampPreview = document.getElementById('vesakStampPreview');
+                    stampPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function downloadVesakCard() {
+            const targetElement = document.getElementById('vesakCardRender');
+            html2canvas(targetElement, { 
+                scale: 3, 
+                backgroundColor: null,
+                useCORS: true,
+                logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Vesak_Blessing_Card_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function resetVesakCard() {
+            document.getElementById('vesakPoemSelect').value = 'preset1';
+            document.getElementById('vesakSender').value = 'හිතවත් සජන';
+            document.getElementById('vesakRecipient').value = 'හිතමිතුරන් සැමට';
+            changeVesakTemplate('buddha');
+            changeVesakStamp('lotus-stamp');
+            changeVesakPoem();
+        }
+
+        // Initialize App UI
+        generateArt();
+        updateCard();
+        changeVesakPoem();
+
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            if (tabParam && ['ascii', 'card', 'meme', 'products', 'vesak', 'seasonal'].includes(tabParam)) {
+                switchTab(tabParam);
+            }
+        } catch (e) {
+            console.error("Tab parsing error:", e);
+        }
+    </script>
+</body>
+</html>

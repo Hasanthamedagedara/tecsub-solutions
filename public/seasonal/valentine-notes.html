@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Valentine Love Notes - TECSUB Seasonal</title>
+    <meta name="description" content="Create anonymous love note cards with floating hearts, rose gradients, and glassmorphic layouts for social media sharing.">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            background-color: #0a0008;
+            color: #f3f4f6;
+            font-family: 'Outfit', sans-serif;
+            background-image: 
+                radial-gradient(at 50% 0%, rgba(236, 72, 153, 0.1) 0px, transparent 60%),
+                radial-gradient(at 100% 100%, rgba(244, 63, 94, 0.06) 0px, transparent 50%);
+        }
+        .heading-font { font-family: 'Space Grotesk', sans-serif; }
+        .handwriting { font-family: 'Caveat', cursive; }
+
+        .theme-hearts {
+            background: linear-gradient(135deg, #1a0010 0%, #2d0020 50%, #1a0015 100%);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+        }
+        .theme-roses {
+            background: linear-gradient(135deg, #4c0519 0%, #881337 50%, #9f1239 100%);
+            border: 2px solid rgba(251, 113, 133, 0.4);
+        }
+        .theme-glass {
+            background: linear-gradient(135deg, rgba(30, 10, 30, 0.8) 0%, rgba(50, 20, 50, 0.6) 100%);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.12);
+        }
+
+        @keyframes floatHeart {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.7; }
+            50% { transform: translateY(-20px) rotate(10deg) scale(1.1); opacity: 1; }
+            100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.7; }
+        }
+        .floating-heart {
+            animation: floatHeart 3s ease-in-out infinite;
+            position: absolute; pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-8">
+
+    <header class="border-b border-pink-500/20 bg-black/40 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <a href="../special-tools.html" class="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm">
+            <i class="fa-solid fa-arrow-left"></i> back to Labs
+        </a>
+        <div class="flex items-center space-x-2">
+            <span class="text-pink-500 text-lg"><i class="fa-solid fa-heart"></i></span>
+            <span class="font-bold tracking-wider text-sm heading-font">TECSUB <span class="text-pink-500">SEASONAL</span></span>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full flex-1 items-center">
+        
+        <!-- Left Column: Controls -->
+        <section class="lg:col-span-5 bg-gray-950 p-6 rounded-3xl border border-gray-800/80 space-y-4">
+            <h2 class="text-lg font-bold text-white heading-font border-b border-gray-800 pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-heart-crack text-pink-500"></i> Love Note Editor
+            </h2>
+
+            <div class="space-y-4 text-sm">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Background Style</label>
+                    <div class="grid grid-cols-3 gap-2 bg-gray-900 p-1.5 rounded-xl border border-gray-800">
+                        <button onclick="setStyle('hearts')" id="styleBtn-hearts" class="py-2 rounded-lg font-semibold text-xs transition bg-pink-500 text-gray-950 shadow-md">
+                            Hearts
+                        </button>
+                        <button onclick="setStyle('roses')" id="styleBtn-roses" class="py-2 rounded-lg font-semibold text-xs text-gray-400 hover:text-white transition">
+                            Roses
+                        </button>
+                        <button onclick="setStyle('glass')" id="styleBtn-glass" class="py-2 rounded-lg font-semibold text-xs text-gray-400 hover:text-white transition">
+                            Glass
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Your Name (or Anonymous)</label>
+                    <input id="senderName" type="text" oninput="updateNote()" value="Anonymous ❤️" placeholder="Your secret identity..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-pink-500 transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">To (Recipient)</label>
+                    <input id="recipientName" type="text" oninput="updateNote()" value="Someone Special" placeholder="Who is this for?..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-pink-500 transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Love Note Message</label>
+                    <textarea id="noteMessage" oninput="updateNote()" rows="4" class="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-white focus:outline-none focus:border-pink-500 resize-none" placeholder="Write something sweet...">You make every ordinary day feel extraordinary. Happy Valentine's Day! 💕</textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 pt-2">
+                    <button onclick="downloadNote()" class="bg-pink-600 hover:bg-pink-500 text-white font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs cursor-pointer shadow-lg shadow-pink-500/10 active:scale-[0.98]">
+                        <i class="fa-solid fa-download"></i> Download Card
+                    </button>
+                    <button onclick="copyShareLink()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-xl border border-gray-750 transition flex items-center justify-center gap-2 text-xs cursor-pointer active:scale-[0.98]">
+                        <i class="fa-solid fa-share-nodes"></i> Copy Share Text
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Card Preview -->
+        <section class="lg:col-span-7 flex flex-col items-center justify-center p-2">
+            
+            <div id="loveNote" class="w-[420px] h-[520px] theme-hearts rounded-3xl p-8 flex flex-col justify-between items-center text-center relative select-none overflow-hidden">
+                
+                <!-- Floating Hearts decorations -->
+                <div class="floating-heart top-8 left-8 text-2xl text-pink-500/50" style="animation-delay: 0s">💕</div>
+                <div class="floating-heart top-16 right-12 text-xl text-pink-400/40" style="animation-delay: 0.5s">❤️</div>
+                <div class="floating-heart bottom-20 left-16 text-lg text-pink-500/30" style="animation-delay: 1s">💝</div>
+                <div class="floating-heart bottom-12 right-20 text-2xl text-pink-400/40" style="animation-delay: 1.5s">💗</div>
+                <div class="floating-heart top-40 left-4 text-sm text-pink-300/20" style="animation-delay: 2s">❤️</div>
+
+                <!-- Top -->
+                <div class="z-10 mt-4">
+                    <span class="text-4xl">💌</span>
+                    <h3 class="text-[10px] font-mono tracking-widest text-pink-400 uppercase mt-2 font-bold">ANONYMOUS VALENTINE NOTE</h3>
+                </div>
+
+                <!-- Central Message -->
+                <div class="z-10 w-full px-2 flex flex-col justify-center flex-1 py-4">
+                    <p class="text-[10px] text-pink-400/80 uppercase tracking-wider font-semibold mb-2">
+                        To: <span id="previewRecipient" class="text-pink-300 font-bold">Someone Special</span>
+                    </p>
+                    <blockquote id="previewMessage" class="text-xl handwriting leading-relaxed text-white font-medium tracking-wide">
+                        You make every ordinary day feel extraordinary. Happy Valentine's Day! 💕
+                    </blockquote>
+                </div>
+
+                <!-- Bottom Sender -->
+                <div class="z-10 w-full border-t border-pink-500/20 pt-4 pb-2">
+                    <p class="text-[9px] text-pink-400/60 uppercase font-mono tracking-wider mb-1">With Love, From</p>
+                    <p id="previewSender" class="text-lg handwriting text-pink-300 font-bold">Anonymous ❤️</p>
+                    <p class="text-[7px] text-pink-400/40 font-mono mt-2 tracking-wider">TECSUB VALENTINE GREETINGS · 2026</p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="text-center text-xs text-gray-500 border-t border-gray-900 pt-6 max-w-5xl mx-auto w-full">
+        <p>&copy; 2026 TECSUB Labs. All rights reserved. Created for Valentine's Day celebrations.</p>
+    </footer>
+
+    <script>
+        let currentStyle = 'hearts';
+
+        function setStyle(style) {
+            currentStyle = style;
+            const card = document.getElementById('loveNote');
+            
+            document.querySelectorAll('[id^="styleBtn-"]').forEach(btn => {
+                btn.className = "py-2 rounded-lg font-semibold text-xs text-gray-400 hover:text-white transition";
+            });
+            document.getElementById(`styleBtn-${style}`).className = "py-2 rounded-lg font-semibold text-xs transition bg-pink-500 text-gray-950 shadow-md";
+
+            card.className = "w-[420px] h-[520px] rounded-3xl p-8 flex flex-col justify-between items-center text-center relative select-none overflow-hidden ";
+            card.classList.add(`theme-${style}`);
+        }
+
+        function updateNote() {
+            const sender = document.getElementById('senderName').value.trim() || 'Anonymous ❤️';
+            const recipient = document.getElementById('recipientName').value.trim() || 'Someone Special';
+            const message = document.getElementById('noteMessage').value.trim() || 'You are loved. 💕';
+
+            document.getElementById('previewSender').innerText = sender;
+            document.getElementById('previewRecipient').innerText = recipient;
+            document.getElementById('previewMessage').innerText = message;
+        }
+
+        function downloadNote() {
+            html2canvas(document.getElementById('loveNote'), { 
+                scale: 3, backgroundColor: null, useCORS: true, logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Valentine_Love_Note_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function copyShareLink() {
+            const sender = document.getElementById('senderName').value.trim() || 'Anonymous';
+            const recipient = document.getElementById('recipientName').value.trim() || 'Someone Special';
+            const message = document.getElementById('noteMessage').value.trim() || 'You are loved.';
+
+            const shareText = `💌 Valentine Love Note for ${recipient}\n\n"${message}"\n\n— From ${sender}\n\n✨ Create your own anonymous love notes at TECSUB Labs! ✨`;
+            navigator.clipboard.writeText(shareText).then(() => {
+                alert('Share text copied to clipboard! Paste on Instagram, Facebook, or WhatsApp.');
+            });
+        }
+
+        updateNote();
+    </script>
+</body>
+</html>

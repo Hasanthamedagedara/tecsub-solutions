@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traditional Avurudu Mini Games - TECSUB Seasonal</title>
+    <meta name="description" content="Play interactive Sri Lankan village sports online, including Kana Muttiya (Strike the Pot) and Aliyata Asa Thabeema (Pin the Eye).">
+    <!-- Tailwind CSS v4 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts: Space Grotesk, Outfit, and Abhaya Libre for Sinhala text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #020205;
+            color: #f3f4f6;
+            font-family: 'Outfit', sans-serif;
+            background-image: 
+                radial-gradient(at 50% 0%, rgba(220, 38, 38, 0.08) 0px, transparent 60%),
+                radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.05) 0px, transparent 50%);
+        }
+        .sinhala-font {
+            font-family: 'Abhaya Libre', serif;
+        }
+        .heading-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .canvas-container {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(220, 38, 38, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-8">
+
+    <!-- Header / Navigation -->
+    <header class="border-b border-red-500/20 bg-black/40 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <a href="../special-tools.html" class="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm">
+            <i class="fa-solid fa-arrow-left"></i> back to Labs
+        </a>
+        <div class="flex items-center space-x-2">
+            <span class="text-red-500 text-lg"><i class="fa-solid fa-seedling"></i></span>
+            <span class="font-bold tracking-wider text-sm heading-font">TECSUB <span class="text-red-500">SEASONAL</span></span>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full flex-1 items-stretch">
+        
+        <!-- Left Column: Big Interactive Game Board -->
+        <section class="lg:col-span-8 bg-black/60 border border-red-500/10 rounded-3xl p-6 flex flex-col justify-between items-center relative overflow-hidden min-h-[500px]">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.03)_0%,transparent_70%)] pointer-events-none"></div>
+            
+            <div class="w-full flex justify-between items-center z-10 border-b border-red-500/10 pb-3 mb-4">
+                <h2 id="gameTitle" class="text-xs font-mono text-red-500 uppercase tracking-widest">Game: Kana Muttiya (Strike the Pot)</h2>
+                <div class="flex gap-2">
+                    <span id="scoreText" class="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] px-2.5 py-0.5 rounded font-mono uppercase font-semibold">Hits: 0 | Misses: 0</span>
+                </div>
+            </div>
+
+            <!-- Canvas Viewport -->
+            <div class="w-full max-w-[550px] aspect-[4/3] bg-gray-950 rounded-2xl border border-gray-900 overflow-hidden relative canvas-container my-auto flex items-center justify-center">
+                <canvas id="gameCanvas" class="w-full h-full object-contain cursor-crosshair"></canvas>
+                
+                <!-- Game Over overlay or start panel -->
+                <div id="blindfoldOverlay" class="absolute inset-0 bg-black/95 flex flex-col items-center justify-center text-center p-6 hidden">
+                    <span class="text-6xl mb-4 animate-bounce">🙈</span>
+                    <h3 class="text-xl font-bold text-white heading-font">You are now BLINDFOLDED!</h3>
+                    <p class="text-sm text-gray-400 max-w-sm mt-2 leading-relaxed">
+                        The elephant silhouette has faded out. Move your cursor to place the eye where you think it fits.
+                    </p>
+                    <button onclick="commitEyePlacement()" class="mt-6 bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 px-6 rounded-xl transition text-xs cursor-pointer active:scale-95">
+                        Pin Eye Here
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottom Controller Help panel -->
+            <div class="w-full flex justify-between items-center border-t border-red-500/10 pt-3 mt-4 text-xs text-gray-400">
+                <span id="helpText"><i class="fa-solid fa-gamepad text-red-500 mr-1.5"></i> Click canvas to hit swinging pots!</span>
+                <button onclick="resetGame()" class="text-xs bg-red-950/30 hover:bg-red-900/40 text-red-400 font-semibold py-1.5 px-3 rounded-lg border border-red-900/30 transition flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-rotate-left"></i> Restart Game
+                </button>
+            </div>
+        </section>
+
+        <!-- Right Column: Game Switchers & Controls -->
+        <section class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- Panel 1: Switch between the 2 games -->
+            <div class="bg-gray-950 p-6 rounded-3xl border border-gray-800/80 space-y-4">
+                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider border-b border-gray-800 pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-shapes text-red-500"></i> Select Avurudu Game
+                </h3>
+                
+                <div class="grid grid-cols-1 gap-3">
+                    <!-- Game 1 selection -->
+                    <button onclick="switchGame('muttia')" id="gameBtn-muttia" class="p-3 text-left bg-red-950/20 border border-red-500/30 rounded-2xl flex justify-between items-center cursor-pointer transition">
+                        <div>
+                            <div class="text-xs font-bold text-white sinhala-font">කණා මුට්ටිය බිඳීම</div>
+                            <div class="text-[10px] text-gray-400">Strike clay pots with a stick</div>
+                        </div>
+                        <span class="text-lg">🏺</span>
+                    </button>
+
+                    <!-- Game 2 selection -->
+                    <button onclick="switchGame('ali')" id="gameBtn-ali" class="p-3 text-left bg-gray-900/40 border border-gray-850 rounded-2xl flex justify-between items-center cursor-pointer transition">
+                        <div>
+                            <div class="text-xs font-bold text-white sinhala-font">අලියාට ඇස තැබීම</div>
+                            <div class="text-[10px] text-gray-400">Pin the eye of the elephant</div>
+                        </div>
+                        <span class="text-lg">🐘</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel 2: Stats & Instructions -->
+            <div class="bg-gray-950 p-6 rounded-3xl border border-gray-800/80 space-y-4">
+                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider border-b border-gray-800 pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-red-500"></i> Instructions
+                </h3>
+                
+                <div id="instructionsText" class="text-xs text-gray-400 leading-relaxed space-y-2">
+                    <p><strong>How to play:</strong></p>
+                    <ul class="list-disc pl-4 space-y-1">
+                        <li>Watch the pots swing left/right.</li>
+                        <li>Click on the swinging clay pot at the exact moment to break it!</li>
+                        <li>Breaking the target pot wins points, hitting nothing counts as a miss.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-gray-500 border-t border-gray-900 pt-6 max-w-5xl mx-auto w-full">
+        <p>&copy; 2026 TECSUB Labs. All rights reserved. Created for Sinhala & Tamil New Year celebrations.</p>
+    </footer>
+
+    <!-- JavaScript Controllers -->
+    <script>
+        let currentGame = 'muttia';
+        let canvas, ctx;
+        let animationFrame = null;
+        let hits = 0;
+        let misses = 0;
+
+        // Sound Engine
+        let audioCtx = null;
+        function playShatterSound() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Noise synthesis for shatter sound
+            const bufferSize = audioCtx.sampleRate * 0.15;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 1000;
+
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            noise.start();
+        }
+
+        function playDingSound() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.2);
+        }
+
+        // ============================================
+        // GAME 1: KANA MUTTIA (Clay Pot Breaking)
+        // ============================================
+        let pots = [];
+        function initMuttia() {
+            pots = [
+                { x: 100, y: 150, r: 25, speed: 2.5, swingRange: 60, startX: 100, broken: false },
+                { x: 250, y: 120, r: 30, speed: 1.8, swingRange: 80, startX: 250, broken: false }, // Golden Pot!
+                { x: 400, y: 160, r: 22, speed: 3.2, swingRange: 50, startX: 400, broken: false }
+            ];
+            animateMuttia();
+        }
+
+        let timeFactor = 0;
+        function animateMuttia() {
+            if (currentGame !== 'muttia') return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            timeFactor += 0.03;
+
+            // Draw Background Trees/Hills styling simple
+            ctx.fillStyle = '#111827';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw wooden crossbar at top
+            ctx.strokeStyle = '#d97706';
+            ctx.lineWidth = 10;
+            ctx.beginPath();
+            ctx.moveTo(0, 30);
+            ctx.lineTo(canvas.width, 30);
+            ctx.stroke();
+
+            pots.forEach(pot => {
+                if (!pot.broken) {
+                    // Update swinging position
+                    pot.x = pot.startX + Math.sin(timeFactor * pot.speed) * pot.swingRange;
+
+                    // Draw string
+                    ctx.strokeStyle = '#4b5563';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(pot.startX, 30);
+                    ctx.lineTo(pot.x, pot.y - pot.r);
+                    ctx.stroke();
+
+                    // Draw clay pot base
+                    ctx.fillStyle = pot.r === 30 ? '#d97706' : '#b45309';
+                    ctx.beginPath();
+                    ctx.arc(pot.x, pot.y, pot.r, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Draw pot rim
+                    ctx.fillStyle = '#78350f';
+                    ctx.fillRect(pot.x - pot.r/2, pot.y - pot.r - 4, pot.r, 6);
+                } else {
+                    // Shattered debris animation
+                    ctx.fillStyle = '#78350f';
+                    ctx.font = '20px serif';
+                    ctx.fillText("💥 Broken!", pot.x - 30, pot.y);
+                }
+            });
+
+            // Draw player stick cursor indicator
+            animationFrame = requestAnimationFrame(animateMuttia);
+        }
+
+        // ============================================
+        // GAME 2: ALIYATA ASA THABEEMA (Elephant Eye)
+        // ============================================
+        const elephantEyeTarget = { x: 195, y: 130 }; // Exact location coordinates inside canvas
+        let placement = null;
+        let isBlindfolded = false;
+
+        function drawElephant(showEye = true) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#1f2937';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw simple filled outline of an elephant
+            ctx.fillStyle = '#4b5563';
+            
+            // Body
+            ctx.beginPath();
+            ctx.arc(280, 200, 100, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Head
+            ctx.beginPath();
+            ctx.arc(180, 180, 70, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Trunk
+            ctx.strokeStyle = '#4b5563';
+            ctx.lineWidth = 30;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(140, 210);
+            ctx.quadraticCurveTo(80, 220, 90, 280);
+            ctx.stroke();
+
+            // Ears
+            ctx.fillStyle = '#374151';
+            ctx.beginPath();
+            ctx.ellipse(220, 160, 45, 60, Math.PI / 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Target spot / Eye
+            if (showEye) {
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(elephantEyeTarget.x, elephantEyeTarget.y, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.arc(elephantEyeTarget.x, elephantEyeTarget.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Draw user placement if any
+            if (placement) {
+                ctx.fillStyle = '#ef4444';
+                ctx.font = '24px serif';
+                ctx.fillText("❌ Placement", placement.x - 12, placement.y + 8);
+            }
+        }
+
+        function blindfoldUser() {
+            isBlindfolded = true;
+            document.getElementById('blindfoldOverlay').classList.remove('hidden');
+        }
+
+        let tempPlacement = null;
+        function canvasClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+            if (currentGame === 'muttia') {
+                // Check collision with pots
+                let hitIndex = -1;
+                pots.forEach((pot, idx) => {
+                    if (!pot.broken) {
+                        const dist = Math.hypot(x - pot.x, y - pot.y);
+                        if (dist < pot.r) {
+                            hitIndex = idx;
+                        }
+                    }
+                });
+
+                if (hitIndex !== -1) {
+                    pots[hitIndex].broken = true;
+                    hits++;
+                    playShatterSound();
+                } else {
+                    misses++;
+                }
+                updateScoreBadge();
+            } else {
+                // Aliyata placement
+                if (isBlindfolded) {
+                    tempPlacement = { x, y };
+                }
+            }
+        }
+
+        function commitEyePlacement() {
+            isBlindfolded = false;
+            document.getElementById('blindfoldOverlay').classList.add('hidden');
+            
+            if (tempPlacement) {
+                placement = tempPlacement;
+                
+                // Calculate Euclidean distance score
+                const dist = Math.hypot(placement.x - elephantEyeTarget.x, placement.y - elephantEyeTarget.y);
+                const score = Math.max(0, Math.round(100 - dist / 3));
+
+                drawElephant(true);
+                playDingSound();
+                alert(`🎯 placement accuracy score: ${score}/100!`);
+            }
+        }
+
+        function updateScoreBadge() {
+            document.getElementById('scoreText').innerText = `Hits: ${hits} | Misses: ${misses}`;
+        }
+
+        function switchGame(gameKey) {
+            currentGame = gameKey;
+            
+            // Switch button highlighting
+            document.querySelectorAll('[id^="gameBtn-"]').forEach(btn => {
+                btn.className = "p-3 text-left bg-gray-900/40 border border-gray-850 rounded-2xl flex justify-between items-center cursor-pointer transition w-full";
+            });
+            document.getElementById(`gameBtn-${gameKey}`).className = "p-3 text-left bg-red-950/20 border border-red-500/30 rounded-2xl flex justify-between items-center cursor-pointer transition w-full";
+
+            if (gameKey === 'muttia') {
+                document.getElementById('gameTitle').innerText = "Game: Kana Muttiya (Strike the Pot)";
+                document.getElementById('helpText').innerHTML = `<i class="fa-solid fa-gamepad text-red-500 mr-1.5"></i> Click canvas to hit swinging pots!`;
+                document.getElementById('instructionsText').innerHTML = `
+                    <p><strong>How to play:</strong></p>
+                    <ul class="list-disc pl-4 space-y-1">
+                        <li>Watch the pots swing left/right.</li>
+                        <li>Click on the swinging clay pot at the exact moment to break it!</li>
+                        <li>Breaking the target pot wins points, hitting nothing counts as a miss.</li>
+                    </ul>
+                `;
+                document.getElementById('blindfoldOverlay').classList.add('hidden');
+                initMuttia();
+            } else {
+                document.getElementById('gameTitle').innerText = "Game: Aliyata Asa Thabeema (Blindfold Eye)";
+                document.getElementById('helpText').innerHTML = `<i class="fa-solid fa-eye-slash text-red-500 mr-1.5"></i> Pin the eye accurately!`;
+                document.getElementById('instructionsText').innerHTML = `
+                    <p><strong>How to play:</strong></p>
+                    <ul class="list-disc pl-4 space-y-1">
+                        <li>Examine the elephant and remember the eye position.</li>
+                        <li>Click "Blindfold Me" to make the canvas go black.</li>
+                        <li>Place the eye using your mouse cursor and press "Pin Eye".</li>
+                    </ul>
+                    <button onclick="blindfoldUser()" class="mt-4 w-full bg-red-950/50 hover:bg-red-900 text-red-400 font-semibold py-2 px-4 rounded-xl border border-red-900/30 transition text-xs cursor-pointer">
+                        Blindfold Me Now
+                    </button>
+                `;
+                placement = null;
+                tempPlacement = null;
+                isBlindfolded = false;
+                drawElephant(true);
+            }
+        }
+
+        function resetGame() {
+            hits = 0;
+            misses = 0;
+            updateScoreBadge();
+            switchGame(currentGame);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // Adjust canvas resolution internal
+            canvas.width = 500;
+            canvas.height = 375;
+
+            canvas.addEventListener('mousedown', canvasClick);
+
+            switchGame('muttia');
+        });
+    </script>
+</body>
+</html>

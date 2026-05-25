@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Result Fun Poster - TECSUB Seasonal</title>
+    <meta name="description" content="Create viral congratulations templates for G.C.E. O/L or A/L results with customizable names, school tags, badges, and score grades.">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            background-color: #020205;
+            color: #f3f4f6;
+            font-family: 'Outfit', sans-serif;
+            background-image: 
+                radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 60%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.06) 0px, transparent 50%);
+        }
+        .heading-font { font-family: 'Space Grotesk', sans-serif; }
+        .sinhala-font { font-family: 'Abhaya Libre', serif; }
+        .poster-bg {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+            box-shadow: 0 25px 60px -15px rgba(99, 102, 241, 0.3);
+        }
+        @keyframes confetti {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(30px) rotate(360deg); opacity: 0; }
+        }
+        .confetti-particle {
+            animation: confetti 2s ease-out infinite;
+            position: absolute; pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-8">
+
+    <header class="border-b border-indigo-500/20 bg-black/40 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <a href="../special-tools.html" class="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm">
+            <i class="fa-solid fa-arrow-left"></i> back to Labs
+        </a>
+        <div class="flex items-center space-x-2">
+            <span class="text-indigo-500 text-lg"><i class="fa-solid fa-award"></i></span>
+            <span class="font-bold tracking-wider text-sm heading-font">TECSUB <span class="text-indigo-500">SEASONAL</span></span>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full flex-1 items-center">
+        
+        <!-- Left Column: Controls -->
+        <section class="lg:col-span-5 bg-gray-950 p-6 rounded-3xl border border-gray-800/80 space-y-4">
+            <h2 class="text-lg font-bold text-white heading-font border-b border-gray-800 pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-indigo-500"></i> Exam Poster Editor
+            </h2>
+
+            <div class="space-y-4 text-sm">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Student Name</label>
+                    <input id="studentName" type="text" oninput="updatePoster()" value="කමල් ප්‍රියන්ත" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Exam Type</label>
+                        <select id="examType" onchange="updatePoster()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-indigo-500">
+                            <option value="ol">G.C.E. Ordinary Level (O/L)</option>
+                            <option value="al">G.C.E. Advanced Level (A/L)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Year</label>
+                        <input id="examYear" type="text" oninput="updatePoster()" value="2026" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">School Name</label>
+                    <input id="schoolName" type="text" oninput="updatePoster()" value="Royal College, Colombo" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Result Summary</label>
+                    <select id="resultSummary" onchange="updatePoster()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-indigo-500">
+                        <option value="9a">9 A passes (O/L)</option>
+                        <option value="8a">8 A passes + 1 B (O/L)</option>
+                        <option value="7a">7 A passes + 2 B (O/L)</option>
+                        <option value="3a">3 A passes (A/L)</option>
+                        <option value="2a1b">2 A + 1 B (A/L)</option>
+                        <option value="3b">3 B passes (A/L)</option>
+                        <option value="pass">Passed All Subjects</option>
+                        <option value="custom">Custom Result</option>
+                    </select>
+                </div>
+
+                <div id="customResultBox" class="hidden">
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Custom Result Text</label>
+                    <input id="customResult" type="text" oninput="updatePoster()" value="" placeholder="e.g., 6 As, 2 Bs, 1 C" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Congratulations Message</label>
+                    <textarea id="congratsMsg" oninput="updatePoster()" rows="2" class="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 resize-none">සුබ පැතුම්! ඔබගේ දක්ෂ ජයග්‍රහණයට හදවතින්ම සුබ පතමි! 🎓</textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 pt-2">
+                    <button onclick="downloadPoster()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs cursor-pointer shadow-lg shadow-indigo-500/10 active:scale-[0.98]">
+                        <i class="fa-solid fa-download"></i> Download Poster
+                    </button>
+                    <button onclick="resetPoster()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-xl border border-gray-750 transition flex items-center justify-center gap-2 text-xs cursor-pointer active:scale-[0.98]">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Card Preview -->
+        <section class="lg:col-span-7 flex flex-col items-center justify-center p-2">
+            
+            <div id="examPoster" class="w-[460px] min-h-[560px] poster-bg border-4 border-indigo-400/30 rounded-3xl p-8 flex flex-col justify-between items-center text-center text-white relative select-none overflow-hidden">
+                
+                <!-- Confetti Particles -->
+                <div class="confetti-particle top-6 left-10 text-lg" style="animation-delay:0s;color:#fbbf24">🎊</div>
+                <div class="confetti-particle top-12 right-16 text-sm" style="animation-delay:0.4s;color:#f472b6">✨</div>
+                <div class="confetti-particle top-24 left-24 text-sm" style="animation-delay:0.8s;color:#34d399">🌟</div>
+                <div class="confetti-particle top-8 right-32 text-lg" style="animation-delay:1.2s;color:#fbbf24">🎉</div>
+
+                <!-- Top header -->
+                <div class="z-10 space-y-2 w-full mt-2">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-3xl">🎓</span>
+                        <span class="text-3xl">🏆</span>
+                    </div>
+                    <h2 id="posterExamTitle" class="text-lg font-bold tracking-wider uppercase text-indigo-200">G.C.E. Ordinary Level</h2>
+                    <p id="posterYear" class="text-xs font-mono text-indigo-300/80 tracking-widest">2026 Examination Results</p>
+                    <div class="h-0.5 w-1/3 bg-indigo-400/30 mx-auto rounded"></div>
+                </div>
+
+                <!-- Name badge section -->
+                <div class="z-10 w-full space-y-3 my-auto py-4">
+                    <div class="bg-indigo-800/50 border border-indigo-400/20 rounded-2xl p-4 space-y-2">
+                        <p class="text-[10px] font-bold text-indigo-300 uppercase tracking-widest">Congratulations to</p>
+                        <h1 id="posterName" class="text-3xl font-extrabold sinhala-font text-white tracking-wide">කමල් ප්‍රියන්ත</h1>
+                        <p id="posterSchool" class="text-xs text-indigo-300/80 font-medium">Royal College, Colombo</p>
+                    </div>
+
+                    <!-- Result Badge -->
+                    <div class="bg-gradient-to-r from-amber-500 to-yellow-500 rounded-2xl p-4 text-gray-950 shadow-lg">
+                        <p class="text-[9px] font-bold tracking-widest uppercase mb-1">Result Achievement</p>
+                        <p id="posterResult" class="text-2xl font-extrabold heading-font">9 A Passes 🏅</p>
+                    </div>
+
+                    <!-- Custom Message -->
+                    <p id="posterCongrats" class="text-sm sinhala-font text-indigo-200/90 leading-relaxed px-4">
+                        සුබ පැතුම්! ඔබගේ දක්ෂ ජයග්‍රහණයට හදවතින්ම සුබ පතමි! 🎓
+                    </p>
+                </div>
+
+                <!-- Footer -->
+                <div class="z-10 w-full border-t border-indigo-400/20 pt-3">
+                    <p class="text-[7px] text-indigo-400/50 font-mono tracking-wider uppercase">TECSUB EXAM WISH POSTER · CELEBRATE WITH PRIDE</p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="text-center text-xs text-gray-500 border-t border-gray-900 pt-6 max-w-5xl mx-auto w-full">
+        <p>&copy; 2026 TECSUB Labs. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const resultTexts = {
+            '9a': '9 A Passes 🏅',
+            '8a': '8 A + 1 B Passes 🏅',
+            '7a': '7 A + 2 B Passes 🎯',
+            '3a': '3 A Passes (Distinction) 🏅',
+            '2a1b': '2 A + 1 B Passes 🎯',
+            '3b': '3 B Passes ✅',
+            'pass': 'All Subjects Passed ✅',
+            'custom': ''
+        };
+
+        function updatePoster() {
+            const name = document.getElementById('studentName').value.trim() || 'Student Name';
+            const examType = document.getElementById('examType').value;
+            const year = document.getElementById('examYear').value.trim() || '2026';
+            const school = document.getElementById('schoolName').value.trim() || 'School Name';
+            const resultKey = document.getElementById('resultSummary').value;
+            const congrats = document.getElementById('congratsMsg').value.trim() || 'Congratulations!';
+
+            // Show/hide custom result
+            document.getElementById('customResultBox').classList.toggle('hidden', resultKey !== 'custom');
+
+            let resultDisplay = resultTexts[resultKey];
+            if (resultKey === 'custom') {
+                resultDisplay = (document.getElementById('customResult').value.trim() || 'Custom Result') + ' 🎯';
+            }
+
+            document.getElementById('posterExamTitle').innerText = examType === 'ol' 
+                ? 'G.C.E. Ordinary Level' 
+                : 'G.C.E. Advanced Level';
+            document.getElementById('posterYear').innerText = `${year} Examination Results`;
+            document.getElementById('posterName').innerText = name;
+            document.getElementById('posterSchool').innerText = school;
+            document.getElementById('posterResult').innerText = resultDisplay;
+            document.getElementById('posterCongrats').innerText = congrats;
+        }
+
+        function downloadPoster() {
+            html2canvas(document.getElementById('examPoster'), { 
+                scale: 3, backgroundColor: null, useCORS: true, logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `TECSUB_Exam_Poster_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function resetPoster() {
+            document.getElementById('studentName').value = 'කමල් ප්‍රියන්ත';
+            document.getElementById('examType').value = 'ol';
+            document.getElementById('examYear').value = '2026';
+            document.getElementById('schoolName').value = 'Royal College, Colombo';
+            document.getElementById('resultSummary').value = '9a';
+            document.getElementById('congratsMsg').value = 'සුබ පැතුම්! ඔබගේ දක්ෂ ජයග්‍රහණයට හදවතින්ම සුබ පතමි! 🎓';
+            updatePoster();
+        }
+
+        updatePoster();
+    </script>
+</body>
+</html>

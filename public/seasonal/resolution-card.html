@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Year Resolution Card - TECSUB Seasonal</title>
+    <meta name="description" content="Draft 5 key goals for the upcoming year and export a gorgeous portrait card optimized for sharing on Instagram or Facebook Stories.">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            background-color: #020205;
+            color: #f3f4f6;
+            font-family: 'Outfit', sans-serif;
+            background-image: 
+                radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 60%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.06) 0px, transparent 50%);
+        }
+        .heading-font { font-family: 'Space Grotesk', sans-serif; }
+        .handwriting { font-family: 'Caveat', cursive; }
+
+        /* Theme styles */
+        .theme-cyberpunk {
+            background: linear-gradient(135deg, #0c0a1f 0%, #1e1b4b 50%, #312e81 100%);
+            border: 3px solid rgba(99, 102, 241, 0.4);
+            color: #e0e7ff;
+        }
+        .theme-neon {
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a0a2e 50%, #2d1b69 100%);
+            border: 3px solid rgba(168, 85, 247, 0.5);
+            color: #f3e8ff;
+        }
+        .theme-leaf {
+            background: linear-gradient(135deg, #052e16 0%, #14532d 50%, #166534 100%);
+            border: 3px solid rgba(74, 222, 128, 0.4);
+            color: #dcfce7;
+        }
+
+        .theme-cyberpunk .accent-text { color: #818cf8; }
+        .theme-cyberpunk .accent-bg { background-color: rgba(99, 102, 241, 0.15); border-color: rgba(99, 102, 241, 0.3); }
+        .theme-cyberpunk .accent-badge { background: linear-gradient(to right, #6366f1, #8b5cf6); }
+
+        .theme-neon .accent-text { color: #c084fc; }
+        .theme-neon .accent-bg { background-color: rgba(168, 85, 247, 0.15); border-color: rgba(168, 85, 247, 0.3); }
+        .theme-neon .accent-badge { background: linear-gradient(to right, #a855f7, #ec4899); }
+
+        .theme-leaf .accent-text { color: #4ade80; }
+        .theme-leaf .accent-bg { background-color: rgba(74, 222, 128, 0.15); border-color: rgba(74, 222, 128, 0.3); }
+        .theme-leaf .accent-badge { background: linear-gradient(to right, #22c55e, #16a34a); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-8">
+
+    <header class="border-b border-indigo-500/20 bg-black/40 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <a href="../special-tools.html" class="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm">
+            <i class="fa-solid fa-arrow-left"></i> back to Labs
+        </a>
+        <div class="flex items-center space-x-2">
+            <span class="text-indigo-500 text-lg"><i class="fa-solid fa-award"></i></span>
+            <span class="font-bold tracking-wider text-sm heading-font">TECSUB <span class="text-indigo-500">SEASONAL</span></span>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full flex-1 items-center">
+        
+        <!-- Left Column: Controls -->
+        <section class="lg:col-span-5 bg-gray-950 p-6 rounded-3xl border border-gray-800/80 space-y-4">
+            <h2 class="text-lg font-bold text-white heading-font border-b border-gray-800 pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-bullseye text-indigo-500"></i> Resolution Card Editor
+            </h2>
+
+            <div class="space-y-4 text-sm">
+                <!-- Theme Switcher -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Card Theme</label>
+                    <div class="grid grid-cols-3 gap-2 bg-gray-900 p-1.5 rounded-xl border border-gray-800">
+                        <button onclick="setTheme('cyberpunk')" id="themeBtn-cyberpunk" class="py-2 rounded-lg font-semibold text-xs transition bg-indigo-500 text-white shadow-md">
+                            Cyberpunk
+                        </button>
+                        <button onclick="setTheme('neon')" id="themeBtn-neon" class="py-2 rounded-lg font-semibold text-xs text-gray-400 hover:text-white transition">
+                            Neon Glow
+                        </button>
+                        <button onclick="setTheme('leaf')" id="themeBtn-leaf" class="py-2 rounded-lg font-semibold text-xs text-gray-400 hover:text-white transition">
+                            Organic Leaf
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Name -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Your Name</label>
+                    <input id="resName" type="text" oninput="updateCard()" value="Hasantha" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                </div>
+
+                <!-- 5 Goals -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">My Top 5 Goals for 2027</label>
+                    <input id="goal1" type="text" oninput="updateCard()" value="🏋️ Exercise 4 times a week" placeholder="Goal 1..." class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    <input id="goal2" type="text" oninput="updateCard()" value="📚 Read 24 books this year" placeholder="Goal 2..." class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    <input id="goal3" type="text" oninput="updateCard()" value="💰 Save 30% of my income" placeholder="Goal 3..." class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    <input id="goal4" type="text" oninput="updateCard()" value="🧘 Practice daily meditation" placeholder="Goal 4..." class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    <input id="goal5" type="text" oninput="updateCard()" value="✈️ Travel to 3 new countries" placeholder="Goal 5..." class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 pt-2">
+                    <button onclick="downloadCard()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs cursor-pointer shadow-lg shadow-indigo-500/10 active:scale-[0.98]">
+                        <i class="fa-solid fa-download"></i> Download Card
+                    </button>
+                    <button onclick="resetCard()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-xl border border-gray-750 transition flex items-center justify-center gap-2 text-xs cursor-pointer active:scale-[0.98]">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Card Preview (Portrait / Story format) -->
+        <section class="lg:col-span-7 flex flex-col items-center justify-center p-2">
+            
+            <!-- Portrait card optimized for IG/FB Stories (9:16 aspect) -->
+            <div id="resolutionCard" class="w-[360px] h-[640px] theme-cyberpunk rounded-3xl p-6 flex flex-col justify-between items-center text-center relative select-none overflow-hidden">
+                
+                <!-- Top header -->
+                <div class="z-10 space-y-2 w-full mt-2">
+                    <span class="text-4xl block">🎆</span>
+                    <h2 class="text-sm font-bold tracking-[0.2em] uppercase accent-text">New Year Resolution</h2>
+                    <h1 class="text-3xl font-extrabold heading-font text-white">2027</h1>
+                    <div class="h-0.5 w-1/4 accent-badge mx-auto rounded"></div>
+                </div>
+
+                <!-- Goals Grid -->
+                <div class="z-10 w-full space-y-2.5 my-auto py-4">
+                    <div id="goalCard1" class="accent-bg border rounded-xl p-3 text-left flex items-start gap-3">
+                        <span class="accent-badge text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                        <span class="text-sm font-medium leading-snug" id="goalText1">🏋️ Exercise 4 times a week</span>
+                    </div>
+                    <div id="goalCard2" class="accent-bg border rounded-xl p-3 text-left flex items-start gap-3">
+                        <span class="accent-badge text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                        <span class="text-sm font-medium leading-snug" id="goalText2">📚 Read 24 books this year</span>
+                    </div>
+                    <div id="goalCard3" class="accent-bg border rounded-xl p-3 text-left flex items-start gap-3">
+                        <span class="accent-badge text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                        <span class="text-sm font-medium leading-snug" id="goalText3">💰 Save 30% of my income</span>
+                    </div>
+                    <div id="goalCard4" class="accent-bg border rounded-xl p-3 text-left flex items-start gap-3">
+                        <span class="accent-badge text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
+                        <span class="text-sm font-medium leading-snug" id="goalText4">🧘 Practice daily meditation</span>
+                    </div>
+                    <div id="goalCard5" class="accent-bg border rounded-xl p-3 text-left flex items-start gap-3">
+                        <span class="accent-badge text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">5</span>
+                        <span class="text-sm font-medium leading-snug" id="goalText5">✈️ Travel to 3 new countries</span>
+                    </div>
+                </div>
+
+                <!-- Bottom Sender -->
+                <div class="z-10 w-full border-t border-white/10 pt-3 pb-1">
+                    <p class="text-[9px] accent-text uppercase font-mono tracking-widest mb-1">Goals By</p>
+                    <p id="previewResName" class="text-lg font-bold handwriting text-white">Hasantha</p>
+                    <p class="text-[7px] text-white/30 font-mono mt-1 tracking-wider">TECSUB RESOLUTION CARD · NEW YEAR 2027</p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="text-center text-xs text-gray-500 border-t border-gray-900 pt-6 max-w-5xl mx-auto w-full">
+        <p>&copy; 2026 TECSUB Labs. All rights reserved.</p>
+    </footer>
+
+    <script>
+        let currentTheme = 'cyberpunk';
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            const card = document.getElementById('resolutionCard');
+
+            document.querySelectorAll('[id^="themeBtn-"]').forEach(btn => {
+                btn.className = "py-2 rounded-lg font-semibold text-xs text-gray-400 hover:text-white transition";
+            });
+            document.getElementById(`themeBtn-${theme}`).className = "py-2 rounded-lg font-semibold text-xs transition bg-indigo-500 text-white shadow-md";
+
+            card.className = "w-[360px] h-[640px] rounded-3xl p-6 flex flex-col justify-between items-center text-center relative select-none overflow-hidden ";
+            card.classList.add(`theme-${theme}`);
+        }
+
+        function updateCard() {
+            const name = document.getElementById('resName').value.trim() || 'Your Name';
+            document.getElementById('previewResName').innerText = name;
+
+            for (let i = 1; i <= 5; i++) {
+                const val = document.getElementById(`goal${i}`).value.trim() || `Goal ${i}`;
+                document.getElementById(`goalText${i}`).innerText = val;
+            }
+        }
+
+        function downloadCard() {
+            html2canvas(document.getElementById('resolutionCard'), { 
+                scale: 3, backgroundColor: null, useCORS: true, logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `TECSUB_Resolution_Card_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function resetCard() {
+            document.getElementById('resName').value = 'Hasantha';
+            document.getElementById('goal1').value = '🏋️ Exercise 4 times a week';
+            document.getElementById('goal2').value = '📚 Read 24 books this year';
+            document.getElementById('goal3').value = '💰 Save 30% of my income';
+            document.getElementById('goal4').value = '🧘 Practice daily meditation';
+            document.getElementById('goal5').value = '✈️ Travel to 3 new countries';
+            setTheme('cyberpunk');
+            updateCard();
+        }
+
+        updateCard();
+    </script>
+</body>
+</html>
