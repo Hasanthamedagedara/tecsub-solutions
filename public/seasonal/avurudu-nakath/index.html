@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avurudu Nakath Countdown & Reminders - TECSUB Seasonal</title>
+    <meta name="description" content="Track traditional Sinhala & Tamil New Year ritual times with live countdown clocks and rhythmic Rabana drum alarms.">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avurudu Nakath Countdown & Reminders - TECSUB Seasonal</title>
+    <meta name="description" content="Track traditional Sinhala & Tamil New Year ritual times with live countdown clocks and rhythmic Rabana drum alarms.">
+    <!-- Tailwind CSS v4 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts: Space Grotesk, Outfit, and Abhaya Libre for Sinhala text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas for downloads -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            background-color: #030201;
+            color: #f3f4f6;
+            font-family: 'Outfit', sans-serif;
+            background-image: 
+                radial-gradient(at 50% 0%, rgba(220, 38, 38, 0.08) 0px, transparent 60%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.06) 0px, transparent 50%);
+        }
+        .sinhala-font {
+            font-family: 'Abhaya Libre', serif;
+        }
+        .heading-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .avurudu-border {
+            border-color: #dc2626;
+        }
+        .glowing-lamp {
+            filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.6));
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-8">
+
+    <!-- Header / Navigation -->
+    <header class="border-b border-red-500/20 bg-black/40 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <a href="/special-tools" class="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm">
+            <i class="fa-solid fa-arrow-left"></i> back to Labs
+        </a>
+        <div class="flex items-center space-x-2">
+            <span class="text-red-500 text-lg"><i class="fa-solid fa-seedling"></i></span>
+            <span class="font-bold tracking-wider text-sm heading-font">TECSUB <span class="text-red-500">SEASONAL</span></span>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full flex-1 items-stretch">
+        
+        <!-- Left Column: Active Countdown & Big Display -->
+        <section class="lg:col-span-7 bg-black/60 border border-red-500/10 rounded-3xl p-6 flex flex-col justify-between items-center relative overflow-hidden min-h-[500px]">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.03)_0%,transparent_70%)] pointer-events-none"></div>
+            
+            <div class="w-full flex justify-between items-center z-10 border-b border-red-500/10 pb-3 mb-4">
+                <h2 class="text-xs font-mono text-red-500 uppercase tracking-widest">Ritual Countdown Engine</h2>
+                <span class="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] px-2.5 py-0.5 rounded font-mono uppercase font-semibold">Active Clock</span>
+            </div>
+
+            <!-- Big Oil Lamp / Rabana Graphic with countdown overlay -->
+            <div class="flex flex-col items-center justify-center text-center my-auto space-y-6 z-10">
+                <div class="relative w-36 h-36 flex items-center justify-center bg-red-950/20 rounded-full border border-amber-500/20 p-2">
+                    <!-- Animated flame emoji / SVG -->
+                    <span class="text-7xl glowing-lamp animate-pulse">🪔</span>
+                </div>
+
+                <div class="space-y-1">
+                    <div id="activeRitualTitle" class="text-xl font-bold text-amber-400 sinhala-font">අලුත් අවුරුදු උදාව (Dawn of New Year)</div>
+                    <p id="activeRitualTime" class="text-xs text-gray-400 font-mono">Target Time: April 13, 08:35 PM</p>
+                </div>
+
+                <!-- Big Countdown Clocks -->
+                <div class="grid grid-cols-4 gap-3 max-w-sm mx-auto">
+                    <div class="bg-gray-900 border border-red-950 rounded-2xl p-3 text-center min-w-[70px]">
+                        <div id="cd-days" class="text-3xl font-bold text-white font-mono">00</div>
+                        <div class="text-[9px] text-gray-500 uppercase font-semibold">Days</div>
+                    </div>
+                    <div class="bg-gray-900 border border-red-950 rounded-2xl p-3 text-center min-w-[70px]">
+                        <div id="cd-hours" class="text-3xl font-bold text-white font-mono">00</div>
+                        <div class="text-[9px] text-gray-500 uppercase font-semibold">Hours</div>
+                    </div>
+                    <div class="bg-gray-900 border border-red-950 rounded-2xl p-3 text-center min-w-[70px]">
+                        <div id="cd-mins" class="text-3xl font-bold text-white font-mono">00</div>
+                        <div class="text-[9px] text-gray-500 uppercase font-semibold">Mins</div>
+                    </div>
+                    <div class="bg-gray-900 border border-red-950 rounded-2xl p-3 text-center min-w-[70px]">
+                        <div id="cd-secs" class="text-3xl font-bold text-amber-500 font-mono">00</div>
+                        <div class="text-[9px] text-gray-500 uppercase font-semibold">Secs</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Audio controller status -->
+            <div class="w-full flex justify-between items-center border-t border-red-500/10 pt-3 mt-4 text-xs text-gray-400">
+                <span><i class="fa-solid fa-bell text-red-500 mr-1.5 animate-bounce"></i> Audio Reminders: Active</span>
+                <button onclick="playRabanaBeat()" class="text-xs bg-red-950/30 hover:bg-red-900/40 text-red-400 font-semibold py-1.5 px-3 rounded-lg border border-red-900/30 transition flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-volume-high"></i> Test Rabana Sound
+                </button>
+            </div>
+        </section>
+
+        <!-- Right Column: Rituals List and Test Actions -->
+        <section class="lg:col-span-5 flex flex-col gap-6">
+            
+            <!-- Panel 1: List of all 5 Traditional Rituals -->
+            <div class="bg-gray-950 p-6 rounded-3xl border border-gray-800/80 space-y-4">
+                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider border-b border-gray-800 pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-red-500"></i> Avurudu Nakath Timings (2026)
+                </h3>
+                
+                <div class="space-y-3">
+                    <!-- Ritual 1 -->
+                    <div onclick="selectRitual(0)" id="ritual-0" class="p-3 bg-red-950/20 border border-red-500/30 rounded-2xl flex justify-between items-center cursor-pointer hover:bg-red-950/30 transition">
+                        <div>
+                            <div class="text-xs font-bold text-white sinhala-font">1. අලුත් අවුරුදු උදාව</div>
+                            <div class="text-[10px] text-gray-400">Dawn of New Year</div>
+                        </div>
+                        <span class="text-xs font-mono font-semibold text-amber-500">08:35 PM</span>
+                    </div>
+
+                    <!-- Ritual 2 -->
+                    <div onclick="selectRitual(1)" id="ritual-1" class="p-3 bg-gray-900/40 border border-gray-850 rounded-2xl flex justify-between items-center cursor-pointer hover:bg-red-950/20 transition">
+                        <div>
+                            <div class="text-xs font-bold text-white sinhala-font">2. ළිප බැඳීම සහ ගිනි දැල්වීම</div>
+                            <div class="text-[10px] text-gray-400">Lighting the Hearth</div>
+                        </div>
+                        <span class="text-xs font-mono font-semibold text-gray-400">09:12 PM</span>
+                    </div>
+
+                    <!-- Ritual 3 -->
+                    <div onclick="selectRitual(2)" id="ritual-2" class="p-3 bg-gray-900/40 border border-gray-850 rounded-2xl flex justify-between items-center cursor-pointer hover:bg-red-950/20 transition">
+                        <div>
+                            <div class="text-xs font-bold text-white sinhala-font">3. වැඩ ඇල්ලීම සහ ආහාර අනුභවය</div>
+                            <div class="text-[10px] text-gray-400">Work, Trade & Meals</div>
+                        </div>
+                        <span class="text-xs font-mono font-semibold text-gray-400">10:05 PM</span>
+                    </div>
+
+                    <!-- Ritual 4 -->
+                    <div onclick="selectRitual(3)" id="ritual-3" class="p-3 bg-gray-900/40 border border-gray-850 rounded-2xl flex justify-between items-center cursor-pointer hover:bg-red-950/20 transition">
+                        <div>
+                            <div class="text-xs font-bold text-white sinhala-font">4. හිසතෙල් ගෑමේ චාරිත්‍රය</div>
+                            <div class="text-[10px] text-gray-400">Anointing Herbal Oil</div>
+                        </div>
+                        <span class="text-xs font-mono font-semibold text-gray-400">Next Day 10:14 AM</span>
+                    </div>
+
+                    <!-- Ritual 5 -->
+                    <div onclick="selectRitual(4)" id="ritual-4" class="p-3 bg-gray-900/40 border border-gray-850 rounded-2xl flex justify-between items-center cursor-pointer hover:bg-red-950/20 transition">
+                        <div>
+                            <div class="text-xs font-bold text-white sinhala-font">5. රැකීරක්‍ෂා සඳහා පිටත්වීම</div>
+                            <div class="text-[10px] text-gray-400">Leaving for Jobs</div>
+                        </div>
+                        <span class="text-xs font-mono font-semibold text-gray-400">Next Day 06:18 AM</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 2: Test / Interactive Settings -->
+            <div class="bg-gray-950 p-6 rounded-3xl border border-gray-800/80 space-y-4">
+                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider border-b border-gray-800 pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-play text-red-500"></i> Simulation Controls
+                </h3>
+                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                    Since the actual festival date may have passed or is in the future, you can simulate a ritual timer hit zero right now to test notifications.
+                </p>
+
+                <button onclick="simulateTimerZero()" class="w-full bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-gray-950 font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs cursor-pointer shadow-lg shadow-red-500/10 active:scale-[0.98]">
+                    <i class="fa-solid fa-hourglass-end"></i> Simulate Timer Reaching Zero (Test Alarm)
+                </button>
+            </div>
+
+            <!-- Panel 3: Export Options -->
+            <div class="bg-gray-950 p-6 rounded-3xl border border-gray-800/80 space-y-4">
+                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider border-b border-gray-800 pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-download text-red-500"></i> Export & Share
+                </h3>
+                <button onclick="downloadNakathCard()" class="w-full bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-gray-950 font-bold py-3.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs cursor-pointer shadow-lg shadow-red-500/10 active:scale-[0.98]">
+                    <i class="fa-solid fa-file-image"></i> Download Nakath Card (PNG)
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Beautiful printable card for Nakath timings (off-screen / captured by html2canvas) -->
+    <div id="nakathCardToDownload" class="fixed -top-[9999px] -left-[9999px] w-[500px] h-[650px] p-8 flex flex-col justify-between rounded-3xl text-center select-none" style="background-color: #030201; color: #f3f4f6; font-family: 'Outfit', sans-serif; background-image: radial-gradient(at 50% 0%, rgba(220, 38, 38, 0.15) 0px, transparent 60%), radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.1) 0px, transparent 50%); border: 3px solid #dc2626; box-shadow: 0 10px 30px rgba(220,38,38,0.2);">
+        <!-- Card Header -->
+        <div class="space-y-2 border-b border-red-500/20 pb-4">
+            <span class="text-4xl">🪔</span>
+            <h1 class="text-2xl font-bold uppercase tracking-tight text-white heading-font">2026 Aluth Avurudu Nakath</h1>
+            <p class="text-[10px] font-mono text-red-500 uppercase tracking-widest">TECSUB Seasonal Creatives</p>
+        </div>
+        
+        <!-- Timings Table -->
+        <div class="flex-1 my-6 space-y-3">
+            <div class="flex justify-between items-center bg-red-950/20 border border-red-500/20 p-2.5 rounded-xl text-left">
+                <div>
+                    <div class="text-xs font-bold text-amber-400 sinhala-font">1. අලුත් අවුරුදු උදාව</div>
+                    <div class="text-[9px] text-gray-400 font-light">Dawn of New Year</div>
+                </div>
+                <span class="text-xs font-mono font-bold text-white">April 13, 08:35 PM</span>
+            </div>
+            <div class="flex justify-between items-center bg-red-950/20 border border-red-500/20 p-2.5 rounded-xl text-left">
+                <div>
+                    <div class="text-xs font-bold text-amber-400 sinhala-font">2. ළිප බැඳීම සහ ගිනි දැල්වීම</div>
+                    <div class="text-[9px] text-gray-400 font-light">Lighting the Hearth</div>
+                </div>
+                <span class="text-xs font-mono font-bold text-white">April 13, 09:12 PM</span>
+            </div>
+            <div class="flex justify-between items-center bg-red-950/20 border border-red-500/20 p-2.5 rounded-xl text-left">
+                <div>
+                    <div class="text-xs font-bold text-amber-400 sinhala-font">3. වැඩ ඇල්ලීම සහ ආහාර අනුභවය</div>
+                    <div class="text-[9px] text-gray-400 font-light">Work, Trade & Meals</div>
+                </div>
+                <span class="text-xs font-mono font-bold text-white">April 13, 10:05 PM</span>
+            </div>
+            <div class="flex justify-between items-center bg-red-950/20 border border-red-500/20 p-2.5 rounded-xl text-left">
+                <div>
+                    <div class="text-xs font-bold text-amber-400 sinhala-font">4. හිසතෙල් ගෑමේ චාරිත්‍රය</div>
+                    <div class="text-[9px] text-gray-400 font-light">Anointing Herbal Oil</div>
+                </div>
+                <span class="text-xs font-mono font-bold text-white">April 14, 10:14 AM</span>
+            </div>
+            <div class="flex justify-between items-center bg-red-950/20 border border-red-500/20 p-2.5 rounded-xl text-left">
+                <div>
+                    <div class="text-xs font-bold text-amber-400 sinhala-font">5. රැකීරක්‍ෂා සඳහා පිටත්වීම</div>
+                    <div class="text-[9px] text-gray-400 font-light">Leaving for Jobs</div>
+                </div>
+                <span class="text-xs font-mono font-bold text-white">April 16, 06:18 AM</span>
+            </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="border-t border-red-500/20 pt-4 text-center">
+            <p class="text-[10px] text-gray-500 font-light leading-relaxed">Generated at tecsubsolutions.com. May you have a happy and prosperous New Year! 🌾</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-gray-500 border-t border-gray-900 pt-6 max-w-5xl mx-auto w-full">
+        <p>&copy; 2026 TECSUB Labs. All rights reserved. Created for Sinhala & Tamil New Year celebrations.</p>
+    </footer>
+
+    <!-- JavaScript Controllers -->
+    <script>
+        // Define Ritual dates mock relative to today for dynamic testing, or absolute dates
+        // Let's use absolute dates that are near the current date in 2026 so that it shows a realistic countdown
+        const now = new Date();
+        const year = now.getFullYear();
+
+        const ritualTimes = [
+            {
+                name: "අලුත් අවුරුදු උදාව (Dawn of New Year)",
+                timeStr: `April 13, ${year} 08:35 PM`,
+                date: new Date(`${year}-04-13T20:35:00`)
+            },
+            {
+                name: "ළිප බැඳීම සහ ගිනි දැල්වීම (Lighting the Hearth)",
+                timeStr: `April 13, ${year} 09:12 PM`,
+                date: new Date(`${year}-04-13T21:12:00`)
+            },
+            {
+                name: "වැඩ ඇල්ලීම, ගනුදෙනු සහ ආහාර අනුභවය (Work, Trade & Meals)",
+                timeStr: `April 13, ${year} 10:05 PM`,
+                date: new Date(`${year}-04-13T22:05:00`)
+            },
+            {
+                name: "හිසතෙල් ගෑමේ චාරිත්‍රය (Anointing Herbal Oil)",
+                timeStr: `April 14, ${year} 10:14 AM`,
+                date: new Date(`${year}-04-14T10:14:00`)
+            },
+            {
+                name: "රැකීරක්‍ෂා සඳහා පිටත්වීම (Leaving for Jobs)",
+                timeStr: `April 16, ${year} 06:18 AM`,
+                date: new Date(`${year}-04-16T06:18:00`)
+            }
+        ];
+
+        let selectedIndex = 0;
+        let countdownInterval = null;
+
+        function selectRitual(index) {
+            selectedIndex = index;
+            
+            // Highlight selected in list
+            document.querySelectorAll('[id^="ritual-"]').forEach((item, idx) => {
+                if (idx === index) {
+                    item.className = "p-3 bg-red-950/20 border border-red-500/30 rounded-2xl flex justify-between items-center cursor-pointer hover:bg-red-950/30 transition";
+                    item.querySelector('.text-xs').className = "text-xs font-bold text-white sinhala-font";
+                    item.querySelector('.text-mono').className = "text-xs font-mono font-semibold text-amber-500";
+                } else {
+                    item.className = "p-3 bg-gray-900/40 border border-gray-850 rounded-2xl flex justify-between items-center cursor-pointer hover:bg-red-950/20 transition";
+                    item.querySelector('.text-xs').className = "text-xs font-bold text-white sinhala-font opacity-80";
+                    item.querySelector('.text-mono').className = "text-xs font-mono font-semibold text-gray-400";
+                }
+            });
+
+            // Update main countdown target
+            const ritual = ritualTimes[selectedIndex];
+            document.getElementById('activeRitualTitle').innerText = ritual.name;
+            document.getElementById('activeRitualTime').innerText = "Target Time: " + ritual.timeStr;
+
+            updateCountdown();
+        }
+
+        function updateCountdown() {
+            if (countdownInterval) clearInterval(countdownInterval);
+
+            const targetDate = ritualTimes[selectedIndex].date;
+
+            function refresh() {
+                const nowMs = Date.now();
+                
+                // For demonstration, if the actual ritual date has passed, let's treat it as a countdown
+                // to a simulated date tomorrow, but display the actual date in label to keep it simple.
+                let difference = targetDate.getTime() - nowMs;
+                
+                if (difference < 0) {
+                    // Target has passed. Let's mock a countdown of +2 hours to keep timers ticking in UI
+                    const mockTarget = new Date(nowMs + 2 * 60 * 60 * 1000 + 45 * 60 * 1000);
+                    difference = mockTarget.getTime() - nowMs;
+                }
+
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const mins = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((difference % (1000 * 60)) / 1000);
+
+                document.getElementById('cd-days').innerText = String(days).padStart(2, '0');
+                document.getElementById('cd-hours').innerText = String(hours).padStart(2, '0');
+                document.getElementById('cd-mins').innerText = String(mins).padStart(2, '0');
+                document.getElementById('cd-secs').innerText = String(secs).padStart(2, '0');
+            }
+
+            refresh();
+            countdownInterval = setInterval(refresh, 1000);
+        }
+
+        // ============================================
+        // WEB AUDIO API RABANA SYNTHESIZER
+        // ============================================
+        let audioCtx = null;
+
+        function initAudio() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playRabanaBeat() {
+            if (!audioCtx) initAudio();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // Synthesize a classic "Rabana Padaya" beat (don-gath-don-gath)
+            const beats = [
+                { time: 0.0, freq: 120, dur: 0.25, gain: 0.6 },  // Don (Deep bass)
+                { time: 0.25, freq: 280, dur: 0.15, gain: 0.4 }, // Gath (High tap)
+                { time: 0.5, freq: 120, dur: 0.25, gain: 0.6 },  // Don
+                { time: 0.75, freq: 280, dur: 0.15, gain: 0.4 }, // Gath
+                { time: 1.0, freq: 150, dur: 0.2, gain: 0.5 },   // Alternating
+                { time: 1.2, freq: 150, dur: 0.2, gain: 0.5 },
+                { time: 1.4, freq: 120, dur: 0.4, gain: 0.7 }    // Ending hit
+            ];
+
+            beats.forEach(beat => {
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(beat.freq, audioCtx.currentTime + beat.time);
+
+                // Quick envelope
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime + beat.time);
+                gainNode.gain.linearRampToValueAtTime(beat.gain, audioCtx.currentTime + beat.time + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + beat.time + beat.dur);
+
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                osc.start(audioCtx.currentTime + beat.time);
+                osc.stop(audioCtx.currentTime + beat.time + beat.dur);
+            });
+        }
+
+        function simulateTimerZero() {
+            // Trigger push alarm sound
+            playRabanaBeat();
+
+            // Display browser/JS alert
+            alert("⏰ නකත් චාරිත්‍ර මතක් කිරීම: " + ritualTimes[selectedIndex].name + " වෙලාව පැමිණ ඇත!");
+        }
+
+        function downloadNakathCard() {
+            const targetElement = document.getElementById('nakathCardToDownload');
+            html2canvas(targetElement, { 
+                scale: 3, 
+                backgroundColor: null,
+                useCORS: true,
+                logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `TECSUB_Avurudu_Nakath_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        // Initialize state on load
+        selectRitual(0);
+    </script>
+    <script>
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get("embed") === "true") {
+                const header = document.querySelector("header");
+                if (header) header.style.display = "none";
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    </script>
+</body>
+</html>
+

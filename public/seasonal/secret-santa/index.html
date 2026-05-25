@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Santa Generator - TECSUB Seasonal</title>
+    <meta name="description" content="Organize gift exchanges easily. Input participant lists to shuffle matches randomly and generate private copyable WhatsApp sharing strings.">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #020205;
+            color: #f3f4f6;
+            font-family: 'Outfit', sans-serif;
+            background-image: 
+                radial-gradient(at 50% 0%, rgba(220, 38, 38, 0.1) 0px, transparent 60%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.06) 0px, transparent 50%);
+        }
+        .heading-font { font-family: 'Space Grotesk', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-8">
+
+    <header class="border-b border-red-500/20 bg-black/40 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <a href="/special-tools" class="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm">
+            <i class="fa-solid fa-arrow-left"></i> back to Labs
+        </a>
+        <div class="flex items-center space-x-2">
+            <span class="text-red-500 text-lg"><i class="fa-solid fa-holly-berry"></i></span>
+            <span class="font-bold tracking-wider text-sm heading-font">TECSUB <span class="text-red-500">SEASONAL</span></span>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full flex-1 items-start">
+        
+        <!-- Left Column: Participant Entry -->
+        <section class="lg:col-span-5 bg-gray-950 p-6 rounded-3xl border border-gray-800/80 space-y-4">
+            <h2 class="text-lg font-bold text-white heading-font border-b border-gray-800 pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-user-secret text-red-500"></i> Secret Santa Setup
+            </h2>
+
+            <div class="space-y-4 text-sm">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Add Participant</label>
+                    <div class="flex gap-2">
+                        <input id="nameInput" type="text" placeholder="Enter a name..." class="flex-1 bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-red-500 transition-colors" onkeydown="if(event.key==='Enter') addName()">
+                        <button onclick="addName()" class="bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 px-4 rounded-xl transition text-xs cursor-pointer active:scale-[0.98]">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Participants List -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                        Participants (<span id="participantCount">0</span>)
+                    </label>
+                    <div id="participantList" class="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                        <p class="text-xs text-gray-500 italic text-center py-6">No participants yet. Add at least 3 names above.</p>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-300">
+                    <i class="fa-solid fa-circle-info mr-1.5"></i> You need at least <strong>3 participants</strong> to generate valid matches. No one will be assigned to themselves.
+                </div>
+
+                <button onclick="generateMatches()" id="generateBtn" class="w-full bg-gradient-to-r from-red-600 to-green-600 hover:from-red-500 hover:to-green-500 text-white font-bold py-3.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs cursor-pointer shadow-lg shadow-red-500/10 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                    <i class="fa-solid fa-shuffle"></i> Generate Secret Santa Matches!
+                </button>
+            </div>
+        </section>
+
+        <!-- Right Column: Results -->
+        <section class="lg:col-span-7 bg-gray-950 p-6 rounded-3xl border border-gray-800/80 space-y-4">
+            <h2 class="text-lg font-bold text-white heading-font border-b border-gray-800 pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-gift text-green-500"></i> Match Results
+            </h2>
+
+            <div id="resultsContainer" class="space-y-3">
+                <div class="text-center py-16">
+                    <span class="text-6xl block mb-4">🎁</span>
+                    <p class="text-gray-400 text-sm">Add participants and click "Generate" to see matches here.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center text-xs text-gray-500 border-t border-gray-900 pt-6 max-w-4xl mx-auto w-full">
+        <p>&copy; 2026 TECSUB Labs. All rights reserved. Created for Christmas celebrations.</p>
+    </footer>
+
+    <script>
+        let participants = [];
+        let currentMatches = [];
+
+        function addName() {
+            const input = document.getElementById('nameInput');
+            const name = input.value.trim();
+            if (!name) return;
+            if (participants.includes(name)) {
+                alert('This name already exists!');
+                return;
+            }
+
+            participants.push(name);
+            input.value = '';
+            input.focus();
+            renderList();
+        }
+
+        function removeName(index) {
+            participants.splice(index, 1);
+            renderList();
+        }
+
+        function renderList() {
+            const list = document.getElementById('participantList');
+            const countEl = document.getElementById('participantCount');
+            const btn = document.getElementById('generateBtn');
+
+            countEl.innerText = participants.length;
+            btn.disabled = participants.length < 3;
+
+            if (participants.length === 0) {
+                list.innerHTML = '<p class="text-xs text-gray-500 italic text-center py-6">No participants yet. Add at least 3 names above.</p>';
+                return;
+            }
+
+            list.innerHTML = participants.map((name, idx) => `
+                <div class="flex justify-between items-center bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-red-600/20 border border-red-600/30 text-red-400 text-[10px] font-bold flex items-center justify-center">${idx + 1}</span>
+                        <span class="text-sm text-white font-medium">${name}</span>
+                    </div>
+                    <button onclick="removeName(${idx})" class="text-gray-500 hover:text-red-400 transition cursor-pointer text-xs">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function generateMatches() {
+            if (participants.length < 3) return;
+
+            // Fisher-Yates derangement: shuffle until no one matches themselves
+            let receivers;
+            let valid = false;
+            let attempts = 0;
+
+            while (!valid && attempts < 500) {
+                receivers = [...participants];
+                // Shuffle
+                for (let i = receivers.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [receivers[i], receivers[j]] = [receivers[j], receivers[i]];
+                }
+                // Check derangement (no self-match)
+                valid = participants.every((p, i) => p !== receivers[i]);
+                attempts++;
+            }
+
+            if (!valid) {
+                alert('Could not generate valid matches. Please try again.');
+                return;
+            }
+
+            // Store globally for download
+            currentMatches = participants.map((giver, idx) => ({
+                giver: giver,
+                receiver: receivers[idx]
+            }));
+
+            // Render results
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = `
+                <div class="p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-xs text-green-300 mb-4 flex flex-wrap justify-between items-center gap-2">
+                    <div>
+                        <i class="fa-solid fa-check-circle mr-1.5"></i> Matches generated successfully!
+                    </div>
+                    <button onclick="downloadPairingsTxt()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-1.5 px-3 rounded-lg transition text-[10px] cursor-pointer active:scale-95">
+                        <i class="fa-solid fa-download mr-1"></i> Download Pairings (.txt)
+                    </button>
+                </div>
+            ` + participants.map((giver, idx) => {
+                const receiver = receivers[idx];
+                const whatsappMsg = encodeURIComponent(`🎄 Secret Santa Alert! 🎅\n\nHi ${giver}! You are the Secret Santa for ✨ ${receiver} ✨!\n\nPrepare a gift and keep it a surprise until Christmas Day! 🎁\n\n— Generated by TECSUB Labs`);
+                return `
+                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white text-xs font-bold">🎅</div>
+                            <div>
+                                <div class="text-sm font-bold text-white">${giver}</div>
+                                <div class="text-[10px] text-gray-400">is Secret Santa for</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-bold text-green-400">${receiver}</div>
+                            <div class="text-[10px] text-gray-400">🎁 Recipient</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="copyMatchText('${giver}', '${receiver}')" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-3 rounded-xl text-[11px] transition cursor-pointer flex items-center justify-center gap-1.5">
+                            <i class="fa-regular fa-copy"></i> Copy Message
+                        </button>
+                        <a href="https://wa.me/?text=${whatsappMsg}" target="_blank" class="flex-1 bg-green-600 hover:bg-green-500 text-white font-semibold py-2 px-3 rounded-xl text-[11px] transition cursor-pointer flex items-center justify-center gap-1.5">
+                            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function copyMatchText(giver, receiver) {
+            const text = `🎄 Secret Santa Alert! 🎅\n\nHi ${giver}! You are the Secret Santa for ✨ ${receiver} ✨!\n\nPrepare a gift and keep it a surprise until Christmas Day! 🎁\n\n— Generated by TECSUB Labs`;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Message copied to clipboard!');
+            });
+        }
+
+        function downloadPairingsTxt() {
+            if (currentMatches.length === 0) return;
+            let text = `🎄 TECSUB SECRET SANTA PAIRINGS 🎄\n`;
+            text += `Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}\n`;
+            text += `--------------------------------------------------\n\n`;
+            currentMatches.forEach((match, idx) => {
+                text += `${idx + 1}. ${match.giver} is Secret Santa for ${match.receiver}\n`;
+            });
+            text += `\n--------------------------------------------------\n`;
+            text += `Keep the matches a secret until Christmas Day! 🎁🎅\n`;
+            
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.download = `Secret_Santa_Matches_${Date.now()}.txt`;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+    </script>
+    <script>
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get("embed") === "true") {
+                const header = document.querySelector("header");
+                if (header) header.style.display = "none";
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    </script>
+</body>
+</html>

@@ -24,7 +24,7 @@ const TOOLS_METADATA: Record<string, ToolDetails> = {
         icon: "☸️",
         type: "widget",
         badge: "INTERACTIVE",
-        path: "/seasonal/digital-pandal.html",
+        path: "/seasonal/digital-pandal",
         colorClass: "from-amber-600 to-yellow-400"
     },
     "digital-dansala": {
@@ -33,7 +33,7 @@ const TOOLS_METADATA: Record<string, ToolDetails> = {
         icon: "🍧",
         type: "poster",
         badge: "FUN POSTER",
-        path: "/seasonal/digital-dansala.html",
+        path: "/seasonal/digital-dansala",
         colorClass: "from-amber-500 to-orange-500"
     },
     "verse-book": {
@@ -41,7 +41,7 @@ const TOOLS_METADATA: Record<string, ToolDetails> = {
         description: "Design beautiful typography cards containing old Sinhala poems and Buddhist verses with serene temple backgrounds.",
         icon: "📜",
         type: "card",
-        path: "/seasonal/verse-book.html",
+        path: "/seasonal/verse-book",
         colorClass: "from-yellow-600 to-amber-700"
     },
     "avurudu-nakath": {
@@ -50,7 +50,7 @@ const TOOLS_METADATA: Record<string, ToolDetails> = {
         icon: "⏰",
         type: "utility",
         badge: "AUDIO TIMERS",
-        path: "/seasonal/avurudu-nakath.html",
+        path: "/seasonal/avurudu-nakath",
         colorClass: "from-emerald-500 to-teal-600"
     },
     "avurudu-greetings": {
@@ -58,7 +58,7 @@ const TOOLS_METADATA: Record<string, ToolDetails> = {
         description: "Create funny 'work commencement' cards (e.g. coding, sleeping, gaming) styled as traditional New Year greeting cards.",
         icon: "🧧",
         type: "card",
-        path: "/seasonal/avurudu-greetings.html",
+        path: "/seasonal/avurudu-greetings",
         colorClass: "from-emerald-600 to-green-500"
     },
     "avurudu-games": {
@@ -67,7 +67,7 @@ const TOOLS_METADATA: Record<string, ToolDetails> = {
         icon: "🎮",
         type: "game",
         badge: "PLAY ONLINE",
-        path: "/seasonal/avurudu-games.html",
+        path: "/seasonal/avurudu-games",
         colorClass: "from-teal-600 to-emerald-700"
     },
     "santa-letter": {
@@ -75,7 +75,7 @@ const TOOLS_METADATA: Record<string, ToolDetails> = {
         description: "Surprise children with a customized letter from the North Pole featuring dynamic names, nice checks, and seal layouts.",
         icon: "🎅",
         type: "poster",
-        path: "/seasonal/santa-letter.html",
+        path: "/seasonal/santa-letter",
         colorClass: "from-red-600 to-rose-500"
     },
     "secret-santa": {
@@ -83,7 +83,7 @@ const TOOLS_METADATA: Record<string, ToolDetails> = {
         description: "Organize gift exchanges easily. Match participants randomly and get private WhatsApp sharing strings.",
         icon: "🎁",
         type: "utility",
-        path: "/seasonal/secret-santa.html",
+        path: "/seasonal/secret-santa",
         colorClass: "from-red-500 to-red-700"
     },
     "valentine-notes": {
@@ -92,7 +92,7 @@ const TOOLS_METADATA: Record<string, ToolDetails> = {
         icon: "💖",
         type: "card",
         badge: "ANONYMOUS",
-        path: "/seasonal/valentine-notes.html",
+        path: "/seasonal/valentine-notes",
         colorClass: "from-pink-500 to-rose-500"
     },
     "exam-wishers": {
@@ -101,7 +101,7 @@ const TOOLS_METADATA: Record<string, ToolDetails> = {
         icon: "🎓",
         type: "poster",
         badge: "AL/OL SEASON",
-        path: "/seasonal/exam-wishers.html",
+        path: "/seasonal/exam-wishers",
         colorClass: "from-indigo-600 to-blue-500"
     },
     "resolution-card": {
@@ -109,7 +109,7 @@ const TOOLS_METADATA: Record<string, ToolDetails> = {
         description: "Draft 5 key goals for the upcoming year and export a gorgeous portrait card optimized for sharing on Instagram or Facebook Stories.",
         icon: "🎯",
         type: "card",
-        path: "/seasonal/resolution-card.html",
+        path: "/seasonal/resolution-card",
         colorClass: "from-indigo-500 to-purple-600"
     }
 };
