@@ -8,30 +8,86 @@ import { useAppContext } from "@/components/ThemeProvider";
 
 export default function BgRemoverPage() {
     const [image, setImage] = useState<string | null>(null);
+    const [file, setFile] = useState<File | null>(null);
+    const [format, setFormat] = useState<"png" | "webp">("png");
     const [processing, setProcessing] = useState(false);
     const [result, setResult] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { language } = useAppContext();
 
     const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
+        const selectedFile = e.target.files?.[0];
+        if (selectedFile) {
+            setFile(selectedFile);
+            setError(null);
             const reader = new FileReader();
             reader.onload = (prev) => {
                 setImage(prev.target?.result as string);
                 setResult(null);
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(selectedFile);
         }
     };
 
-    const handleRemoveBg = () => {
-        if (!image) return;
+    const handleRemoveBg = async () => {
+        if (!file) return;
         setProcessing(true);
-        setTimeout(() => {
+        setError(null);
+        try {
+            const formData = new FormData();
+            formData.append("size", "auto");
+            formData.append("image_file", file);
+            formData.append("format", format);
+
+            const apiKey = process.env.NEXT_PUBLIC_REMOVE_BG_API_KEY || 
+                           process.env.NEXT_PUBLIC_REMOVD_API_KEY || 
+                           "dMesF1EdhedgbBEbRM4NiWUM";
+
+            const response = await fetch("https://api.remove.bg/v1.0/removebg", {
+                method: "POST",
+                headers: {
+                    "X-Api-Key": apiKey,
+                },
+                body: formData,
+            });
+
+            if (!response.ok) {
+                let errorMessage = `${response.status}: ${response.statusText}`;
+                try {
+                    const errorJson = await response.json();
+                    if (errorJson?.errors?.[0]?.title) {
+                        errorMessage = errorJson.errors[0].title;
+                    }
+                } catch (_) {
+                    try {
+                        const errorText = await response.text();
+                        if (errorText) errorMessage = errorText;
+                    } catch (_) {}
+                }
+                throw new Error(errorMessage);
+            }
+
+            const arrayBuffer = await response.arrayBuffer();
+            const resultBlob = new Blob([arrayBuffer], { type: `image/${format}` });
+            const resultUrl = URL.createObjectURL(resultBlob);
+            setResult(resultUrl);
+        } catch (err: any) {
+            console.error("Remove.bg API error:", err);
+            setError(err?.message || "Failed to remove background. Please verify your API key and connection.");
+        } finally {
             setProcessing(false);
-            setResult(image); // Simulated transparency result
-        }, 3500);
+        }
+    };
+
+    const handleDownload = () => {
+        if (!result) return;
+        const link = document.createElement("a");
+        link.href = result;
+        link.download = `no-bg.${format}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     const t = {
@@ -70,11 +126,19 @@ export default function BgRemoverPage() {
                                 <div>
                                     <label className="text-[11px] font-black uppercase mb-3 block text-gray-400">Output Format</label>
                                     <div className="flex gap-2">
-                                        {["PNG", "WebP"].map((f) => (
-                                            <button key={f} className={`flex-1 py-2 rounded-xl text-[10px] font-black border transition-all ${f === "PNG" ? "bg-orange-500 text-white border-orange-500 shadow-lg" : "bg-transparent text-gray-500 border-gray-100 dark:border-white/5"}`}>
-                                                {f}
-                                            </button>
-                                        ))}
+                                        {(["PNG", "WebP"] as const).map((f) => {
+                                            const normalized = f.toLowerCase() as "png" | "webp";
+                                            const isActive = format === normalized;
+                                            return (
+                                                <button 
+                                                    key={f} 
+                                                    onClick={() => setFormat(normalized)}
+                                                    className={`flex-1 py-2 rounded-xl text-[10px] font-black border transition-all ${isActive ? "bg-orange-500 text-white border-orange-500 shadow-lg" : "bg-transparent text-gray-500 border-gray-100 dark:border-white/5 hover:border-orange-500/20"}`}
+                                                >
+                                                    {f}
+                                                </button>
+                                            );
+                                        })}
                                     </div>
                                 </div>
 
@@ -101,6 +165,18 @@ export default function BgRemoverPage() {
                             className={`relative min-h-[350px] sm:min-h-[500px] rounded-[2rem] sm:rounded-[3rem] border-2 border-dashed transition-all flex flex-col items-center justify-center overflow-hidden bg-[url('https://www.transparenttextures.com/patterns/checkerboard.png')] ${image ? "border-transparent" : "border-gray-200 dark:border-white/10 hover:border-orange-500/30 cursor-pointer"}`}
                             onClick={() => !image && fileInputRef.current?.click()}
                         >
+                            {error && (
+                                <div className="absolute inset-x-4 top-4 bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-xs font-black uppercase text-center z-50 flex items-center justify-between">
+                                    <span>Error: {error}</span>
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); setError(null); }} 
+                                        className="w-6 h-6 rounded-full hover:bg-red-500/20 flex items-center justify-center font-bold"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            )}
+
                             <input type="file" ref={fileInputRef} onChange={handleUpload} className="hidden" accept="image/*" />
 
                             {image ? (
@@ -115,7 +191,12 @@ export default function BgRemoverPage() {
                                             >
                                                 <img src={result} alt="Background removal result from Tecsub AI" className="max-h-[400px] rounded-2xl drop-shadow-2xl" />
                                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all rounded-2xl flex items-center justify-center">
-                                                    <button className="opacity-0 group-hover:opacity-100 px-8 py-3 bg-white text-black rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-2xl hover:scale-110">Download PNG</button>
+                                                    <button 
+                                                        onClick={handleDownload}
+                                                        className="opacity-0 group-hover:opacity-100 px-8 py-3 bg-white text-black rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-2xl hover:scale-110"
+                                                    >
+                                                        Download {format.toUpperCase()}
+                                                    </button>
                                                 </div>
                                             </motion.div>
                                         ) : (
@@ -131,7 +212,13 @@ export default function BgRemoverPage() {
                                     </AnimatePresence>
 
                                     <button 
-                                        onClick={(e) => { e.stopPropagation(); setImage(null); setResult(null); }}
+                                        onClick={(e) => { 
+                                            e.stopPropagation(); 
+                                            setImage(null); 
+                                            setFile(null); 
+                                            setResult(null); 
+                                            setError(null); 
+                                        }}
                                         className="absolute top-8 right-8 w-12 h-12 bg-white/20 backdrop-blur-xl rounded-full flex items-center justify-center text-white hover:bg-red-500 transition-colors z-30"
                                     >
                                         ✕
