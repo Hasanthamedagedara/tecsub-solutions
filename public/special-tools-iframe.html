@@ -570,19 +570,26 @@
                         
                         <div>
                             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Meme Template</label>
-                            <select id="memeTemplate" onchange="changeMemeTemplate()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-purple-500 transition-colors">
-                                <option value="drake">Drake Hotline Bling</option>
-                                <option value="harold">Hide the Pain Harold</option>
-                                <option value="buttons">Two Buttons</option>
-                                <option value="success">Success Kid</option>
-                                <option value="custom">-- Custom Upload --</option>
+                            <select id="memeTemplate" onchange="changeMemeTemplate()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-purple-500 transition-colors mb-3">
+                                <!-- Populated dynamically -->
                             </select>
+                            
+                            <!-- Visual Grid of Template Previews -->
+                            <div id="memeTemplateGrid" class="grid grid-cols-4 gap-2 max-h-[160px] overflow-y-auto pr-1 custom-scroll mb-2">
+                                <!-- Thumbnails loaded dynamically -->
+                            </div>
                         </div>
 
                         <!-- Custom Image File Upload -->
-                        <div id="memeCustomUploadContainer" class="hidden">
-                            <label class="block text-[11px] font-semibold text-purple-400 uppercase mb-1.5">Upload Custom Template</label>
-                            <input id="memeCustomUpload" type="file" accept="image/*" onchange="handleMemeCustomUpload(event)" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-1.5 text-xs text-gray-400 file:mr-3 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-purple-500/10 file:text-purple-400 hover:file:bg-purple-500/20 cursor-pointer">
+                        <div id="memeCustomUploadContainer" class="hidden space-y-3 bg-gray-900/50 p-4 rounded-xl border border-gray-800">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-purple-400 uppercase mb-1">Template Name</label>
+                                <input id="memeCustomName" type="text" placeholder="My Custom Template" class="w-full bg-gray-950 border border-gray-850 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-purple-400 uppercase mb-1">Select Image File</label>
+                                <input id="memeCustomUpload" type="file" accept="image/*" onchange="handleMemeCustomUpload(event)" class="w-full bg-gray-955 border border-gray-850 rounded-lg px-3 py-1.5 text-xs text-gray-400 file:mr-3 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-purple-500/10 file:text-purple-400 hover:file:bg-purple-500/20 cursor-pointer">
+                            </div>
                         </div>
 
                         <div>
@@ -1507,7 +1514,9 @@
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = `TECSUB_ASCII_Art_${Date.now()}.txt`;
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         }
 
         // ============================================
@@ -1591,19 +1600,31 @@
                 const link = document.createElement('a');
                 link.download = filename;
                 link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
                 link.click();
+                document.body.removeChild(link);
             });
         }
 
         // ============================================
         // MEME GENERATOR LOGIC (CANVAS POWERED)
         // ============================================
-        const memeTemplates = {
-            drake: "https://api.memegen.link/images/drake.png",
-            harold: "https://api.memegen.link/images/harold.png",
-            buttons: "https://api.memegen.link/images/both.png",
-            success: "https://api.memegen.link/images/success.png"
+        const defaultMemeTemplates = {
+            drake: { name: "Drake Hotline Bling", src: "https://api.memegen.link/images/drake.png" },
+            harold: { name: "Hide the Pain Harold", src: "https://api.memegen.link/images/harold.png" },
+            buttons: { name: "Two Buttons", src: "https://api.memegen.link/images/both.png" },
+            success: { name: "Success Kid", src: "https://api.memegen.link/images/success.png" }
         };
+
+        let customMemeTemplates = [];
+        try {
+            const saved = localStorage.getItem('tecsub_custom_meme_templates');
+            if (saved) {
+                customMemeTemplates = JSON.parse(saved);
+            }
+        } catch (e) {
+            console.error("Failed to load custom templates", e);
+        }
 
         let memeImageObj = new Image();
         memeImageObj.crossOrigin = "anonymous";
@@ -1612,26 +1633,177 @@
         memeImageObj.onload = function() {
             drawMeme();
         };
-        memeImageObj.src = memeTemplates.drake;
+
+        function initMemeGenerator() {
+            renderMemeTemplates();
+            // Load default drake
+            memeImageObj.src = defaultMemeTemplates.drake.src;
+        }
+
+        function renderMemeTemplates() {
+            const select = document.getElementById('memeTemplate');
+            const grid = document.getElementById('memeTemplateGrid');
+            if (!select || !grid) return;
+
+            const activeValue = select.value || 'drake';
+            
+            // Clear existing
+            select.innerHTML = '';
+            grid.innerHTML = '';
+            
+            // Render defaults
+            Object.entries(defaultMemeTemplates).forEach(([id, t]) => {
+                const opt = document.createElement('option');
+                opt.value = id;
+                opt.textContent = t.name;
+                select.appendChild(opt);
+                
+                renderGridItem(id, t.name, t.src);
+            });
+            
+            // Render customs
+            customMemeTemplates.forEach((t) => {
+                const opt = document.createElement('option');
+                opt.value = t.id;
+                opt.textContent = t.name + " (Custom)";
+                select.appendChild(opt);
+                
+                renderGridItem(t.id, t.name, t.src, true);
+            });
+            
+            // Add "custom upload" option to select
+            const customOpt = document.createElement('option');
+            customOpt.value = 'custom_new';
+            customOpt.textContent = '-- Upload New Template --';
+            select.appendChild(customOpt);
+
+            select.value = activeValue;
+        }
+        
+        function renderGridItem(id, name, src, isCustom = false) {
+            const grid = document.getElementById('memeTemplateGrid');
+            const select = document.getElementById('memeTemplate');
+            const activeId = select ? select.value : 'drake';
+            
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `group relative h-20 rounded-xl border overflow-hidden cursor-pointer flex flex-col justify-end text-left p-1 transition-all ${id === activeId ? 'border-purple-500 ring-2 ring-purple-500/30' : 'border-gray-800 hover:border-gray-700'}`;
+            btn.onclick = () => selectTemplate(id);
+            
+            btn.innerHTML = `
+                <img src="${src}" alt="${name}" class="absolute inset-0 w-full h-full object-cover z-0" loading="lazy">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-1"></div>
+                <span class="z-2 text-[9px] font-semibold text-white truncate w-full pr-1">${name}</span>
+            `;
+            
+            if (isCustom) {
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'absolute top-1 right-1 w-4 h-4 rounded-full bg-red-600 hover:bg-red-500 flex items-center justify-center text-white text-[8px] z-10';
+                deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteCustomTemplate(id);
+                };
+                btn.appendChild(deleteBtn);
+            }
+            
+            grid.appendChild(btn);
+        }
+
+        function selectTemplate(id) {
+            const select = document.getElementById('memeTemplate');
+            if (select) {
+                select.value = id;
+                changeMemeTemplate();
+            }
+        }
+        
+        function deleteCustomTemplate(id) {
+            customMemeTemplates = customMemeTemplates.filter(t => t.id !== id);
+            try {
+                localStorage.setItem('tecsub_custom_meme_templates', JSON.stringify(customMemeTemplates));
+            } catch (err) {
+                console.error(err);
+            }
+            renderMemeTemplates();
+            const select = document.getElementById('memeTemplate');
+            if (select && select.value === id) {
+                selectTemplate('drake');
+            } else {
+                renderGridHighlights();
+            }
+        }
+
+        function renderGridHighlights() {
+            const select = document.getElementById('memeTemplate');
+            const activeId = select ? select.value : 'drake';
+            const grid = document.getElementById('memeTemplateGrid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+            Object.entries(defaultMemeTemplates).forEach(([id, t]) => {
+                renderGridItem(id, t.name, t.src);
+            });
+            customMemeTemplates.forEach((t) => {
+                renderGridItem(t.id, t.name, t.src, true);
+            });
+        }
 
         function changeMemeTemplate() {
-            const val = document.getElementById('memeTemplate').value;
+            const select = document.getElementById('memeTemplate');
+            if (!select) return;
+            const val = select.value;
             const uploadContainer = document.getElementById('memeCustomUploadContainer');
-
-            if (val === 'custom') {
+            if (!uploadContainer) return;
+            
+            if (val === 'custom_new') {
                 uploadContainer.classList.remove('hidden');
             } else {
                 uploadContainer.classList.add('hidden');
-                memeImageObj.src = memeTemplates[val];
+                
+                let src = '';
+                if (defaultMemeTemplates[val]) {
+                    src = defaultMemeTemplates[val].src;
+                } else {
+                    const found = customMemeTemplates.find(t => t.id === val);
+                    if (found) src = found.src;
+                }
+                
+                if (src) {
+                    memeImageObj.src = src;
+                }
             }
+            renderGridHighlights();
         }
 
         function handleMemeCustomUpload(event) {
             const file = event.target.files[0];
+            const nameInput = document.getElementById('memeCustomName');
+            let name = nameInput ? nameInput.value.trim() : "";
+            if (!name) {
+                name = file ? file.name.split('.')[0] : "Custom Template";
+            }
+            
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    memeImageObj.src = e.target.result;
+                    const src = e.target.result;
+                    const id = 'custom_' + Date.now();
+                    
+                    customMemeTemplates.push({ id, name, src });
+                    
+                    try {
+                        localStorage.setItem('tecsub_custom_meme_templates', JSON.stringify(customMemeTemplates));
+                    } catch (err) {
+                        alert("Storage limit exceeded. Could not save template permanently.");
+                    }
+                    
+                    renderMemeTemplates();
+                    selectTemplate(id);
+                    
+                    if (nameInput) nameInput.value = '';
+                    event.target.value = '';
                 };
                 reader.readAsDataURL(file);
             }
