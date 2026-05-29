@@ -43,7 +43,7 @@ export default function SpecialToolsContainer() {
                             className="w-full border-0 min-h-[850px] h-[85vh] block relative z-10"
                             onLoad={() => setIsLoading(false)}
                             title="Tecsub Labs Creative Suite"
-                            allow="autoplay; camera; clipboard-write; clipboard-read"
+                            allow="autoplay; camera; clipboard-write; clipboard-read; web-share"
                         />
                     </div>
                 </div>

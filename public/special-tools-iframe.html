@@ -9,7 +9,7 @@
     <!-- Google Fonts: Outfit & Space Grotesk -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- html2canvas for Wasi Card Downloading -->
@@ -24,6 +24,10 @@
                 radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
                 radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.05) 0px, transparent 50%),
                 radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+        }
+
+        .sinhala-font {
+            font-family: 'Abhaya Libre', serif;
         }
 
         .heading-font {
@@ -823,6 +827,13 @@
                                 <option value="preset1">Poem 1: වෛරී සිතක ගිනි ජාලා</option>
                                 <option value="preset2">Poem 2: සිත් තුල ඇතිවන ක්‍රෝධය</option>
                                 <option value="preset3">Poem 3: සම්බුදු තෙමඟුල සිහිපත්</option>
+                                <option value="preset4">Poem 4: කලකිනි බුදු කෙනෙකුන් (ලෝවැඩ සඟරාව)</option>
+                                <option value="preset5">Poem 5: සෙත් සිරි දෙන මහ ගුණ (ලෝවැඩ සඟරාව)</option>
+                                <option value="preset6">Poem 6: කුළුණු මෙත් සත වෙත (බුදුගුණ අලංකාරය)</option>
+                                <option value="preset7">Poem 7: ලොවට උතුම් මුනි රජුගේ (ලෝවැඩ සඟරාව)</option>
+                                <option value="preset8">Poem 8: සිරිමත් බඹ සිරසෙහි (ලෝවැඩ සඟරාව)</option>
+                                <option value="preset9">Poem 9: වැනුවා නම් බුදු ගුණ (ලෝවැඩ සඟරාව)</option>
+                                <option value="preset10">Poem 10: යහපත් කොට යෙතැයි (බුදුගුණ අලංකාරය)</option>
                                 <option value="custom">-- Custom Message --</option>
                             </select>
                             <textarea id="vesakPoemText" oninput="updateVesakText()" rows="3" class="w-full mt-2 bg-gray-900 border border-gray-800 rounded-xl p-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-orange-500 resize-none" placeholder="Enter your card text..."></textarea>
@@ -872,9 +883,9 @@
 
                                     <!-- Blessing Poem text -->
                                     <div class="my-auto pt-8 pr-16 pl-2">
-                                        <blockquote id="vesakPreviewPoem" class="text-xs italic text-gray-700 font-medium leading-relaxed whitespace-pre-line font-serif">
+                                        <blockquote id="vesakPreviewPoem" class="text-xs italic text-gray-700 font-medium leading-relaxed whitespace-pre-line sinhala-font">
                                             වෛරී සිතක ගිනි ජාලා නිවෙන්නයි
-                                            මෙන් සිතකින් ලෝකය දෙස බලන්නයි
+                                            මෙත් සිතකින් ලෝකය දෙස බලන්නයි
                                             අමා දහම් සිසිලස් බව දැනෙන්නයි
                                             මේ අරුමෝත් මෙත් පුරයට වඩින්නයි
                                         </blockquote>
@@ -883,8 +894,8 @@
                                     <!-- Sender & Recipient lines -->
                                     <div class="border-t border-amber-200/80 pt-3 flex justify-between items-end text-[10px] text-gray-600 font-semibold px-2">
                                         <div class="space-y-1">
-                                            <div>ලබන්නා (To): <span id="vesakPreviewRecipient" class="text-gray-800 font-bold border-b border-amber-300 pb-0.5">හිතමිතුරන් සැමට</span></div>
-                                            <div>එවන්නා (By): <span id="vesakPreviewSender" class="text-gray-800 font-bold border-b border-amber-300 pb-0.5">හිතවත් සජන</span></div>
+                                            <div>ලබන්නා (To): <span id="vesakPreviewRecipient" class="text-gray-800 font-bold border-b border-amber-300 pb-0.5 sinhala-font">හිතමිතුරන් සැමට</span></div>
+                                            <div>එවන්නා (By): <span id="vesakPreviewSender" class="text-gray-800 font-bold border-b border-amber-300 pb-0.5 sinhala-font">හිතවත් සජන</span></div>
                                         </div>
                                         
                                         <!-- QR code or brand tag -->
@@ -916,7 +927,13 @@
                         <!-- Action Downloader buttons -->
                         <div class="w-full grid grid-cols-2 gap-4">
                             <button onclick="downloadVesakCard()" class="bg-orange-500 hover:bg-orange-400 text-gray-950 font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/10 cursor-pointer hover:shadow-orange-500/25 active:scale-[0.98]">
-                                <i class="fa-solid fa-download"></i> Export Blessing Card (PNG)
+                                <i class="fa-solid fa-download"></i> Export Card (PNG)
+                            </button>
+                            <button onclick="shareVesakCard(event)" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-500/10 cursor-pointer hover:shadow-amber-500/25 active:scale-[0.98]">
+                                <i class="fa-solid fa-share-nodes"></i> Share Card
+                            </button>
+                            <button onclick="randomizeVesakCard()" class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-gray-950 font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/10 cursor-pointer active:scale-[0.98]">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Randomize Style
                             </button>
                             <button onclick="resetVesakCard()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-xl border border-gray-750 transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/10 cursor-pointer active:scale-[0.98]">
                                 <i class="fa-solid fa-arrows-rotate"></i> Reset Settings
@@ -1867,9 +1884,16 @@
         };
 
         const vesakPoems = {
-            preset1: `වෛරී සිතක ගිනි ජාලා නිවෙන්නයි\nමෙන් සිතකින් ලෝකය දෙස බලන්නයි\nඅමා දහම් සිසිලස් බව දැනෙන්නයි\nමේ අරුමෝත් මෙත් පුරයට වඩින්නයි`,
+            preset1: `වෛරී සිතක ගිනි ජාලා නිවෙන්නයි\nමෙත් සිතකින් ලෝකය දෙස බලන්නයි\nඅමා දහම් සිසිලස් බව දැනෙන්නයි\nමේ අරුමෝත් මෙත් පුරයට වඩින්නයි`,
             preset2: `සිත් තුල ඇතිවන ක්‍රෝධය සිඳිලා\nමෙත් සිත ලොව තුල සැමටම බෙදිලා\nඅමා නිවන් මග සැමටම පෑදී\nවෙසක් මංගල්‍යය සාර්ථක වේවා!`,
-            preset3: `සම්බුදු තෙමඟුල සිහිපත් කරමින්\nමෙත් සිසිලස සැම හදවත පිබිදේ\nපින්බර වෙසක් උත්සවයක්\nඔබ සැමටම වේවා!`
+            preset3: `සම්බුදු තෙමඟුල සිහිපත් කරමින්\nමෙත් සිසිලස සැම හදවත පිබිදේ\nපින්බර වෙසක් උත්සවයක්\nඔබ සැමටම වේවා!`,
+            preset4: `කලකිනි බුදු කෙනෙකුන් උපදින්නේ\nදුකකිනි මිනිසත් බව ලැබ ගන්නේ\nමෙදෙකිනි මෙසසර දුක් දුර ලන්නේ\nසුදනෙනි කිම වීරිය නොකරන්නේ`,
+            preset5: `සෙත් සිරි දෙන මහ ගුණ මුහුදාණන්\nසත් හට වන බව දුකට වෙදාණන්\nතිත් ගනඳුරු දුරලන දිනිදාණන්\nසිත් සතොසින් නමදිම් මුනිදාණන්`,
+            preset6: `කුළුණු මෙත් සත වෙත\nපතළ නැණ සව් පදරුත\nඑළි කළ ලොවට සෙත\nනිතර නමදිම් මුනිඳු සරණත`,
+            preset7: `ලොවට උතුම් මුනි රජුගේ ගුණ විපුල\nසිතට රැගෙන සිහි කළ නුවණින් නිමල\nසතට නොවී කලෙකත් බව දුක් අසල\nයසට එයින් සිදුවේ සිරි සුබ මගුල`,
+            preset8: `සිරිමත් බඹ සිරසෙහි පා පිසිනා\nසෑරියුත් මහ මුගලන් පිළිවෙලිනා\nපිළිවෙත් සරු මහ සඟගන සොබනා\nමුදුනත් බැඳ නමදිම් බැති පෙමිනා`,
+            preset9: `වැනුවා නම් බුදු ගුණ වැනුවාමය\nතැනුවා නම් තම සිත තැනුවාමය\nදෙනුවා නම් දන් පින් දෙනුවාමය\nදිනුවා නම් පරලොව දිනුවාමය`,
+            preset10: `යහපත් කොට යෙතැයි\nසුන්දර තැනට සැපතැයි\nසොඳුරු බස් කියතැයි\nකියති ඒ මුනි රජුට සුගතැයි`
         };
 
         function changeVesakTemplate(type) {
@@ -1942,6 +1966,97 @@
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             });
+        }
+
+        function shareVesakCard(event) {
+            const targetElement = document.getElementById('vesakCardRender');
+            const shareBtn = event ? event.currentTarget : null;
+            let originalText = "";
+            if (shareBtn) {
+                originalText = shareBtn.innerHTML;
+                shareBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Preparing...`;
+                shareBtn.disabled = true;
+            }
+
+            html2canvas(targetElement, { 
+                scale: 3, 
+                backgroundColor: null,
+                useCORS: true,
+                logging: false
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    if (!blob) {
+                        alert("Could not generate image. Please try downloading.");
+                        if (shareBtn) {
+                            shareBtn.innerHTML = originalText;
+                            shareBtn.disabled = false;
+                        }
+                        return;
+                    }
+
+                    const file = new File([blob], `Vesak_Card_${Date.now()}.png`, { type: 'image/png' });
+                    
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share({
+                            files: [file],
+                            title: 'පින්බර වෙසක් සුබපැතුම් පතක්',
+                            text: 'ලබන්නා වූ වෙසක් මංගල්‍යය පින්බර එකක් වේවා! - TECSUB Greetings'
+                        }).then(() => {
+                            if (shareBtn) {
+                                shareBtn.innerHTML = originalText;
+                                shareBtn.disabled = false;
+                            }
+                        }).catch(err => {
+                            console.error("Share failed:", err);
+                            if (shareBtn) {
+                                shareBtn.innerHTML = originalText;
+                                shareBtn.disabled = false;
+                            }
+                        });
+                    } else {
+                        // Fallback
+                        const link = document.createElement('a');
+                        link.download = `Vesak_Blessing_Card_${Date.now()}.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                        
+                        const shareText = "ලබන්නා වූ වෙසක් මංගල්‍යය පින්බර එකක් වේවා! - TECSUB Greetings";
+                        navigator.clipboard.writeText(shareText).then(() => {
+                            alert("Sharing not fully supported on this browser. The card image has been downloaded, and a greeting message was copied to your clipboard!");
+                        }).catch(e => {
+                            alert("Sharing not fully supported on this browser. The card image has been downloaded!");
+                        });
+
+                        if (shareBtn) {
+                            shareBtn.innerHTML = originalText;
+                            shareBtn.disabled = false;
+                        }
+                    }
+                }, 'image/png');
+            }).catch(err => {
+                console.error("Canvas share error:", err);
+                if (shareBtn) {
+                    shareBtn.innerHTML = originalText;
+                    shareBtn.disabled = false;
+                }
+            });
+        }
+
+        function randomizeVesakCard() {
+            const templateKeys = Object.keys(vesakTemplates);
+            const randomTemplate = templateKeys[Math.floor(Math.random() * templateKeys.length)];
+            changeVesakTemplate(randomTemplate);
+
+            const stampKeys = Object.keys(vesakStamps);
+            const randomStamp = stampKeys[Math.floor(Math.random() * stampKeys.length)];
+            changeVesakStamp(randomStamp);
+
+            const poemKeys = Object.keys(vesakPoems);
+            const randomPoem = poemKeys[Math.floor(Math.random() * poemKeys.length)];
+            
+            const select = document.getElementById('vesakPoemSelect');
+            select.value = randomPoem;
+            changeVesakPoem();
         }
 
         function resetVesakCard() {
