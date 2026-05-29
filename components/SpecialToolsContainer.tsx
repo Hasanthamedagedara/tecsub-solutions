@@ -17,7 +17,7 @@ export default function SpecialToolsContainer() {
         }
     }, [searchParams]);
 
-    const iframeSrc = `/special-tools.html?tab=${tab}&embed=true`;
+    const iframeSrc = `/special-tools-iframe.html?tab=${tab}&embed=true`;
 
     return (
         <div className="min-h-screen text-[#f1f1f1]" style={{ background: "#0a0a0b" }}>
