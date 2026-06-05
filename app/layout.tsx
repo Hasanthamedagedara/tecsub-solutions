@@ -64,6 +64,9 @@ export const metadata: Metadata = {
     },
     verification: {
         google: "ZPljKHMes5GVg_2Y3XubDmSRrLmCR9KXvOSC5fDNQ0k",
+        other: {
+            "tiktok-developers-site-verification": "vqn6urgsisbtwceMwOxkKdknmjGrXuA7",
+        },
     },
     openGraph: {
         title: "Tecsub Solutions | Engineering the Future",
