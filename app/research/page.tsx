@@ -70,7 +70,7 @@ export default function ResearchDiscoveryPage() {
     };
 
     return (
-        <div className="min-h-screen text-[#f1f1f1]" style={{ background: "#0a0a0b" }}>
+        <div className="min-h-screen bg-[var(--yt-bg)] text-[var(--yt-text-primary)]">
             <Navbar />
             
             <div className="pt-32 pb-12 px-4">
@@ -94,7 +94,7 @@ export default function ResearchDiscoveryPage() {
                     <div className="max-w-3xl mx-auto mb-12">
                         <div className="relative group">
                             <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-                            <div className="relative flex items-center bg-[#111] rounded-2xl border border-white/10 p-2 overflow-hidden">
+                            <div className="relative flex items-center bg-[var(--yt-bg-secondary)] border border-[var(--yt-border)] p-2 rounded-2xl overflow-hidden">
                                 <span className="pl-4 text-white/30">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                                 </span>
@@ -135,7 +135,7 @@ export default function ResearchDiscoveryPage() {
                             >
                                 {/* Info Sidebar */}
                                 <div className="lg:col-span-4 space-y-6">
-                                    <div className="bg-[#161618] rounded-3xl p-6 border border-white/5 h-fit">
+                                    <div className="bg-[var(--yt-bg-secondary)] rounded-3xl p-6 border border-[var(--yt-border)] h-fit">
                                         <div className="mb-6">
                                             <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest block mb-2">Publisher & Journal</span>
                                             <h3 className="font-bold text-lg leading-tight">{paper.journal}</h3>
@@ -171,7 +171,7 @@ export default function ResearchDiscoveryPage() {
                                                     <a 
                                                         href={paper.pdfUrl} 
                                                         target="_blank" 
-                                                        className="w-full py-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black text-xs tracking-widest uppercase transition-all flex items-center justify-center gap-2"
+                                                        className="w-full py-4 rounded-2xl bg-[var(--yt-bg-hover)] border border-[var(--yt-border)] text-[var(--yt-text-primary)] font-black text-xs tracking-widest uppercase transition-all flex items-center justify-center gap-2"
                                                     >
                                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                                         Download PDF
@@ -190,7 +190,7 @@ export default function ResearchDiscoveryPage() {
 
                                 {/* Content Area */}
                                 <div className="lg:col-span-8">
-                                    <div className="bg-[#161618] rounded-3xl border border-white/5 overflow-hidden min-h-[500px]">
+                                    <div className="bg-[var(--yt-bg-secondary)] rounded-3xl border border-[var(--yt-border)] overflow-hidden min-h-[500px]">
                                         <AnimatePresence mode="wait">
                                             {viewMode === "info" ? (
                                                 <motion.div 
@@ -203,7 +203,7 @@ export default function ResearchDiscoveryPage() {
                                                     <h2 className="text-2xl md:text-4xl font-bold mb-8 leading-tight">{paper.title}</h2>
                                                     <div className="prose prose-invert max-w-none">
                                                         <h4 className="text-blue-500 uppercase tracking-widest text-[10px] font-black mb-4">Abstract</h4>
-                                                        <p className="text-[#aaa] leading-relaxed text-sm md:text-base whitespace-pre-wrap">
+                                                        <p className="text-[var(--yt-text-secondary)] leading-relaxed text-sm md:text-base whitespace-pre-wrap">
                                                             {paper.abstract}
                                                         </p>
                                                     </div>
@@ -235,17 +235,17 @@ export default function ResearchDiscoveryPage() {
                     {/* Features/Info */}
                     {!paper && !loading && (
                         <div className="mt-16 grid md:grid-cols-3 gap-8">
-                            <div className="p-6 bg-[#161618] rounded-3xl border border-white/5">
+                            <div className="p-6 bg-[var(--yt-bg-secondary)] rounded-3xl border border-[var(--yt-border)]">
                                 <div className="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 text-2xl mb-4 font-bold">📚</div>
                                 <h3 className="font-bold mb-2">50M+ Papers</h3>
                                 <p className="text-xs text-[#666] leading-relaxed">Search through a massive database of journals and conference papers from IEEE, ACM, Elsevier, and more.</p>
                             </div>
-                            <div className="p-6 bg-[#161618] rounded-3xl border border-white/5">
+                            <div className="p-6 bg-[var(--yt-bg-secondary)] rounded-3xl border border-[var(--yt-border)]">
                                 <div className="w-12 h-12 rounded-2xl bg-cyan-600/10 flex items-center justify-center text-cyan-500 text-2xl mb-4 font-bold">🌍</div>
                                 <h3 className="font-bold mb-2">Open Access</h3>
                                 <p className="text-xs text-[#666] leading-relaxed">Automatically identifies legal open-access versions of research papers so you can read them for free.</p>
                             </div>
-                            <div className="p-6 bg-[#161618] rounded-3xl border border-white/5">
+                            <div className="p-6 bg-[var(--yt-bg-secondary)] rounded-3xl border border-[var(--yt-border)]">
                                 <div className="w-12 h-12 rounded-2xl bg-purple-600/10 flex items-center justify-center text-purple-500 text-2xl mb-4 font-bold">⚡</div>
                                 <h3 className="font-bold mb-2">Instant Viewer</h3>
                                 <p className="text-xs text-[#666] leading-relaxed">Built-in PDF viewer powered by PDF.js allows you to read documents directly within the TecSub environment.</p>

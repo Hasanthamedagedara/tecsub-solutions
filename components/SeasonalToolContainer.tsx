@@ -123,7 +123,7 @@ export default function SeasonalToolContainer({ toolSlug }: { toolSlug: string }
 
     if (!tool) {
         return (
-            <div className="min-h-screen text-[#f1f1f1] flex flex-col justify-between" style={{ background: "#0a0a0b" }}>
+            <div className="min-h-screen text-[var(--yt-text-primary)] bg-[var(--yt-bg)] flex flex-col justify-between">
                 <Navbar />
                 <div className="pt-32 pb-20 px-4 text-center flex-1 flex flex-col items-center justify-center">
                     <div className="w-20 h-20 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-4xl mb-6">
@@ -148,7 +148,7 @@ export default function SeasonalToolContainer({ toolSlug }: { toolSlug: string }
     }
 
     return (
-        <div className="min-h-screen text-[#f1f1f1]" style={{ background: "#0a0a0b" }}>
+        <div className="min-h-screen text-[var(--yt-text-primary)] bg-[var(--yt-bg)]">
             <Navbar />
 
             <div className="pt-32 pb-20 px-4">
@@ -172,7 +172,7 @@ export default function SeasonalToolContainer({ toolSlug }: { toolSlug: string }
                             </div>
                             <div>
                                 <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                                    <h1 className="text-xl md:text-3xl font-black uppercase tracking-tight text-white">
+                                    <h1 className="text-xl md:text-3xl font-black uppercase tracking-tight text-[var(--yt-text-primary)]">
                                         {tool.title}
                                     </h1>
                                     {tool.badge && (
@@ -181,7 +181,7 @@ export default function SeasonalToolContainer({ toolSlug }: { toolSlug: string }
                                         </span>
                                     )}
                                 </div>
-                                <p className="text-xs md:text-sm text-[#888] leading-relaxed max-w-2xl font-light">
+                                <p className="text-xs md:text-sm text-[var(--yt-text-secondary)] leading-relaxed max-w-2xl font-light">
                                     {tool.description}
                                 </p>
                             </div>
@@ -223,15 +223,15 @@ export default function SeasonalToolContainer({ toolSlug }: { toolSlug: string }
                     </div>
 
                     {/* Tool iFrame Container */}
-                    <div className="relative w-full rounded-[2rem] border border-white/5 bg-[#121214]/60 backdrop-blur-md overflow-hidden shadow-2xl">
+                    <div className="relative w-full rounded-[2rem] border border-[var(--yt-border)] bg-[var(--yt-bg-secondary)]/60 backdrop-blur-md overflow-hidden shadow-2xl">
                         {/* Glow header overlay */}
                         <div className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-r ${tool.colorClass} opacity-60 z-10`} />
 
                         {/* Spinner */}
                         {isLoading && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0a0a0b]/80 z-20 transition-all duration-300">
-                                <div className="w-12 h-12 border-4 border-white/5 border-t-orange-500 rounded-full animate-spin mb-4" />
-                                <div className="text-xs font-black uppercase tracking-widest text-[#666]">
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-[var(--yt-bg)]/80 z-20 transition-all duration-300">
+                                <div className="w-12 h-12 border-4 border-[var(--yt-border)] border-t-orange-500 rounded-full animate-spin mb-4" />
+                                <div className="text-xs font-black uppercase tracking-widest text-[var(--yt-text-secondary)]">
                                     Launching Interactive Workspace...
                                 </div>
                             </div>

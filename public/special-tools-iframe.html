@@ -1610,10 +1610,10 @@
         // MEME GENERATOR LOGIC (CANVAS POWERED)
         // ============================================
         const defaultMemeTemplates = {
-            drake: { name: "Drake Hotline Bling", src: "https://api.memegen.link/images/drake.png" },
-            harold: { name: "Hide the Pain Harold", src: "https://api.memegen.link/images/harold.png" },
-            buttons: { name: "Two Buttons", src: "https://api.memegen.link/images/both.png" },
-            success: { name: "Success Kid", src: "https://api.memegen.link/images/success.png" }
+            drake: { name: "Drake Hotline Bling", src: "/images/memes/drake.png" },
+            harold: { name: "Hide the Pain Harold", src: "/images/memes/harold.png" },
+            buttons: { name: "Two Buttons", src: "/images/memes/both.png" },
+            success: { name: "Success Kid", src: "/images/memes/success.png" }
         };
 
         let customMemeTemplates = [];
@@ -2244,6 +2244,7 @@
         generateArt();
         updateCard();
         changeVesakPoem();
+        initMemeGenerator();
 
         try {
             const urlParams = new URLSearchParams(window.location.search);

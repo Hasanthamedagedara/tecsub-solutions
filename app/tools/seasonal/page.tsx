@@ -154,7 +154,7 @@ const CATEGORIES: CategoryGroup[] = [
 export default function SeasonalToolsDashboard() {
     const router = useRouter();
     return (
-        <div className="min-h-screen text-[#f1f1f1]" style={{ background: "#0a0a0b" }}>
+        <div className="min-h-screen bg-[var(--yt-bg)] text-[var(--yt-text-primary)]">
             <Navbar />
 
             <div className="pt-32 pb-20 px-4">
@@ -162,7 +162,7 @@ export default function SeasonalToolsDashboard() {
                     {/* Back button */}
                     <button
                         onClick={() => router.push("/tools")}
-                        className="group inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white/50 hover:text-white mb-8 transition-colors"
+                        className="group inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[var(--yt-text-secondary)] hover:text-[var(--yt-text-primary)] mb-8 transition-colors"
                     >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="group-hover:-translate-x-1 transition-transform">
                             <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -194,7 +194,7 @@ export default function SeasonalToolsDashboard() {
                                 <div className="flex items-center gap-3 border-b border-white/5 pb-3">
                                     <span className="text-2xl">{section.icon}</span>
                                     <div>
-                                        <h2 className="text-lg font-black uppercase tracking-wider text-white">
+                                        <h2 className="text-lg font-black uppercase tracking-wider text-[var(--yt-text-primary)]">
                                             {section.title}
                                         </h2>
                                         <p className="text-xs text-[#666] font-medium">{section.subtitle}</p>
@@ -226,7 +226,7 @@ export default function SeasonalToolsDashboard() {
                                                     )}
                                                 </div>
 
-                                                <h3 className="text-base font-black uppercase tracking-tight text-white group-hover:text-orange-400 transition-colors">
+                                                <h3 className="text-base font-black uppercase tracking-tight text-[var(--yt-text-primary)] group-hover:text-orange-400 transition-colors">
                                                     {tool.title}
                                                 </h3>
                                                 <p className="text-xs text-[#777] leading-relaxed line-clamp-3 font-light">
@@ -234,7 +234,7 @@ export default function SeasonalToolsDashboard() {
                                                 </p>
                                             </div>
 
-                                            <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-[#aaa] group-hover:text-white transition-colors mt-4">
+                                            <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-[var(--yt-text-secondary)] group-hover:text-[var(--yt-text-primary)] transition-colors mt-4">
                                                 Launch Tool
                                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="group-hover:translate-x-1 transition-transform">
                                                     <path d="M5 12h14M12 5l7 7-7 7" />

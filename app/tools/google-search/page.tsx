@@ -102,7 +102,7 @@ export default function GoogleSearchDorkGenerator() {
     );
 
     return (
-        <div className="min-h-screen text-[#f1f1f1]" style={{ background: "#0a0a0b" }}>
+        <div className="min-h-screen bg-[var(--yt-bg)] text-[var(--yt-text-primary)]">
             <Navbar />
 
             <div className="pt-32 pb-20 px-4">
@@ -128,7 +128,7 @@ export default function GoogleSearchDorkGenerator() {
                     <div className="max-w-2xl mx-auto mb-10">
                         <div className="relative group">
                             <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                            <div className="relative flex items-center bg-[#111] rounded-2xl border border-white/10 p-2 overflow-hidden">
+                            <div className="relative flex items-center bg-[var(--yt-bg-secondary)] border border-[var(--yt-border)] p-2 rounded-2xl overflow-hidden">
                                 <span className="pl-4 text-white/30 text-lg">🔍</span>
                                 <input
                                     type="text"
@@ -191,7 +191,7 @@ export default function GoogleSearchDorkGenerator() {
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -10 }}
-                                        className="bg-[#161618] border border-white/5 rounded-3xl p-6 relative overflow-hidden transition-all hover:border-white/10 group"
+                                        className="bg-[var(--yt-bg-secondary)] border border-[var(--yt-border)] rounded-3xl p-6 relative overflow-hidden transition-all hover:border-[var(--yt-border)] group"
                                     >
                                         <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 blur-[50px] -z-10 rounded-full" />
                                         
@@ -201,7 +201,7 @@ export default function GoogleSearchDorkGenerator() {
                                             </div>
                                             <div className="flex-1 space-y-4">
                                                 <div>
-                                                    <h3 className="text-base font-black uppercase tracking-tight text-white group-hover:text-blue-400 transition-colors">
+                                                    <h3 className="text-base font-black uppercase tracking-tight text-[var(--yt-text-primary)] group-hover:text-blue-400 transition-colors">
                                                         {preset.title}
                                                     </h3>
                                                     <p className="text-xs text-[#888] mt-1">
@@ -215,11 +215,11 @@ export default function GoogleSearchDorkGenerator() {
                                                         readOnly
                                                         value={currentQuery}
                                                         rows={2}
-                                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-3 text-xs font-mono text-blue-400 select-all outline-none resize-none leading-relaxed"
+                                                        className="w-full bg-[var(--yt-bg)] border border-[var(--yt-border)] rounded-2xl px-5 py-3 text-xs font-mono text-blue-400 select-all outline-none resize-none leading-relaxed"
                                                     />
                                                     <button
                                                         onClick={() => handleCopy(currentQuery, preset.id)}
-                                                        className="absolute top-3 right-3 p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all text-white/60 hover:text-white"
+                                                        className="absolute top-3 right-3 p-2 bg-[var(--yt-bg-hover)] rounded-lg transition-all text-[var(--yt-text-secondary)] hover:text-[var(--yt-text-primary)]"
                                                         title="Copy string to clipboard"
                                                     >
                                                         {copiedId === preset.id ? (
@@ -238,7 +238,7 @@ export default function GoogleSearchDorkGenerator() {
                                                 {/* Launch Search Button */}
                                                 <button
                                                     onClick={() => handleSearch(currentQuery)}
-                                                    className="inline-flex items-center gap-2 bg-white text-black font-black px-5 py-2.5 rounded-xl text-xs hover:bg-white/90 transition-all shadow-md active:scale-[0.98]"
+                                                    className="inline-flex items-center gap-2 bg-[var(--yt-chip-active-bg)] text-[var(--yt-chip-active-text)] font-black px-5 py-2.5 rounded-xl text-xs hover:opacity-90 transition-all shadow-md active:scale-[0.98]"
                                                 >
                                                     <img src="https://www.google.com/favicon.ico" className="w-3.5 h-3.5" alt="Google icon" />
                                                     LAUNCH SEARCH
@@ -263,8 +263,8 @@ export default function GoogleSearchDorkGenerator() {
                         </div>
                         <div className="space-y-2">
                             <h3 className="text-sm font-black uppercase tracking-wider text-blue-400">Pro-Tip for Trending App Ideas</h3>
-                            <p className="text-xs text-[#aaa] leading-relaxed">
-                                When Google loads the search results, click on the <strong className="text-white">"Tools"</strong> button beneath the search bar, click <strong className="text-white">"Any time"</strong>, and choose <strong className="text-white">"Past month"</strong> or <strong className="text-white">"Past year"</strong>. This filters out stale posts and shows live, trending problems and requests that people are complaining about right now!
+                            <p className="text-xs text-[var(--yt-text-secondary)] leading-relaxed">
+                                When Google loads the search results, click on the <strong className="text-[var(--yt-text-primary)]">"Tools"</strong> button beneath the search bar, click <strong className="text-[var(--yt-text-primary)]">"Any time"</strong>, and choose <strong className="text-[var(--yt-text-primary)]">"Past month"</strong> or <strong className="text-[var(--yt-text-primary)]">"Past year"</strong>. This filters out stale posts and shows live, trending problems and requests that people are complaining about right now!
                             </p>
                         </div>
                     </div>
