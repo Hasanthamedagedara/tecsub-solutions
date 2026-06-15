@@ -3,12 +3,14 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAXXHwV2GG17rGait_7A3vr5V17T_RCuHQ",
-    authDomain: "gen-lang-client-0698552660.firebaseapp.com",
-    projectId: "gen-lang-client-0698552660",
-    storageBucket: "gen-lang-client-0698552660.firebasestorage.app",
-    messagingSenderId: "370839875671",
-    appId: "1:370839875671:web:3101dc21da5147adb8f312"
+    apiKey: "AIzaSyBxJHccT6qiZGsFBYisT8oIUw43mzFldQQ",
+    authDomain: "tecsubonline.firebaseapp.com",
+    projectId: "tecsubonline",
+    storageBucket: "tecsubonline.firebasestorage.app",
+    messagingSenderId: "105883522974",
+    appId: "1:105883522974:web:693279505a1eb1c29ea88f",
+    measurementId: "G-E2R9S024L0",
+    databaseURL: "https://tecsubonline-default-rtdb.firebaseio.com"
 };
 
 /* ─── Initialize (safe for SSR + hot-reload) ─── */
