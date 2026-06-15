@@ -6,7 +6,7 @@ service cloud.firestore {
     // ─── Engagement documents ─────────────────────────────────
     match /engagement/{contentId} {
       // Anyone can read engagement counts
-      allow read: true;
+      allow read: if true;
 
       // Only allow increment/decrement on numeric fields (not arbitrary writes)
       allow write: if request.resource.data.keys().hasOnly(['likes','reposts','views','commentCount'])
@@ -17,7 +17,7 @@ service cloud.firestore {
 
       // ─── Comments subcollection ─────────────────────────────
       match /comments/{commentId} {
-        allow read: true;
+        allow read: if true;
 
         // Allow creating a comment (must have required fields)
         allow create: if request.resource.data.keys().hasAll(['author','avatar','text','timestamp','likes','likedBy','replies'])
